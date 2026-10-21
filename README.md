@@ -1,0 +1,2487 @@
+[index.html](https://github.com/user-attachments/files/33789592/index.html)
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Моя кофейня</title>
+<style>
+*{box-sizing:border-box}
+html{color-scheme:only light}
+html[data-theme=dark]{color-scheme:dark}
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;-webkit-touch-callout:none;overscroll-behavior:none}
+button,.tab,.golden,canvas,.card,.panel{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+input,textarea,select{font-size:16px!important;-webkit-user-select:text;user-select:text}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0%,#6b4a38,#2a1b14 55%,#17100c);background-attachment:fixed;font-family:'Segoe UI',system-ui,Arial,sans-serif;color:#fff6ea}
+.wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;padding:24px;max-width:1000px;margin:0 auto}
+.left{flex:1 1 360px;text-align:center}
+.right{flex:1 1 360px}
+.left,.right{background:linear-gradient(160deg,rgba(255,240,220,.10),rgba(255,240,220,.03));border:1px solid rgba(255,235,205,.15);border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.item{transition:transform .12s,background .12s}
+.item:hover:not(:disabled){transform:translateX(3px)}
+.ach:not(.locked){box-shadow:0 0 10px rgba(255,214,102,.45)}
+#money{text-shadow:0 0 18px rgba(165,214,167,.5)}
+h1{margin:0 0 8px;font-size:30px;letter-spacing:.5px;color:#ffe9c9}
+h2{margin:22px 0 12px;font-size:18px;color:#ffe0b2;letter-spacing:.3px}
+.right h2:first-child{margin-top:0}
+#money{font-size:56px;font-weight:bold;color:#c8e6c9}
+#income{opacity:.8;margin-bottom:6px}
+#buffs{min-height:20px;font-size:14px;color:#ffcc80;margin-bottom:8px}
+#eventBar{display:none;align-items:center;justify-content:center;gap:10px;margin:0 0 10px;padding:8px 12px;background:rgba(255,179,0,.2);border:1px solid #ffb300;border-radius:10px;font-size:14px}
+#eventBar button{padding:6px 12px;border:none;border-radius:8px;background:#ffb300;color:#222;font-weight:bold;cursor:pointer}
+#scene{width:100%;max-width:480px;margin:8px auto 16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#work{width:180px;height:180px;border-radius:50%;border:none;background:radial-gradient(circle at 30% 30%,#ffd180,#d84315);color:white;font-size:24px;font-weight:bold;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.4);transition:transform .08s;user-select:none}
+#work:active{transform:scale(.92)}
+#work small{font-size:14px;font-weight:normal;opacity:.9}
+canvas{display:block;margin:24px auto 0;max-width:100%}
+#chart{background:rgba(255,255,255,.06);border-radius:10px}
+.caption{font-size:12px;opacity:.6;margin-top:4px}
+#fxBtn,#vibBtn{margin:0 4px;padding:6px 14px;border:none;border-radius:8px;background:rgba(255,240,220,.14);color:inherit;cursor:pointer}
+#reset,#mute,#music{margin:0 4px;padding:6px 14px;border:none;border-radius:8px;background:rgba(255,255,255,.12);color:white;cursor:pointer}
+.item{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:10px;padding:12px 14px;border:none;border-radius:12px;background:rgba(255,255,255,.1);color:white;text-align:left;cursor:pointer;font-size:15px}
+.item:hover:not(:disabled){background:rgba(255,255,255,.2)}
+.item:disabled{opacity:.45;cursor:not-allowed}
+.item.bought{opacity:.6;background:rgba(165,214,167,.15);cursor:default}
+.item .name{font-weight:bold}
+.item .desc{font-size:12px;opacity:.75;margin-top:3px}
+.item .cost{color:#a5d6a7;font-weight:bold;white-space:nowrap;margin-left:12px}
+.item .count{font-size:22px;font-weight:bold;opacity:.5;margin-left:12px;min-width:28px;text-align:right}
+#achs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.ach{font-size:26px;padding:8px 0;border-radius:10px;background:rgba(255,255,255,.1);cursor:help}
+.ach.locked{filter:grayscale(1);opacity:.3}
+#toasts{position:fixed;top:16px;right:16px;z-index:10}
+.toast{background:#ffb300;color:#222;padding:10px 16px;margin-bottom:8px;border-radius:10px;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,.4);animation:fade 3.5s ease-out forwards}
+@keyframes fade{0%{opacity:0;transform:translateX(30px)}8%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0}}
+.golden{position:fixed;z-index:9;font-size:52px;cursor:pointer;user-select:none;filter:drop-shadow(0 0 14px gold) sepia(1) saturate(4) hue-rotate(-15deg);animation:pulse .7s ease-in-out infinite alternate}
+@keyframes pulse{from{transform:scale(.9)}to{transform:scale(1.2)}}
+.float.crit{color:#ff8a00;font-size:30px;text-shadow:0 0 10px #ffd54f,0 2px 0 #7a2e00;animation-duration:1.1s}
+.float{position:fixed;font-weight:bold;color:#ffeb3b;pointer-events:none;animation:rise .8s ease-out forwards;font-size:20px}
+@keyframes rise{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-60px)}}
+#work{animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 8px 30px rgba(255,160,60,.5)}}
+.item{background:rgba(255,240,220,.09)}
+.item:not(:disabled):not(.bought){box-shadow:inset 0 0 0 1px rgba(255,224,178,.3),0 0 12px rgba(255,200,120,.12)}
+.ach{transition:transform .15s}
+.ach:not(.locked):hover{transform:scale(1.15)}
+#scene{border:2px solid rgba(255,235,205,.2);box-shadow:0 0 0 6px #3e2723,0 0 0 8px rgba(255,224,178,.28),0 10px 26px rgba(0,0,0,.55)}
+.toast{background:linear-gradient(135deg,#ffe0b2,#ffb74d);border-radius:12px}
+#mute,#music,#reset{background:rgba(255,240,220,.14)}
+@media(prefers-reduced-motion:reduce){#work{animation:none}}
+#chart{width:240px;height:48px;margin-top:14px;background:none;border-radius:12px}
+.caption{font-size:11px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;padding:4px;background:rgba(0,0,0,.25);border-radius:14px}
+.tab{flex:1;padding:9px 6px;border:none;border-radius:10px;background:transparent;color:#ffe0b2;font-size:14px;font-weight:600;cursor:pointer}
+.tab.on{background:rgba(255,224,178,.22);color:#fff}
+.panel{display:none}.panel.on{display:block}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;font-size:15px}
+.setrow input[type=range]{width:150px;accent-color:#ffb74d}
+#impIn{width:100%;padding:10px 12px;border:1px solid rgba(255,235,205,.25);border-radius:10px;background:rgba(0,0,0,.25);color:#fff6ea;font-size:13px}
+#nameIn{width:100%;padding:10px 12px;border:1px solid rgba(255,235,205,.25);border-radius:10px;background:rgba(0,0,0,.25);color:#fff6ea;font-size:16px}
+#achs{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.ach{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 10px;text-align:left}
+.ach .ai{font-size:24px}.ach .an{font-weight:600}.ach .ad{opacity:.7;font-size:12px}
+#stage{margin:4px auto 12px;max-width:340px;font-size:15px;font-weight:600;color:#ffe0b2}
+.bar{height:6px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe0b2,#ffb74d);transition:width .3s}
+#eventBar{flex-wrap:wrap}
+#eventBar #eventBtn2{background:rgba(255,255,255,.2);color:#fff}
+#modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(10,6,4,.72);align-items:center;justify-content:center;padding:16px}
+#modal.on{display:flex}
+.mbox{max-width:420px;background:linear-gradient(160deg,#4a3326,#2a1b14);border:1px solid rgba(255,235,205,.25);border-radius:18px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mbox h3{margin:0 0 10px;color:#ffe0b2;font-size:20px}
+.mbox p{line-height:1.5;margin:0 0 14px}
+.mbox button{display:block;width:100%;margin-top:8px;padding:10px 12px;border:none;border-radius:10px;background:rgba(255,224,178,.2);color:#fff6ea;font-size:15px;text-align:left;cursor:pointer}
+.mbox button:hover{background:rgba(255,224,178,.34)}
+#combo{min-height:22px;margin-top:10px;font-weight:bold;color:#ffcc80;text-shadow:0 0 12px rgba(255,160,60,.6)}
+.jr{padding:12px 14px;margin-bottom:10px;border-radius:12px;background:rgba(255,240,220,.08);font-size:14px;line-height:1.45}
+.jr b{display:block;margin-bottom:4px;color:#ffe0b2}
+.jr .res{margin-top:6px;font-size:12px;opacity:.7;font-style:italic}
+.jr.lock{opacity:.55}
+.tab{font-size:13px;padding:9px 2px}
+#exp,#imp,#pBtn{margin:0 4px;padding:8px 14px;border:none;border-radius:10px;background:rgba(255,240,220,.14);color:#fff6ea;cursor:pointer;font-size:14px}
+#pBtn{background:linear-gradient(135deg,#ffd180,#d84315);font-weight:bold}
+#pBtn:disabled{opacity:.4;cursor:default}
+.goal{margin-bottom:10px;font-size:13px}
+.goal .bar{height:5px;margin:4px 0 0}
+#seasonBtn{margin:0 4px;padding:6px 14px;border:none;border-radius:8px;background:rgba(255,240,220,.14);color:#fff6ea;cursor:pointer}
+.item.best .name::after{content:attr(data-badge);font-size:12px;font-weight:600;color:#ffd54f}
+.item.best{box-shadow:inset 0 0 0 1px rgba(255,213,79,.55),0 0 14px rgba(255,200,80,.2)}
+#buffs{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(255,204,128,.16);border:1px solid rgba(255,204,128,.4);font-size:12px;color:#ffe0b2}
+.chip b{color:#fff}
+.tabs{position:sticky;top:0;z-index:5;backdrop-filter:blur(6px);flex-wrap:wrap}
+.qty{display:flex;gap:6px;margin:0 0 10px}
+.qty button{flex:1;padding:6px 0;border:1px solid rgba(255,224,178,.25);border-radius:9px;background:rgba(0,0,0,.2);color:#ffe0b2;font-weight:700;cursor:pointer}
+.qty button.on{background:rgba(255,224,178,.28);color:#fff;border-color:rgba(255,224,178,.7)}
+.fchips{display:flex;gap:6px;margin:0 0 10px}
+.fchips button{padding:5px 12px;border:1px solid rgba(255,224,178,.25);border-radius:999px;background:transparent;color:#ffe0b2;cursor:pointer;font-size:12px}
+.fchips button.on{background:rgba(255,224,178,.25);color:#fff}
+#achs.f-open .ach.locked{display:none}
+#achs.f-locked .ach:not(.locked){display:none}
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.scard{padding:10px;border-radius:12px;background:rgba(0,0,0,.22);font-size:12px;opacity:.95}
+.scard b{display:block;font-size:17px;margin-top:3px;color:#fff}
+.sbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0 4px;background:rgba(0,0,0,.3)}
+.sbar i{display:block;height:100%}
+.slegend{font-size:12px;line-height:1.7;opacity:.9}
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(ellipse at 50% 35%,#6d4c41 0%,#3e2723 55%,#1b0f0b 100%);color:#fff3e0;text-align:center;transition:opacity .7s ease,transform .7s ease;cursor:pointer;padding:20px}
+#splash.out{opacity:0;transform:scale(1.06);pointer-events:none}
+#splash .cup{font-size:84px;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));animation:sFloat 3s ease-in-out infinite;position:relative}
+#splash .steam{position:absolute;left:50%;top:-6px;width:8px;height:30px;margin-left:-4px;border-radius:8px;background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.55));filter:blur(3px);animation:sSteam 2.4s ease-in infinite;opacity:0}
+#splash .steam:nth-child(2){margin-left:-20px;animation-delay:.8s}#splash .steam:nth-child(3){margin-left:12px;animation-delay:1.6s}
+#splash h1{margin:6px 0 0;font-size:clamp(30px,8vw,56px);letter-spacing:.04em;line-height:1.05;text-shadow:0 4px 24px rgba(255,170,80,.45)}
+#splash h1 small{display:block;font-size:.38em;letter-spacing:.5em;color:#ffcc80;font-weight:600;margin-bottom:6px}
+#splash p{margin:0;opacity:.7;font-size:15px;letter-spacing:.08em}
+#splash .ld{width:min(260px,70vw);height:6px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:18px}
+#splash .ld i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffb74d,#ff7043);animation:sLoad 1.6s ease-out forwards;border-radius:6px}
+#splash .tip{max-width:min(380px,86vw);margin-top:20px;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,224,178,.18);font-size:14px;line-height:1.45;color:#ffe9cc;opacity:0;animation:sTipIn .7s ease .35s forwards}
+#splash .tip b{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#ffb74d;margin-bottom:4px}
+@keyframes sTipIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#splash .tap{margin-top:14px;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:#ffe0b2;opacity:0;animation:sTap 1.6s ease 1.5s infinite}
+@keyframes sFloat{50%{transform:translateY(-8px)}}
+@keyframes sSteam{0%{transform:translateY(8px) scaleX(1);opacity:0}30%{opacity:.8}100%{transform:translateY(-34px) scaleX(1.8);opacity:0}}
+@keyframes sLoad{to{width:100%}}
+@keyframes sTap{0%,100%{opacity:.25}50%{opacity:1}}
+select#langSel{padding:7px 10px;border-radius:10px;border:1px solid rgba(255,224,178,.4);background:rgba(0,0,0,.3);color:#fff3e0;font-size:14px}
+select#langSel option{color:#000}
+#bkCards{margin-bottom:10px}
+.fin{width:100%;padding:10px 12px;border:1px solid rgba(255,235,205,.25);border-radius:10px;background:rgba(0,0,0,.25);color:inherit;font-size:14px;font-family:inherit;margin-bottom:6px;resize:none}
+.bkrow .fin{flex:1;min-width:140px;margin:0}
+.wqbar{height:6px;border-radius:4px;background:rgba(0,0,0,.3);margin-top:6px;overflow:hidden}.wqbar i{display:block;height:100%;background:linear-gradient(90deg,#ffb74d,#ff7043)}
+.wqgo{white-space:nowrap}
+.perk{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.45;padding:3px 0}.perk.off{opacity:.5}
+.vcard{padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(255,213,79,.18),rgba(255,160,60,.08));border:1px solid rgba(255,213,79,.4);margin-bottom:8px}
+.vcard .vt{font-size:18px;font-weight:800}
+html[data-theme=light] .fin{background:#fff;border-color:rgba(90,60,30,.25)}
+html[data-theme=light] .vcard{background:linear-gradient(135deg,rgba(255,213,79,.3),rgba(255,160,60,.12))}
+.bkrow{display:flex;gap:8px;flex-wrap:wrap}
+.bkbtn,.bkp button{padding:8px 12px;border:none;border-radius:10px;background:rgba(255,224,178,.22);color:#fff3e0;font-weight:700;cursor:pointer;font-size:13px}
+.bkbtn:hover:not(:disabled),.bkp button:hover:not(:disabled){background:rgba(255,224,178,.36)}
+.bkbtn:disabled,.bkp button:disabled{opacity:.4;cursor:default}
+.bkp{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid rgba(255,224,178,.12)}
+.bkp.own,.bkp.done{border-color:rgba(129,199,132,.6);background:rgba(76,175,80,.12)}
+.bkp.lock{opacity:.45}
+.bkp .nm{font-weight:700}.bkp .ds{font-size:12px;opacity:.78;margin-top:2px;line-height:1.4}
+.bkp .pb{display:flex;flex-direction:column;gap:6px;min-width:128px}
+.due{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;margin-bottom:8px;border-radius:12px;background:rgba(255,167,38,.14);border:1px solid rgba(255,167,38,.5);font-size:14px}
+.due.late{background:rgba(239,83,80,.18);border-color:rgba(239,83,80,.7)}
+.tbar{height:6px;border-radius:6px;background:rgba(0,0,0,.3);overflow:hidden;margin:3px 0 10px}.tbar i{display:block;height:100%;background:linear-gradient(90deg,#64b5f6,#4db6ac)}
+.chip.red{background:rgba(239,83,80,.22);border-color:rgba(239,83,80,.7);color:#ffcdd2}
+
+/* ---- кнопка «Варить кофе» ---- */
+#work{--b1:#ffd180;--b2:#d84315;--ring:#8d3a12;--glow:255,160,60;--cb:0;position:relative;overflow:visible;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:124px;height:124px;border:none;border-radius:50%;color:#fff;font-weight:800;letter-spacing:.3px;
+ background:radial-gradient(circle at 32% 26%,var(--b1) 0%,var(--b2) 78%);
+ box-shadow:0 0 0 5px var(--ring),0 0 0 7px rgba(255,255,255,.14),0 10px 22px rgba(0,0,0,.5),0 0 calc(12px + 26px*var(--cb)) rgba(var(--glow),calc(.18 + .5*var(--cb))),inset 0 -14px 26px rgba(0,0,0,.30),inset 0 10px 18px rgba(255,255,255,.30);
+ text-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .09s,box-shadow .2s;animation:none}
+#work{margin:20px 0 18px}
+#work:hover{transform:translateY(-2px) scale(1.02)}
+#work:active{transform:scale(.94);box-shadow:0 0 0 5px var(--ring),0 0 0 7px rgba(255,255,255,.14),0 4px 10px rgba(0,0,0,.5),inset 0 -6px 18px rgba(0,0,0,.35),inset 0 6px 14px rgba(255,255,255,.2)}
+#work .bi{font-size:42px;line-height:1;margin-top:4px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));animation:wbob 3.2s ease-in-out infinite}
+#work .bt{font-size:14px;line-height:1.1}
+#work small{font-size:10.5px;font-weight:600;opacity:.92}
+#work .gloss{position:absolute;left:16%;top:8%;width:42%;height:24%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0));transform:rotate(-24deg);pointer-events:none}
+#work .wring{position:absolute;inset:-11px;border-radius:50%;border:2px dashed rgba(255,255,255,.28);animation:wspin 28s linear infinite;pointer-events:none}
+#work .wsteam{position:absolute;top:6px;left:50%;width:5px;height:16px;margin-left:-3px;border-radius:8px;background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.6));filter:blur(2.5px);opacity:0;animation:wsteam 2.6s ease-in infinite;pointer-events:none}
+#work .wsteam.b{margin-left:-17px;animation-delay:.9s}#work .wsteam.c{margin-left:11px;animation-delay:1.7s}
+#work .rip{position:absolute;left:var(--rx);top:var(--ry);width:12px;height:12px;margin:-6px;border-radius:50%;border:2px solid rgba(255,255,255,.7);pointer-events:none;animation:wrip .45s ease-out forwards}
+@keyframes wrip{to{transform:scale(6.5);opacity:0}}
+@keyframes wspin{to{transform:rotate(360deg)}}
+@keyframes wbob{50%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes wsteam{0%{transform:translateY(10px) scaleX(1);opacity:0}30%{opacity:.8}100%{transform:translateY(-22px) scaleX(1.8);opacity:0}}
+#work[data-skin=mocha]{--b1:#c9a27e;--b2:#4e342e;--ring:#2b1b14;--glow:200,150,110}
+#work[data-skin=matcha]{--b1:#c5e1a5;--b2:#33691e;--ring:#1b3a10;--glow:140,200,90}
+#work[data-skin=berry]{--b1:#f8bbd0;--b2:#ad1457;--ring:#5a0a2e;--glow:236,100,160}
+#work[data-skin=neon]{--b1:#80ffea;--b2:#5e35b1;--ring:#1a0f3a;--glow:100,240,230}
+#work[data-skin=royal]{--b1:#d1a8ff;--b2:#5b2a9e;--ring:#2e1257;--glow:170,110,255}
+#work[data-skin=diamond]{--b1:#ffffff;--b2:#4dc3ee;--ring:#1b6f94;--glow:150,235,255}
+#work[data-skin=gold]{--b1:#fff59d;--b2:#f9a825;--ring:#8a5a00;--glow:255,215,60}
+#work[data-size=s]{width:96px;height:96px}#work[data-size=s] .bi{font-size:32px}#work[data-size=s] .bt{font-size:11.5px}#work[data-size=s] small{font-size:9px}
+#work[data-size=l]{width:158px;height:158px}#work[data-size=l] .bi{font-size:54px}#work[data-size=l] .bt{font-size:18px}#work[data-size=l] small{font-size:12.5px}
+.fly{position:fixed;z-index:15;pointer-events:none;font-size:16px;animation:fly .9s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
+@media(prefers-reduced-motion:reduce){#work .wring,#work .bi,#work .wsteam{animation:none}}
+/* ---- настройки: чипы ---- */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.chips button{padding:7px 12px;border:1px solid rgba(255,224,178,.28);border-radius:999px;background:transparent;color:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chips button.on{background:rgba(255,224,178,.26);border-color:rgba(255,224,178,.8);font-weight:700}
+.chips .sw{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.4)}
+/* ---- тёмная тема ---- */
+html[data-theme=dark] body{background:radial-gradient(circle at 20% 0%,#1c1c22,#0a0a0d 55%,#000);color:#ececf1}
+html[data-theme=dark] .left,html[data-theme=dark] .right{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:rgba(255,255,255,.09);box-shadow:0 10px 30px rgba(0,0,0,.7)}
+html[data-theme=dark] h1,html[data-theme=dark] h2,html[data-theme=dark] #stage,html[data-theme=dark] .tab,html[data-theme=dark] .jr b,html[data-theme=dark] .mbox h3{color:#e8e0d4}
+html[data-theme=dark] .item,html[data-theme=dark] .ach,html[data-theme=dark] .jr,html[data-theme=dark] .scard,html[data-theme=dark] .bkp{background:rgba(255,255,255,.06)}
+html[data-theme=dark] .item:hover:not(:disabled){background:rgba(255,255,255,.12)}
+html[data-theme=dark] .item:not(:disabled):not(.bought){box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+html[data-theme=dark] .tabs{background:rgba(255,255,255,.05)}
+html[data-theme=dark] .tab.on{background:rgba(255,255,255,.14);color:#fff}
+html[data-theme=dark] .mbox{background:linear-gradient(160deg,#25252c,#101014)}
+html[data-theme=dark] #scene{box-shadow:0 0 0 6px #17171b,0 0 0 8px rgba(255,255,255,.14),0 10px 26px rgba(0,0,0,.8)}
+html[data-theme=dark] #money{color:#9be7a6}
+/* ---- светлая тема ---- */
+html[data-theme=light] body{background:radial-gradient(circle at 20% 0%,#fffaf2,#f1e7da 60%,#e6d8c6);color:#3b2a20}
+html[data-theme=light] .left,html[data-theme=light] .right{background:#fffdf9;border-color:rgba(60,40,25,.10);box-shadow:0 10px 30px rgba(90,60,30,.15)}
+html[data-theme=light] h1{color:#6d4c41}
+html[data-theme=light] h2,html[data-theme=light] #stage,html[data-theme=light] .mbox h3,html[data-theme=light] .jr b{color:#8d5a3b}
+html[data-theme=light] #money{color:#2e7d32;text-shadow:none}
+html[data-theme=light] #buffs{color:#b26a00}
+html[data-theme=light] #combo{color:#e65100;text-shadow:none}
+html[data-theme=light] .item{background:#f6efe6;color:#3b2a20}
+html[data-theme=light] .item:hover:not(:disabled){background:#eee1d2}
+html[data-theme=light] .item:not(:disabled):not(.bought){box-shadow:inset 0 0 0 1px rgba(90,60,30,.14)}
+html[data-theme=light] .item .cost{color:#2e7d32}
+html[data-theme=light] .item.bought{background:rgba(129,199,132,.2)}
+html[data-theme=light] .ach,html[data-theme=light] .jr,html[data-theme=light] .scard,html[data-theme=light] .bkp{background:#f6efe6;color:#3b2a20}
+html[data-theme=light] .tabs{background:rgba(90,60,30,.08)}
+html[data-theme=light] .tab{color:#6d4c41}
+html[data-theme=light] .tab.on{background:#fff;color:#3b2a20;box-shadow:0 2px 6px rgba(90,60,30,.18)}
+html[data-theme=light] .scard b{color:#3b2a20}
+html[data-theme=light] .bar,html[data-theme=light] .tbar{background:rgba(90,60,30,.12)}
+html[data-theme=light] #nameIn,html[data-theme=light] #impIn,html[data-theme=light] select#langSel{background:#fff;color:#3b2a20;border-color:rgba(90,60,30,.25)}
+html[data-theme=light] #reset,html[data-theme=light] #mute,html[data-theme=light] #music,html[data-theme=light] #exp,html[data-theme=light] #imp,html[data-theme=light] #seasonBtn,html[data-theme=light] .bkbtn,html[data-theme=light] .bkp button,html[data-theme=light] .qty button,html[data-theme=light] .fchips button,html[data-theme=light] .chips button{background:rgba(90,60,30,.08);color:#3b2a20;border-color:rgba(90,60,30,.22)}
+html[data-theme=light] .chips button.on,html[data-theme=light] .qty button.on,html[data-theme=light] .fchips button.on{background:rgba(255,160,60,.28);border-color:#e08a2c}
+html[data-theme=light] .mbox{background:#fffdf9;border-color:rgba(90,60,30,.2)}
+html[data-theme=light] .mbox p,html[data-theme=light] .mbox button{color:#3b2a20}
+html[data-theme=light] .mbox button{background:rgba(90,60,30,.08)}
+html[data-theme=light] .chip{background:rgba(255,160,60,.18);color:#6d3b00;border-color:rgba(200,120,40,.5)}
+html[data-theme=light] .chip b{color:#3b2a20}
+html[data-theme=light] .chip.red{background:rgba(239,83,80,.15);color:#b71c1c}
+html[data-theme=light] .due{color:#3b2a20}
+html[data-theme=light] .slegend,html[data-theme=light] #stats,html[data-theme=light] #bkStats{color:#3b2a20}
+html[data-theme=light] #scene{box-shadow:0 0 0 6px #6d4c41,0 0 0 8px rgba(255,224,178,.5),0 10px 26px rgba(90,60,30,.35)}
+html[data-theme=light] .caption{opacity:.7}
+html[data-theme=light] #eventBar{background:rgba(255,179,0,.2)}
+html[data-theme=light] #income{opacity:.85}
+
+/* ---- кнопка: миниатюрный «игрушечный» стиль ---- */
+#work{overflow:hidden;width:190px;height:190px;margin:30px 0 26px;gap:0;padding-bottom:6px;border:4px solid var(--ring);
+ background:radial-gradient(circle at 50% 30%,var(--b1) 0%,var(--b2) 100%);
+ box-shadow:0 8px 0 var(--ring),0 14px 18px rgba(0,0,0,.45),0 0 calc(10px + 26px*var(--cb)) rgba(var(--glow),calc(.15 + .5*var(--cb))),inset 0 -8px 0 rgba(0,0,0,.14),inset 0 5px 0 rgba(255,255,255,.28);
+ text-shadow:0 2px 0 rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s}
+#work:hover{transform:translateY(-2px)}
+#work:active{transform:translateY(6px);box-shadow:0 2px 0 var(--ring),0 6px 10px rgba(0,0,0,.45),inset 0 -5px 0 rgba(0,0,0,.14),inset 0 5px 0 rgba(255,255,255,.2)}
+#work::before{content:'';position:absolute;inset:9px;border-radius:50%;border:2px dashed rgba(255,255,255,.55);pointer-events:none}
+#work .wring,#work .gloss{display:none}
+#work .bi{display:flex;align-items:center;justify-content:center;width:78px;height:64px;margin-top:0;font-size:50px;line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.25));animation:wbob 3.2s ease-in-out infinite}
+#work .bi svg{width:100%;height:100%;display:block}
+#work .bt{font-size:18px;letter-spacing:.4px;margin-top:3px}
+#work small{font-size:12px;font-weight:700;opacity:.95;background:rgba(0,0,0,.2);padding:1px 9px;border-radius:999px;margin-top:3px}
+#work .wsteam{display:none}
+#work[data-size=s]{width:150px;height:150px}#work[data-size=s] .bi{width:60px;height:50px;font-size:38px}#work[data-size=s] .bt{font-size:15px}#work[data-size=s] small{font-size:10px}
+#work[data-size=l]{width:225px;height:225px}#work[data-size=l] .bi{width:94px;height:78px;font-size:60px}#work[data-size=l] .bt{font-size:22px}#work[data-size=l] small{font-size:13px}
+</style>
+<script>(function(){var o=function(e){e.preventDefault()};['gesturestart','gesturechange','gestureend'].forEach(function(n){document.addEventListener(n,o,{passive:false})});document.addEventListener('touchmove',function(e){if(e.touches.length>1)e.preventDefault()},{passive:false});try{var w=window.Telegram&&Telegram.WebApp;if(w){w.ready();w.expand();if(w.disableVerticalSwipes)w.disableVerticalSwipes()}}catch(x){}})();</script>
+<script>try{var __rt=localStorage.getItem('ctThemeFix')!=='2';window.__resetTheme=__rt;if(__rt)localStorage.setItem('ctTheme','classic');var __t=localStorage.getItem('ctTheme');if(__t&&__t!=='classic')document.documentElement.setAttribute('data-theme',__t)}catch(e){}</script>
+</head>
+<body>
+<div id="splash"><div class="cup"><span class="steam"></span><span class="steam"></span><span class="steam"></span>☕</div><h1><small>TYCOON</small>COFFEE SHOP<br>SIMULATOR</h1><p>Brew. Grow. Build your empire.</p><div class="ld"><i></i></div><div class="tip"><b>💡 Подсказка</b><span id="splashTip"></span></div><div class="tap">Tap to start</div></div>
+<div id="toasts"></div>
+<div id="modal"><div class="mbox"><h3 id="mTitle"></h3><p id="mText"></p><div id="mBtns"></div></div></div>
+<div class="wrap">
+ <div class="left">
+  <h1 id="title">☕ Моя кофейня</h1>
+  <div id="stage"><div id="stageName"></div><div class="bar"><i id="stageBar"></i></div><small id="stageNext" class="caption"></small></div>
+  <div id="money">$0</div>
+  <div id="income">+0 $/сек</div>
+  <div id="buffs"></div>
+  <div id="eventBar"><span id="eventText"></span><button id="eventBtn"></button><button id="eventBtn2"></button><span id="eventTime"></span></div>
+  <canvas id="scene" width="480" height="220"></canvas>
+  <button id="work" data-skin="caramel" data-size="m"><span class="wring"></span><span class="wsteam a"></span><span class="wsteam b"></span><span class="wsteam c"></span><span class="bi">☕</span><span class="bt">Варить кофе</span><small id="clickInfo"></small><span class="gloss"></span></button>
+  <div id="combo"></div>
+  <canvas id="chart" width="480" height="96"></canvas>
+  <div class="caption">Доход за последние 30 секунд</div>
+  <h2>📋 Задания</h2>
+  <div id="goals"><div class="goal"><span></span><div class="bar"><i></i></div></div><div class="goal"><span></span><div class="bar"><i></i></div></div><div class="goal"><span></span><div class="bar"><i></i></div></div></div>
+ </div>
+ <div class="right">
+  <div class="tabs">
+   <button class="tab on" data-p="p1">📈 Развитие</button>
+   <button class="tab" data-p="p2">🏆 Достижения</button>
+   <button class="tab" data-p="p4">📖 Журнал</button>
+   <button class="tab" data-p="p5">📊 Статистика</button>
+   <button class="tab" data-p="p6" id="bkTab">🏦 Банк</button>
+   <button class="tab" data-p="p7" id="frTab">🎁 Друзья</button>
+   <button class="tab" data-p="p8" id="wqTab">📋 Задания</button>
+   <button class="tab" data-p="p3">⚙️ Настройки</button>
+  </div>
+  <div class="panel on" id="p1">
+   <h2>Кофемашина и персонал</h2>
+   <div class="qty" id="qty"><button data-q="1" class="on">×1</button><button data-q="10">×10</button><button data-q="100">×100</button><button data-q="0">Макс</button></div>
+   <div id="shop"></div>
+   <h2>Прокачка</h2>
+   <div id="gearShop"></div>
+   <h2>Разовые улучшения</h2>
+   <div id="boostShop"></div>
+   <div id="prestige" style="display:none"><h2>⭐ Новая франшиза</h2><p id="pInfo" style="font-size:13px;line-height:1.5;margin:0 0 10px"></p><button id="pBtn">Открыть новую франшизу</button></div>
+  </div>
+  <div class="panel" id="p2">
+   <h2>Достижения <span id="achCount" style="font-size:14px;opacity:.6"></span></h2>
+   <div class="fchips" id="fchips"><button data-f="" class="on">Все</button><button data-f="f-open">Открытые</button><button data-f="f-locked">Закрытые</button></div>
+   <div id="achs"></div>
+  </div>
+  <div class="panel" id="p4"><h2>Журнал</h2><div id="journal"></div></div>
+  <div class="panel" id="p3">
+   <h2>Название кофейни</h2>
+   <div class="setrow"><input id="nameIn" maxlength="20" placeholder="Моя кофейня"></div>
+   <div class="caption" style="margin:-6px 0 6px">Появится в заголовке и на вывеске в кофейне</div>
+   <h2>Звук</h2>
+   <div class="setrow"><span>Звуки</span><button id="mute"></button></div>
+   <div class="setrow"><span>Громкость звуков</span><input type="range" id="sfxVol" min="0" max="100"></div>
+   <div class="setrow"><span>Фоновая музыка</span><button id="music"></button></div>
+   <div class="setrow"><span>Громкость музыки</span><input type="range" id="musVol" min="0" max="100"></div>
+   <h2>Язык</h2>
+   <div class="setrow"><span>Язык интерфейса</span><select id="langSel"></select></div>
+   <div class="caption" style="margin:-6px 0 6px">Язык переключается сразу, прогресс сохраняется</div>
+   <h2>Тема оформления</h2>
+   <div class="chips" id="themeChips"></div>
+   <h2>Кнопка «Варить кофе»</h2>
+   <div class="setrow"><span>Стиль кнопки</span></div><div class="chips" id="skinChips"></div>
+   <div class="setrow"><span>Иконка</span></div><div class="chips" id="iconChips"></div>
+   <div class="setrow"><span>Звук клика</span></div><div class="chips" id="sndChips"></div>
+   <div class="setrow"><span>Размер кнопки</span></div><div class="chips" id="sizeChips"></div>
+   <div class="setrow"><span>Эффекты клика</span><button id="fxBtn"></button></div>
+   <div class="setrow"><span>Вибрация при клике</span><button id="vibBtn"></button></div>
+   <h2>Оформление</h2>
+   <div class="setrow"><span id="seasonLbl">Сезонный декор</span><button id="seasonBtn"></button></div>
+   <h2>Прогресс</h2>
+   <div class="setrow"><span>Сбросить всё и начать заново</span><button id="reset">Начать заново</button></div>
+   <div class="setrow"><input id="impIn" placeholder="Код сохранения: нажми «Копировать» или вставь свой"></div>
+   <div class="setrow"><span>Резервная копия</span><span><button id="exp">Копировать</button><button id="imp">Загрузить</button></span></div>
+  </div>
+  <div class="panel" id="p8">
+   <h2>Задания недели</h2>
+   <div id="wqList"></div>
+  </div>
+  <div class="panel" id="p7">
+   <h2>👑 VIP-клуб</h2>
+   <div id="frVip"></div>
+   <h2>Ежедневная награда</h2>
+   <div id="frDaily"></div>
+   <h2>Пригласи друзей</h2>
+   <div class="caption" style="margin:-6px 0 8px">Отправь другу приглашение с твоим кодом. Друг вводит код и получает бонус, а ты получаешь награды, когда подтвердишь его ответный код.</div>
+   <textarea class="fin" id="frMsg" rows="3" readonly></textarea>
+   <input class="fin" id="frLink" placeholder="Ссылка на игру или бота (необязательно)">
+   <div class="bkrow" style="margin:8px 0 4px"><button class="bkbtn" id="frCopy">Скопировать приглашение</button></div>
+   <h2>Есть код друга?</h2>
+   <div class="bkrow"><input class="fin" id="frIn" placeholder="Код друга" maxlength="14"><button class="bkbtn" id="frGo">Ввести</button></div>
+   <div id="frReply"></div>
+   <h2>Подтверждение друга</h2>
+   <div class="caption" style="margin:-6px 0 8px">Друг присылает тебе ответный код. Введи его, чтобы засчитать приглашение.</div>
+   <div class="bkrow"><input class="fin" id="frIn2" placeholder="Ответный код друга" maxlength="16"><button class="bkbtn" id="frGo2">Подтвердить</button></div>
+   <h2>Награды за друзей</h2>
+   <div id="frMs"></div>
+   <div class="caption" style="margin-top:10px">В этой версии коды обмениваются вручную. В Telegram-боте друзья засчитываются автоматически.</div>
+  </div>
+  <div class="panel" id="p6">
+   <h2>🏦 Банк</h2>
+   <div class="scards" id="bkCards"></div>
+   <div class="bkrow"><button class="bkbtn" id="bkDeposit">Сдать выручку в банк</button><button class="bkbtn" id="bkAuto"></button></div>
+   <div class="caption" style="margin:6px 0 10px">Наличные в кассе без комиссии, но их могут украсть. Карты безопасны, но банк берёт комиссию.</div>
+   <h2>Счета к оплате</h2>
+   <div id="bkDues"></div>
+   <div id="bkTimers"></div>
+   <h2>Помещения</h2>
+   <div id="bkPrem"></div>
+   <h2>Банковские улучшения</h2>
+   <div id="bkUp"></div>
+   <h2>Итоги банка</h2>
+   <div id="bkStats" style="font-size:13px;line-height:1.8;opacity:.85"></div>
+  </div>
+  <div class="panel" id="p5"><h2>Статистика</h2><div class="scards" id="scards"></div><div id="sstruct"></div><h2>Лучшие покупки сейчас</h2><div id="stop" class="slegend"></div><h2>Подробно</h2><div id="stats" style="font-size:13px;line-height:1.8;opacity:.85"></div></div>
+ </div>
+</div>
+<script>
+const GROWTH = 1.15, HIRE_GROWTH = 1.18, MILESTONES = [10, 25, 50], MS_MULT = 1.5, AUTO_VAL = 0.2, TIP_PCT = 0.005, GRIND_PCT = 0.03;
+function msMult(n) { let m = 1; MILESTONES.forEach(a => { if (n >= a) m *= MS_MULT; }); return m; }
+const upgrade = { id: 'click', name: 'Кофемашина получше', desc: '+1 $ за каждый клик', base: 30, growth: 1.3 };
+const levelUps = [
+ { id: 'auto',    name: 'Автоматическая кофемашина', desc: '+0.5 авто-клика/сек за уровень, авто-клик = 20% ручного (макс. 10 ур.)', base: 2000, growth: 1.35, max: 10 },
+ { id: 'quality', name: 'Качество зёрен',            desc: '+5% к доходу сотрудников за уровень',  base: 400,  growth: 1.22 },
+ { id: 'luck',    name: 'Удача',                     desc: 'События чаще, квесты успешнее (макс. 10 ур.)', base: 1000, growth: 1.5, max: 10 },
+ { id: 'grinder', name: 'Кофемолка',                 desc: '+3% к силе клика за уровень',          base: 250,  growth: 1.2 },
+ { id: 'tips',    name: 'Чаевые',                    desc: 'Клик приносит +0.5% дохода/сек за уровень (макс. 12 ур.)', base: 2000, growth: 1.3, max: 12 },
+ { id: 'cozy',    name: 'Уют',                       desc: 'Бонусы длятся на 10% дольше (макс. 10 ур.)', base: 3000, growth: 1.45, max: 10 }
+];
+const hires = [
+ { id: 'intern',  name: 'Стажёр',      desc: '+0.7 $/сек',  base: 50,     income: 0.7 },
+ { id: 'barista', name: 'Бариста',     desc: '+1.4 $/сек',  base: 300,    income: 1.4 },
+ { id: 'manager', name: 'Управляющий', desc: '+2.6 $/сек',  base: 1500,   income: 2.6 },
+ { id: 'robot',   name: 'Робот-повар', desc: '+5 $/сек',    base: 8000,   income: 5 },
+ { id: 'branch',  name: 'Новая точка', desc: '+9 $/сек',    base: 40000,  income: 9 },
+ { id: 'chain',   name: 'Сеть кофеен', desc: '+18 $/сек',   base: 250000, income: 18 },
+ { id: 'roastery', name: 'Обжарочный цех',   desc: '+36 $/сек', base: 1500000,  income: 36 },
+ { id: 'empire',   name: 'Кофейная империя', desc: '+75 $/сек', base: 10000000, income: 75 }
+];
+const boosts = [
+ { id: 'wifi',    name: 'Бесплатный Wi-Fi',      desc: 'Клик ×1.5, значок на стене',            cost: 1500,    click: 1.5, income: 1 },
+ { id: 'music',   name: 'Живая музыка',          desc: 'Доход сотрудников ×1.3, ноты в воздухе', cost: 20000,   click: 1,   income: 1.3 },
+ { id: 'terrace', name: 'Летняя терраса',        desc: 'Клик и сотрудники ×1.2, столики',     cost: 150000,  click: 1.2, income: 1.2 },
+ { id: 'app',     name: 'Мобильное приложение',  desc: 'Доход сотрудников ×1.4, значок',        cost: 1000000, click: 1,   income: 1.4 },
+ { id: 'sign',      name: 'Яркая вывеска',      desc: 'Клик ×1.5, вывеска светится',     cost: 500,    click: 1.5, income: 1 },
+ { id: 'ads',       name: 'Реклама в соцсетях', desc: 'Доход сотрудников ×1.3, плакат',  cost: 2000,   click: 1, income: 1.3 },
+ { id: 'premium',   name: 'Премиальные зёрна',  desc: 'Клик ×1.5, банка с зёрнами',      cost: 10000,  click: 1.5, income: 1 },
+ { id: 'training',  name: 'Обучение персонала', desc: 'Доход сотрудников ×1.5, колпаки', cost: 50000,  click: 1, income: 1.5 },
+ { id: 'franchise', name: 'Франшиза',           desc: 'Клик ×1.2, сотрудники ×1.3, город',   cost: 500000, click: 1.2, income: 1.3 },
+ { id: 'pastry',    name: 'Витрина с выпечкой', desc: 'Клик и сотрудники ×1.2, пирожные', cost: 5000,    click: 1.2, income: 1.2 },
+ { id: 'plants',    name: 'Уютные растения',    desc: 'Клик ×1.2, зелень в углу',         cost: 25000,   click: 1.2, income: 1 },
+ { id: 'delivery',  name: 'Доставка на скутерах', desc: 'Доход сотрудников ×1.4, курьер',   cost: 250000,  click: 1,   income: 1.4 },
+ { id: 'stars',     name: 'Звёзды Мишлен',      desc: 'Клик ×1.2, сотрудники ×1.3, звёзды над входом', cost: 5000000, click: 1.2, income: 1.3 }
+];
+boosts.sort((a, b) => a.cost - b.cost);
+const achievements = [
+ { id: 'a1',  icon: '☕', name: 'Первая чашка',     desc: 'Сделай первый клик',           test: () => state.clicks >= 1 },
+ { id: 'a2',  icon: '💪', name: 'Рука набита',      desc: '100 кликов',                   test: () => state.clicks >= 100 },
+ { id: 'a3',  icon: '🔥', name: 'Кофейный марафон', desc: '1000 кликов',                  test: () => state.clicks >= 1000 },
+ { id: 'a4',  icon: '💵', name: 'Первая тысяча',    desc: 'Заработай $1K за всё время',   test: () => state.total >= 1000 },
+ { id: 'a5',  icon: '💰', name: 'Бизнесмен',        desc: 'Заработай $100K за всё время', test: () => state.total >= 100000 },
+ { id: 'a6',  icon: '🏆', name: 'Миллионер',        desc: 'Заработай $1M за всё время',   test: () => state.total >= 1000000 },
+ { id: 'a7',  icon: '🤝', name: 'Первый сотрудник', desc: 'Найми кого-нибудь',            test: () => staffCount() >= 1 },
+ { id: 'a8',  icon: '👥', name: 'Целая команда',    desc: '10 сотрудников',               test: () => staffCount() >= 10 },
+ { id: 'a9',  icon: '⚡', name: 'Поток денег',      desc: 'Доход $100 в секунду',         test: () => incomePerSec() >= 100 },
+ { id: 'a10', icon: '🚀', name: 'Всё прокачано',    desc: 'Купи все разовые улучшения',   test: () => boosts.every(b => state.boosts[b.id]) },
+ { id: 'a11', icon: '🌟', name: 'Золотая чашка',    desc: 'Поймай золотую чашку',         test: () => state.golden >= 1 },
+ { id: 'a12', icon: '📸', name: 'Друг блогеров',    desc: 'Угости блогера',               test: () => state.bloggers >= 1 },
+ { id: 'a13', icon: '🛒', name: 'Коллекционер',       desc: 'Купи 5 разовых улучшений',      test: () => boosts.filter(b => state.boosts[b.id]).length >= 5 },
+ { id: 'a14', icon: '🤖', name: 'Автоматизация',      desc: 'Купи автоматическую кофемашину', test: () => lvl('auto') >= 1 },
+ { id: 'a15', icon: '🌱', name: 'Знаток зёрен',       desc: 'Качество зёрен: 10 уровень',    test: () => lvl('quality') >= 10 },
+ { id: 'a16', icon: '🍀', name: 'Везунчик',           desc: 'Удача: 5 уровень',              test: () => lvl('luck') >= 5 },
+ { id: 'a17', icon: '🏢', name: 'Целый штат',         desc: '50 сотрудников',                test: () => staffCount() >= 50 },
+ { id: 'a18', icon: '🌊', name: 'Река денег',         desc: 'Доход $10K в секунду',          test: () => incomePerSec() >= 10000 },
+ { id: 'a19', icon: '👑', name: 'Кофейный король',    desc: 'Заработай $1B за всё время',    test: () => state.total >= 1000000000 },
+ { id: 'a20', icon: '🎯', name: 'Кофеман',            desc: '10 000 кликов',                 test: () => state.clicks >= 10000 },
+ { id: 'a21', icon: '🌠', name: 'Охотник за чашками', desc: 'Поймай 5 золотых чашек',        test: () => state.golden >= 5 },
+ { id: 'a22', icon: '🔧', name: 'Мастер на все руки', desc: 'Почини машину 3 раза',          test: () => (state.fixes || 0) >= 3 },
+ { id: 'a23', icon: '🍳', name: 'Полный набор',       desc: 'Найми сотрудников каждого вида', test: () => hires.every(h => (state.owned[h.id] || 0) > 0) },
+ { id: 'a25', icon: '🧂', name: 'Первая прокачка',    desc: 'Прокачай что-нибудь',            test: () => totalLv() >= 1 },
+ { id: 'a26', icon: '🏋️', name: 'Мастер прокачки',    desc: 'Суммарно 25 уровней прокачки',   test: () => totalLv() >= 25 },
+ { id: 'a27', icon: '⚙️', name: 'Кофемашина-про',     desc: 'Кофемашина получше: 25 уровень', test: () => state.clickLvl >= 25 },
+ { id: 'a28', icon: '🌆', name: 'Сетевик',            desc: 'Открой сеть кофеен',             test: () => (state.owned.chain || 0) >= 1 },
+ { id: 'a29', icon: '🏰', name: 'Империя',            desc: 'Построй кофейную империю',       test: () => (state.owned.empire || 0) >= 1 },
+ { id: 'a30', icon: '🚄', name: 'Бешеный темп',       desc: 'Доход $100K в секунду',          test: () => incomePerSec() >= 100000 },
+ { id: 'a31', icon: '🌌', name: 'Триллионер',         desc: 'Заработай $1T за всё время',     test: () => state.total >= 1e12 },
+ { id: 'a32', icon: '📱', name: 'Звезда блогеров',    desc: 'Угости 5 блогеров',              test: () => state.bloggers >= 5 },
+ { id: 'a33', icon: '🎰', name: 'Король удачи',       desc: 'Удача: 10 уровень',              test: () => lvl('luck') >= 10 },
+ { id: 'a34', icon: '⭐', name: 'Мишлен',             desc: 'Получи звёзды Мишлен',           test: () => !!state.boosts.stars },
+ { id: 'a35', icon: '🛵', name: 'Быстрая доставка',   desc: 'Запусти доставку',               test: () => !!state.boosts.delivery },
+ { id: 'a36', icon: '🎁', name: 'Золотая лихорадка',  desc: 'Поймай 10 золотых чашек',        test: () => state.golden >= 10 },
+ { id: 'a37', icon: '🏪', name: 'Растём',               desc: 'Достигни этапа «Небольшая кофейня»', test: () => stageIdx() >= 1 },
+ { id: 'a38', icon: '🌆', name: 'Город наш',            desc: 'Достигни этапа «Городская сеть»',    test: () => stageIdx() >= 3 },
+ { id: 'a39', icon: '🌍', name: 'Мировой бренд',        desc: 'Достигни этапа «Мировая империя»',   test: () => stageIdx() >= 5 },
+ { id: 'a40', icon: '🎲', name: 'Рискнул — выиграл',    desc: 'Выиграй первый квест',               test: () => state.qWon >= 1 },
+ { id: 'a41', icon: '🃏', name: 'Азартный игрок',       desc: 'Выиграй 5 квестов',                  test: () => state.qWon >= 5 },
+ { id: 'a42', icon: '📉', name: 'Учимся на ошибках',    desc: 'Провали 3 квеста',                   test: () => state.qLost >= 3 },
+ { id: 'a43', icon: '🌙', name: 'Сова',            desc: 'Свари кофе глубокой ночью',          secret: true, test: () => !!state.secNight },
+ { id: 'a44', icon: '🍀', name: 'Счастливое число', desc: 'Кликни, когда на счету ровно $777',  secret: true, test: () => !!state.sec777 },
+ { id: 'a45', icon: '🐌', name: 'Терпение',         desc: 'Не трогай кофейню 90 секунд',        secret: true, test: () => lastClickT > 0 && Date.now() - lastClickT > 90000 },
+ { id: 'a46', icon: '⚡', name: 'Скорострел',       desc: '12 кликов за 2 секунды',             secret: true, test: () => clickTimes.length >= 12 },
+ { id: 'a47', icon: '🕵️', name: 'Детектив',         desc: 'Раскрой тайну незнакомца Н.',        secret: true, test: () => state.chapter >= story.length },
+ { id: 'a48', icon: '📦', name: 'Любопытный',       desc: 'Открой 3 загадочные посылки',        test: () => state.boxes >= 3 },
+ { id: 'a49', icon: '📋', name: 'Исполнитель',      desc: 'Выполни 10 заданий',                 test: () => (state.goalsDone || 0) >= 10 },
+ { id: 'a50', icon: '🛠️', name: 'Трудяга',          desc: 'Выполни 50 заданий',                 test: () => (state.goalsDone || 0) >= 50 },
+ { id: 'a51', icon: '🫘', name: 'Зерновой магнат',  desc: 'Накопи 10 кофейных зёрен',           test: () => (state.beans || 0) >= 10 },
+ { id: 'a52', icon: '🔄', name: 'Новая франшиза',   desc: 'Открой франшизу в первый раз',       test: () => (state.prestiges || 0) >= 1 },
+{ id: 'a53', icon: '🔥', name: 'Разогрев',               desc: '30 кликов подряд без пауз',            test: () => (state.bestCombo || 0) >= 30 },
+ { id: 'a54', icon: '🌋', name: 'Неудержимый',            desc: '100 кликов подряд без пауз',           test: () => (state.bestCombo || 0) >= 100 },
+ { id: 'a55', icon: '🐱', name: 'Друг кота',              desc: 'Погладь кота 20 раз',                  test: () => (state.pets || 0) >= 20 },
+ { id: 'a56', icon: '😸', name: 'Кошачий шёпот',          desc: 'Заставь кота замурлыкать 3 раза',      test: () => (state.purrs || 0) >= 3 },
+ { id: 'a57', icon: '🎉', name: 'Праздничное настроение', desc: 'Загляни в кофейню в сезонный праздник', test: () => !!state.seasonSeen },
+ { id: 'a58', icon: '👑', name: 'VIP-обслуживание', desc: 'Обслужи первого VIP-клиента', test: () => (state.vips || 0) >= 1 },
+ { id: 'a59', icon: '🥂', name: 'Любимец элиты', desc: 'Обслужи 10 VIP-клиентов', test: () => (state.vips || 0) >= 10 },
+ { id: 'a60', icon: '🏅', name: 'Безупречный сервис', desc: 'Обслужи 5 VIP подряд, не упустив ни одного', test: () => (state.vipBest || 0) >= 5 },
+ { id: 'a61', icon: '🧾', name: 'Налогоплательщик', desc: 'Заплати первый налог', test: () => (state.bkLife.taxes || 0) >= 1 },
+ { id: 'a62', icon: '🏠', name: 'Домовладелец', desc: 'Выкупи первое помещение', test: () => PREM.some(p => state.bk.prem[p.id] === 'own') },
+ { id: 'a63', icon: '🏢', name: 'Недвижимый магнат', desc: 'Выкупи все помещения', test: () => PREM.every(p => state.bk.prem[p.id] === 'own') },
+ { id: 'a64', icon: '🏦', name: 'Финансовая грамотность', desc: 'Купи все банковские улучшения', test: () => BKU.every(u => state.bk.upg[u.id]) },
+ { id: 'a65', icon: '🤝', name: 'Друг народа', desc: 'Пригласи первого друга', test: () => friendCount() >= 1 },
+ { id: 'a66', icon: '🎈', name: 'Душа компании', desc: 'Пригласи 6 друзей', test: () => friendCount() >= 6 },
+ { id: 'a67', icon: '📅', name: 'Постоянный гость', desc: 'Забери ежедневную награду 7 дней подряд', test: () => (state.fr.best || 0) >= 7 },
+ { id: 'a24', icon: '💎', name: 'Идеальная кофейня',  desc: 'Получи все остальные достижения', test: () => achievements.every(x => x.id === 'a24' || state.ach[x.id]) }
+];
+
+const stages = [
+ { name: 'Уличный киоск',      icon: '🛖', at: 0 },
+ { name: 'Небольшая кофейня',  icon: '☕', at: 5000 },
+ { name: 'Популярное кафе',    icon: '🏪', at: 100000 },
+ { name: 'Городская сеть',     icon: '🌆', at: 3000000 },
+ { name: 'Региональный бренд', icon: '🏢', at: 100000000 },
+ { name: 'Мировая империя',    icon: '🌍', at: 5000000000 }
+];
+const STAGE_REQ = { manager: 1, music: 1, robot: 2, branch: 2, terrace: 2, app: 2, chain: 3, delivery: 3, franchise: 3, roastery: 4, stars: 4, empire: 5 };
+function stageIdx() { let k = 0; stages.forEach((g, i) => { if (state.total >= g.at) k = i; }); return k; }
+
+function freshState() {
+ return { money: 0, total: 0, clicks: 0, clickLvl: 0, owned: {}, boosts: {}, ach: {}, golden: 0, bloggers: 0, fixes: 0, lv: {}, muted: false, music: true, name: 'Моя кофейня', sfxVol: 100, musVol: 100, stage: 0, qWon: 0, qLost: 0, chapter: 0, flags: {}, log: {}, boxes: 0, beans: 0, prestiges: 0, goals: [], goalsDone: 0, playSec: 0, pets: 0, purrs: 0, bestCombo: 0, seasonOff: false, seasonSeen: false, vips: 0, vipMissed: 0, vipStreak: 0, vipBest: 0, bk: freshBank(), bkLife: freshLife(), fr: freshFr(), wq: null, theme: 'classic', btnSkin: 'caramel', btnIcon: '☕', clickSnd: 'pent', btnSize: 'm', vib: false, fx: true };
+}
+let state = freshState();
+let history = new Array(30).fill(0);
+let earnedThisSecond = 0;
+let tickCount = 0;
+let buffs = [];
+let comboN = 0, lastClickT = 0, clickTimes = [], modalOpen = false;
+let currentEvent = null;
+let nextEventAt = Date.now() + 40000;
+
+let stateLoaded = false;
+function save() {
+ if (!stateLoaded) return;
+ try { state.lastSeen = Date.now(); localStorage.setItem('coffeeTycoon', JSON.stringify(state)); } catch (e) {}
+}
+let hadBk = true;
+function load() {
+ try {
+  const raw = localStorage.getItem('coffeeTycoon');
+  if (raw) { const j = JSON.parse(raw); hadBk = !!(j && j.bk && j.bk.prem); state = Object.assign(freshState(), j); }
+ } catch (e) {}
+}
+
+let audioCtx = null, bus = null;
+function ensureAudio() {
+ if (!audioCtx) {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = 0.3;
+  const dry = audioCtx.createGain(); dry.gain.value = 0.85;
+  const dl = audioCtx.createDelay(1); dl.delayTime.value = 0.28;
+  const fb = audioCtx.createGain(); fb.gain.value = 0.4;
+  const wl = audioCtx.createBiquadFilter(); wl.type = 'lowpass'; wl.frequency.value = 1500;
+  const wet = audioCtx.createGain(); wet.gain.value = 0.4;
+  bus = audioCtx.createGain();
+  bus.connect(lp); lp.connect(dry); dry.connect(audioCtx.destination);
+  lp.connect(dl); dl.connect(wl); wl.connect(fb); fb.connect(dl); wl.connect(wet); wet.connect(audioCtx.destination);
+ }
+ if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function volOf(m) { return Math.pow((m ? state.musVol : state.sfxVol) / 100, 2); }
+function tone(freq, delay, dur, type, vol, att, mus) {
+ if (state.muted || volOf(mus) <= 0) return;
+ try {
+  ensureAudio();
+  const t = audioCtx.currentTime + delay;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq; o.detune.value = (Math.random() - 0.5) * 8;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(vol * volOf(mus), t + (att || 0.015));
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(bus);
+  o.start(t); o.stop(t + dur + 0.05);
+ } catch (e) {}
+}
+const PENT = [523.25, 587.33, 659.25, 783.99, 880, 1046.5];
+function sweep(f1, f2, dur, type, vol) {
+ if (state.muted || volOf(false) <= 0) return;
+ try { ensureAudio(); const t = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f2), t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol * volOf(false), t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(bus); o.start(t); o.stop(t + dur + 0.05); } catch (e) {}
+}
+function noiseBurst(dur, vol, freq) {
+ if (state.muted || volOf(false) <= 0) return;
+ try { ensureAudio(); const n = Math.floor(audioCtx.sampleRate * dur), buf = audioCtx.createBuffer(1, n, audioCtx.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const src = audioCtx.createBufferSource(), f = audioCtx.createBiquadFilter(), g = audioCtx.createGain();
+  f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 0.8; g.gain.value = vol * volOf(false);
+  src.buffer = buf; src.connect(f); f.connect(g); g.connect(bus); src.start(); } catch (e) {}
+}
+const CLICK_SOUNDS = {
+ pent: () => tone(PENT[Math.floor(Math.random() * 5)] / 2, 0, 0.22, 'sine', 0.07, 0.004),
+ bell: () => { const f = PENT[Math.floor(Math.random() * 5)]; tone(f, 0, 0.7, 'sine', 0.08, 0.003); tone(f * 2.01, 0, 0.4, 'sine', 0.03, 0.003); },
+ coin: () => { tone(987.8, 0, 0.09, 'square', 0.04, 0.002); tone(1318.5, 0.07, 0.3, 'square', 0.04, 0.002); },
+ drop: () => sweep(900 + Math.random() * 200, 260, 0.14, 'sine', 0.12),
+ drum: () => { sweep(170, 48, 0.2, 'sine', 0.3); noiseBurst(0.04, 0.05, 1800); },
+ key: () => { tone(2100, 0, 0.03, 'square', 0.03, 0.001); tone(320, 0, 0.06, 'triangle', 0.07, 0.001); },
+ brew: () => { noiseBurst(0.22, 0.12, 1400); sweep(240, 130, 0.25, 'sawtooth', 0.04); },
+ off: () => {}
+};
+function sndClick() { (CLICK_SOUNDS[state.clickSnd] || CLICK_SOUNDS.pent)(); }
+function sndBuy()   { tone(523.25, 0, 0.3, 'sine', 0.08); tone(783.99, 0.07, 0.4, 'sine', 0.08); tone(1046.5, 0.07, 0.4, 'triangle', 0.02); }
+function sndAch()   { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => { tone(f, i * 0.11, 0.8, 'sine', 0.07); tone(f * 2, i * 0.11, 0.5, 'triangle', 0.015); }); }
+function sndEvent() { tone(783.99, 0, 0.5, 'sine', 0.07); tone(987.77, 0.14, 0.7, 'sine', 0.07); }
+function sndBad()   { tone(261.63, 0, 0.6, 'sine', 0.08); tone(220, 0.22, 0.8, 'sine', 0.08); }
+const chords = [[130.81, 261.63, 329.63, 392, 493.88], [110, 220, 261.63, 329.63, 392], [87.31, 174.61, 261.63, 329.63, 440], [98, 196, 246.94, 293.66, 329.63]];
+let chordIdx = 0;
+function playMusic() {
+ if (state.muted || !state.music || !audioCtx || audioCtx.state !== 'running') return;
+ chords[chordIdx++ % chords.length].forEach((f, i) => tone(f, i * 0.06, 7, 'sine', i === 0 ? 0.045 : 0.022, 1.6, true));
+ const n = state.boosts.music ? 6 : 3;
+ for (let k = 0; k < n; k++) if (Math.random() < 0.75) tone(PENT[Math.floor(Math.random() * PENT.length)], 0.8 + k * 0.9 + Math.random() * 0.4, 2.4, 'triangle', 0.02, 0.03, true);
+}
+setInterval(playMusic, 6000);
+document.addEventListener('pointerdown', () => { try { if (!state.muted) ensureAudio(); } catch (e) {} });
+
+function costOf(base, count, g) { return Math.ceil(base * Math.pow(g || GROWTH, count)); }
+function displayName() { return (state.name || '').trim() || 'Моя кофейня'; }
+function lvl(id) { return state.lv[id] || 0; }
+function totalLv() { return levelUps.reduce((n, u) => n + lvl(u.id), 0); }
+function clickMult() {
+ let m = 1;
+ boosts.forEach(b => { if (state.boosts[b.id]) m *= b.click; });
+ if (state.flags.proud) m *= 1.3;
+ m *= 1 + 0.03 * (state.beans || 0);
+ if (state.flags.fight) m *= 1.25;
+ if (state.flags.finale) m *= 1.5;
+ buffs.forEach(b => { m *= b.click; });
+ return m;
+}
+function incomeMult() {
+ let m = 1;
+ boosts.forEach(b => { if (state.boosts[b.id]) m *= b.income; });
+ if (state.flags.ally) m *= 1.1;
+ m *= 1 + 0.03 * (state.beans || 0);
+ if (state.flags.debt) m *= 0.9;
+ if (state.flags.critic) m *= 1.25;
+ if (state.flags.finale) m *= 1.5;
+ m *= bankMult();
+ m *= vipIncome();
+ m *= wxIncome();
+ buffs.forEach(b => { m *= b.income; });
+ return m;
+}
+function clickPower() { return (1 + state.clickLvl) * clickMult() * (1 + GRIND_PCT * lvl('grinder')); }
+function staffCount() {
+ let n = 0;
+ hires.forEach(h => { n += state.owned[h.id] || 0; });
+ return n;
+}
+function passiveIncome() {
+ let sum = 0;
+ hires.forEach(h => { const n = state.owned[h.id] || 0; sum += n * h.income * msMult(n); });
+ return sum * incomeMult() * (1 + 0.05 * lvl('quality'));
+}
+function autoIncome() { return lvl('auto') * 0.5 * AUTO_VAL * clickPower(); }
+function incomePerSec() { return passiveIncome() + autoIncome(); }
+function comboMult() { return 1 + Math.min(1, Math.floor(comboN / 10) * 0.1); }
+function clickGain() { return (clickPower() + passiveIncome() * TIP_PCT * lvl('tips')) * comboMult(); }
+function fmt1(n) { return n < 10 ? String(Math.round(n * 10) / 10) : fmt(n); }
+function fmt(n) {
+ if (n < 1000) return Math.floor(n).toString();
+ const units = ['K', 'M', 'B', 'T'];
+ let i = -1;
+ while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
+ return n.toFixed(n < 10 ? 2 : 1) + units[i];
+}
+function earn(amount) {
+ wqAdd('earn', amount);
+ const cs = cardShare(), net = amount * (1 - cs * cardFee());
+ state.money += net;
+ state.total += amount;
+ earnedThisSecond += net;
+ state.bk.till += amount * (1 - cs);
+ state.bkLife.fees += amount - net;
+}
+
+const $ = id => document.getElementById(id);
+const moneyEl = $('money'), incomeEl = $('income'), buffsEl = $('buffs'), clickInfoEl = $('clickInfo');
+const gearShopEl = $('gearShop'), shopEl = $('shop'), boostShopEl = $('boostShop'), achsEl = $('achs'), achCountEl = $('achCount');
+const toastsEl = $('toasts'), muteBtn = $('mute'), musicBtn = $('music'), titleEl = $('title'), comboEl = $('combo'), stageNameEl = $('stageName'), stageBarEl = $('stageBar'), stageNextEl = $('stageNext'), nameIn = $('nameIn'), sfxVol = $('sfxVol'), musVol = $('musVol');
+const eventBar = $('eventBar'), eventTextEl = $('eventText'), eventBtn = $('eventBtn'), eventBtn2 = $('eventBtn2'), eventTimeEl = $('eventTime');
+const canvas = $('chart'), ctx = canvas.getContext('2d');
+const scene = $('scene'), sctx = scene.getContext('2d');
+const W = 480, H = 220, DPR = 2;
+scene.width = W * DPR; scene.height = H * DPR; sctx.scale(DPR, DPR);
+
+const buttons = {};
+function makeButton(container, id, name, desc, onClick) {
+ const b = document.createElement('button');
+ b.className = 'item';
+ b.innerHTML = '<div><div class="name">' + name + '</div><div class="desc">' + desc + '</div></div>' +
+  '<div style="display:flex;align-items:center"><span class="cost"></span><span class="count"></span></div>';
+ b.addEventListener('click', onClick);
+ container.appendChild(b);
+ buttons[id] = b;
+}
+
+let buyQty = 1;
+function plan(base, n, g) {
+ let q = 0, sum = 0; const want = buyQty === 0 ? 1000 : buyQty;
+ while (q < want) { const c = costOf(base, n + q, g); if (buyQty === 0 ? sum + c > state.money : false) break; sum += c; q++; }
+ if (q === 0) { q = 1; sum = costOf(base, n, g); }
+ return { q, cost: sum };
+}
+document.querySelectorAll('#qty button').forEach(b => b.addEventListener('click', () => { buyQty = +b.dataset.q; document.querySelectorAll('#qty button').forEach(x => x.classList.toggle('on', x === b)); render(); }));
+makeButton(shopEl, upgrade.id, upgrade.name, upgrade.desc, () => {
+ const pl = plan(upgrade.base, state.clickLvl, upgrade.growth);
+ if (state.money >= pl.cost) {
+  state.money -= pl.cost;
+  state.clickLvl += pl.q;
+  sndBuy(); save(); render();
+ }
+});
+hires.forEach(h => {
+ makeButton(shopEl, h.id, h.name, h.desc, () => {
+  const pl = plan(h.base, state.owned[h.id] || 0, HIRE_GROWTH);
+  if (state.money >= pl.cost) {
+   state.money -= pl.cost;
+   state.owned[h.id] = (state.owned[h.id] || 0) + pl.q;
+   sndBuy(); save(); render();
+  }
+ });
+});
+levelUps.forEach(u => {
+ makeButton(gearShopEl, u.id, u.name, u.desc, () => {
+  const n = lvl(u.id);
+  if (u.max && n >= u.max) return;
+  const cost = costOf(u.base, n, u.growth);
+  if (state.money >= cost) { state.money -= cost; state.lv[u.id] = n + 1; sndBuy(); save(); render(); }
+ });
+});
+boosts.forEach(bo => {
+ makeButton(boostShopEl, bo.id, bo.name, bo.desc, () => {
+  if (!state.boosts[bo.id] && state.money >= bo.cost) {
+   state.money -= bo.cost;
+   state.boosts[bo.id] = true;
+   sndBuy(); save(); render();
+  }
+ });
+});
+
+const achCells = {};
+achievements.forEach(a => {
+ const d = document.createElement('div');
+ d.className = 'ach locked';
+ d.innerHTML = '<span class="ai">' + (a.secret ? '❓' : a.icon) + '</span><div><div class="an">' + (a.secret ? '???' : a.name) + '</div><div class="ad">' + (a.secret ? 'Секретное достижение' : a.desc) + '</div></div>';
+ achsEl.appendChild(d);
+ achCells[a.id] = d;
+});
+
+function toast(text) {
+ const t = document.createElement('div');
+ t.className = 'toast';
+ t.textContent = text;
+ toastsEl.appendChild(t);
+ setTimeout(() => t.remove(), 3500);
+}
+
+function checkAchievements() {
+ let unlocked = false;
+ achievements.forEach(a => {
+  if (!state.ach[a.id] && a.test()) {
+   state.ach[a.id] = true;
+   unlocked = true;
+   toast(a.icon + ' Достижение: ' + a.name);
+  }
+ });
+ if (unlocked) { sndAch(); save(); }
+}
+
+function addBuff(buff, seconds) {
+ buffs = buffs.filter(b => b.id !== buff.id);
+ buff.until = Date.now() + seconds * 1000 * (buff.income < 1 || buff.click < 1 ? 1 : 1 + 0.1 * lvl('cozy'));
+ buffs.push(buff);
+}
+function removeBuff(id) { buffs = buffs.filter(b => b.id !== id); }
+
+function showEvent(ev) {
+ currentEvent = Object.assign({}, ev, { until: Date.now() + ev.dur * 1000 });
+ eventTextEl.textContent = ev.text;
+ eventBtn.textContent = ev.btn;
+ eventBtn2.style.display = ev.btn2 ? '' : 'none'; eventBtn2.textContent = ev.btn2 || '';
+ eventBar.style.display = 'flex';
+}
+function hideEvent() {
+ currentEvent = null;
+ eventBar.style.display = 'none';
+}
+eventBtn.addEventListener('click', () => {
+ if (currentEvent) {
+  currentEvent.onClick();
+  hideEvent();
+  render();
+ }
+});
+
+eventBtn2.addEventListener('click', () => {
+ if (currentEvent) {
+  if (currentEvent.onClick2) currentEvent.onClick2();
+  hideEvent();
+  render();
+ }
+});
+
+function questList() {
+ const inc = Math.max(5, incomePerSec()), luck = 0.02 * lvl('luck'), m = Math.floor(state.money);
+ const mk = (title, st, p, mult, bad) => {
+  st = Math.min(Math.round(st), m); p = Math.min(0.9, p + luck);
+  return { text: title + ': взнос $' + fmt(st) + ', шанс успеха ' + Math.round(p * 100) + '%', btn: 'Рискнуть', btn2: 'Отказаться', dur: 25,
+   onClick: () => {
+    if (state.money < st) { toast('Не хватило денег на взнос'); return; }
+    state.money -= st;
+    if (Math.random() < p) { earn(st * mult); state.qWon++; toast('✅ Успех! +$' + fmt(st * mult)); sndEvent(); }
+    else { state.qLost++; toast('❌ Провал: −$' + fmt(st)); if (bad) addBuff(bad, 30); sndBad(); }
+    save();
+   } };
+ };
+ const tax = Math.min(Math.max(30, m * 0.06), m);
+ return [
+  mk('🏅 Конкурс бариста', Math.max(60, m * 0.08), 0.5, 3, { id: 'shame', name: '😞 Позор: доход ×0.8', click: 1, income: 0.8 }),
+  mk('🫘 Партия редких зёрен', Math.max(40, m * 0.05), 0.6, 2),
+  mk('🎉 Кейтеринг на свадьбу', Math.max(80, inc * 25), 0.55, 2.4, { id: 'angry', name: '😠 Жалобы гостей: клик ×0.7', click: 0.7, income: 1 }),
+  { text: '🧾 Налоговая проверка: штраф $' + fmt(tax), btn: 'Заплатить', btn2: 'Оспорить (50%, иначе ×2)', dur: 25,
+   onClick: () => { state.money = Math.max(0, state.money - tax); toast('🧾 Штраф уплачен: −$' + fmt(tax)); sndBad(); save(); },
+   onClick2: () => {
+    if (Math.random() < 0.5) { toast('⚖️ Оспорили — штрафа нет!'); sndEvent(); }
+    else { const f = Math.min(state.money, tax * 2); state.money -= f; state.qLost++; toast('❌ Проверка проиграна: −$' + fmt(f)); sndBad(); }
+    save();
+   } }
+ ];
+}
+
+const story = [
+ { at: 25, title: '📝 Записка под дверью', text: 'Утром под дверью лежала записка: «Ваш кофе мне нравится. Продолжайте. — Н.» Кто такой Н.?', ok: 'Спрятать записку', run: () => 'Ты спрятал записку. Н. наблюдает.' },
+ { at: 3000, title: '🕴️ Предложение Н.', text: 'Незнакомец в сером пальто предлагает вложиться в твою кофейню. «Без лишних вопросов», — говорит он и не снимает перчаток.', choices: [
+  { label: 'Взять деньги Н. (+$ сразу, но Н. это запомнит)', run: () => { const g = Math.max(1500, state.total * 0.4); earn(g); state.flags.investor = 1; return 'Ты взял $' + fmt(g) + ' у Н.'; } },
+  { label: 'Отказаться из гордости (клик ×1.3 навсегда)', run: () => { state.flags.proud = 1; return 'Ты отказался от денег Н.'; } } ] },
+ { at: 60000, title: '🏪 Конкурент через дорогу', text: 'Напротив открылась кофейня «Бразильеро». Её владелец машет тебе рукой — то ли дружески, то ли нет.', choices: [
+  { label: 'Подружиться (доход ×1.1 навсегда)', run: () => { state.flags.ally = 1; return 'Вы с соседом решили не воевать.'; } },
+  { label: 'Объявить войну (клик ×1.25, но он будет мстить акциями)', run: () => { state.flags.fight = 1; return 'Война с «Бразильеро» началась.'; } } ] },
+ { at: 1500000, title: '🔔 Н. возвращается',
+  text: () => state.flags.investor ? 'Н. стоит у стойки. «Пора вернуть долг с процентами», — шепчет он, и в зале становится тише.' : 'Н. снова у двери. «Ты не взял мои деньги. Редкость», — говорит он и кладёт на стойку конверт.',
+  choices: () => state.flags.investor ? [
+   { label: 'Вернуть долг (−20% денег)', run: () => { state.money *= 0.8; return 'Долг Н. выплачен. Он кивнул и исчез.'; } },
+   { label: 'Послать Н. подальше (доход ×0.9 навсегда)', run: () => { state.flags.debt = 1; return 'Н. затаил злобу. Что-то нехорошее в воздухе.'; } } ] : [
+   { label: 'Открыть конверт', run: () => { const g = Math.max(2000, state.total * 0.1); earn(g); return 'В конверте было $' + fmt(g) + ' и слова «Всё только начинается».'; } } ] },
+ { at: 40000000, title: '🎩 Критик в зале', text: 'Знаменитый критик пришёл инкогнито. У тебя 20 секунд, чтобы заметить его шляпу среди посетителей!', ok: 'Искать критика', run: () => { spawnCritic(); return 'Критик в зале — найди шляпу на экране!'; } },
+ { at: 1000000000, title: '🔍 Тайна Н. раскрыта', text: 'На двери — последняя записка: «Помнишь самую первую чашку? Я был тем клиентом. Спасибо, что не сдался. — Н.» Ты понимаешь: вся империя выросла из одной чашки.', ok: 'Улыбнуться (всё ×1.5 навсегда)', run: () => { state.flags.finale = 1; return 'Тайна раскрыта. Н. — твой первый клиент.'; } }
+];
+function confirmBox(title, text, yes, fn) {
+ modalOpen = true;
+ $('mTitle').textContent = title; $('mText').textContent = text;
+ const box = $('mBtns'); box.innerHTML = '';
+ [[yes, fn], ['Отмена', null]].forEach(a => {
+  const b = document.createElement('button');
+  b.textContent = a[0];
+  b.addEventListener('click', () => { closeModal(); if (a[1]) a[1](); });
+  box.appendChild(b);
+ });
+ $('modal').classList.add('on');
+}
+function closeModal() { modalOpen = false; $('modal').classList.remove('on'); }
+function openChapter(i) {
+ const ch = story[i], box = $('mBtns');
+ modalOpen = true;
+ $('mTitle').textContent = ch.title;
+ $('mText').textContent = typeof ch.text === 'function' ? ch.text() : ch.text;
+ box.innerHTML = '';
+ const choices = typeof ch.choices === 'function' ? ch.choices() : (ch.choices || [{ label: ch.ok, run: ch.run }]);
+ choices.forEach(c => {
+  const b = document.createElement('button');
+  b.textContent = c.label;
+  b.addEventListener('click', () => {
+   state.log[i] = c.run();
+   state.chapter = i + 1;
+   closeModal(); sndAch(); save(); renderJournal(); render();
+  });
+  box.appendChild(b);
+ });
+ $('modal').classList.add('on');
+ sndEvent();
+}
+function checkStory() {
+ const ch = story[state.chapter];
+ if (!modalOpen && ch && state.total >= ch.at) openChapter(state.chapter);
+}
+function renderJournal() {
+ let h = '';
+ for (let i = 0; i < state.chapter && i < story.length; i++) {
+  const ch = story[i];
+  h += '<div class="jr"><b>' + ch.title + '</b>' + (typeof ch.text === 'function' ? ch.text() : ch.text) + '<div class="res">' + (state.log[i] || '') + '</div></div>';
+ }
+ h += state.chapter < story.length ? '<div class="jr lock">🔒 ??? <span id="jrNext"></span></div>' : '<div class="jr lock">История завершена. Но кофе всегда нужен.</div>';
+ $('journal').innerHTML = h;
+}
+function floater(id, emoji, title, glow) {
+ const g = document.createElement('div');
+ g.id = id; g.className = 'golden'; g.textContent = emoji; g.title = title;
+ g.style.filter = 'drop-shadow(0 0 14px ' + glow + ')';
+ g.style.left = (10 + Math.random() * 75) + '%';
+ g.style.top = (15 + Math.random() * 60) + '%';
+ document.body.appendChild(g);
+ return g;
+}
+function spawnBox() {
+ if ($('box')) return;
+ const g = floater('box', '📦', 'Загадочная посылка', '#b388ff');
+ g.addEventListener('click', () => {
+  g.remove(); state.boxes++;
+  const r = Math.random();
+  if (r < 0.45) { const gain = Math.max(200, incomePerSec() * 120); earn(gain); toast('📦 Внутри деньги: +$' + fmt(gain)); sndEvent(); }
+  else if (r < 0.7) { addBuff({ id: 'insp', name: '💡 Вдохновение: всё ×3', click: 3, income: 3 }, 20); toast('📦 Внутри идея! Всё ×3 на 20 секунд'); sndEvent(); }
+  else if (r < 0.9) { toast('📦 Пусто. Только записка: «Скоро. — Н.»'); sndBuy(); }
+  else { const l = state.money * 0.05; state.money -= l; toast('📦 Ловушка! Рассыпались зёрна: −$' + fmt(l)); sndBad(); }
+  save(); render();
+ });
+ setTimeout(() => g.remove(), 10000);
+ sndEvent();
+}
+function spawnCritic() {
+ const g = floater('critic', '🎩', 'Критик!', '#ffffff');
+ let done = false;
+ g.addEventListener('click', () => {
+  done = true; g.remove(); state.flags.critic = 1;
+  state.log[4] = 'Критик остался доволен (доход ×1.25 навсегда).';
+  toast('🎩 Критик в восторге! Доход ×1.25 навсегда'); sndAch(); save(); renderJournal(); render();
+ });
+ setTimeout(() => {
+  if (done) return;
+  g.remove(); state.log[4] = 'Критик ушёл, так и не попробовав кофе.';
+  toast('🎩 Критик ушёл незамеченным...'); sndBad(); save(); renderJournal();
+ }, 20000);
+}
+
+function ownedCount() { return hires.reduce((n, h) => n + (state.owned[h.id] || 0), 0); }
+const goalTypes = {
+ clicks:  { val: () => state.clicks,        text: n => 'Сделай кликов: ' + fmt(n),         n: () => 30 + 25 * (stageIdx() + 1) },
+ earn:    { val: () => state.total,         text: n => 'Заработай $' + fmt(n),             n: () => Math.max(200, Math.round(incomePerSec() * 100)) },
+ hire:    { val: ownedCount,                text: n => 'Найми сотрудников: ' + n,          n: () => 2 + stageIdx() },
+ golden:  { val: () => state.golden || 0,   text: n => 'Поймай золотых чашек: ' + n,       n: () => 2 },
+ machine: { val: () => state.clickLvl,      text: n => 'Улучши кофемашину раз: ' + n,      n: () => 2 },
+ lvl:     { val: totalLv,                   text: n => 'Прокачай что-нибудь раз: ' + n,    n: () => 2 }
+};
+function pickType() {
+ const used = state.goals.map(g => g.t), ks = Object.keys(goalTypes).filter(k => !used.includes(k));
+ return ks[Math.floor(Math.random() * ks.length)];
+}
+function newGoal(t) { return { t: t, base: goalTypes[t].val(), n: goalTypes[t].n() }; }
+function checkGoals() {
+ if (!Array.isArray(state.goals)) state.goals = [];
+ while (state.goals.length < 3) state.goals.push(newGoal(pickType()));
+ state.goals.forEach((g, i) => {
+  const T = goalTypes[g.t];
+  if (!T) { state.goals[i] = newGoal(pickType()); return; }
+  if (T.val() - g.base >= g.n) {
+   const r = Math.max(100, Math.round(incomePerSec() * 45));
+   earn(r); state.goalsDone = (state.goalsDone || 0) + 1;
+   toast('📋 Задание выполнено! +$' + fmt(r)); sndEvent();
+   state.goals[i] = newGoal(pickType());
+   save();
+  }
+ });
+ const el = $('goals');
+ state.goals.forEach((g, i) => {
+  const T = goalTypes[g.t], row = el.children[i], cur = Math.max(0, Math.min(g.n, T.val() - g.base));
+  row.firstChild.textContent = T.text(g.n) + ' — ' + fmt(cur) + '/' + fmt(g.n);
+  row.lastChild.firstChild.style.width = (cur / g.n * 100) + '%';
+ });
+ if (tickCount % 10 === 0) renderStats();
+}
+function renderStats() {
+ const m = Math.floor((state.playSec || 0) / 60);
+ $('stats').innerHTML = ['⏱ Время игры: ' + Math.floor(m / 60) + ' ч ' + (m % 60) + ' мин ' + ((state.playSec || 0) % 60) + ' с', '☕ Кликов за забег: ' + fmt(state.clicks), '💰 Заработано за забег: $' + fmt(state.total),
+  '🎲 Квесты: ' + state.qWon + ' побед / ' + state.qLost + ' провалов', '📦 Посылок: ' + (state.boxes || 0), '📋 Заданий: ' + (state.goalsDone || 0),
+  '⭐ Зёрна: ' + (state.beans || 0) + ', франшиз: ' + (state.prestiges || 0), '🔥 Лучшая серия кликов: ' + (state.bestCombo || 0), '🐱 Кота погладили: ' + (state.pets || 0) + ', мурлыканий: ' + (state.purrs || 0)].join('<br>');
+}
+function renderCards() {
+ const pass = passiveIncome(), au = autoIncome(), inc = pass + au, ck = clickGain();
+ const vips = state.vips || 0;
+ $('scards').innerHTML = [['💰 Доход/сек', '$' + fmt1(inc)], ['👆 За клик', '$' + fmt1(ck)], ['🏆 Достижений', Object.keys(state.ach).length + '/' + achievements.length], ['👑 VIP обслужено', vips + ' (упущено ' + (state.vipMissed || 0) + ')'], ['🐱 Кота гладили', state.pets || 0], ['⭐ Зёрна', state.beans || 0]].map(x => '<div class="scard">' + x[0] + '<b>' + x[1] + '</b></div>').join('');
+ const tip = inc > 0 ? Math.max(0, clickGain() - clickPower()) : 0;
+ const parts = [['Персонал', pass, '#ffb74d'], ['Авто-машина', au, '#81c784'], ['Клик с чаевыми (1 кл/с)', ck, '#64b5f6']], tot = parts.reduce((a, x) => a + x[1], 0) || 1;
+ $('sstruct').innerHTML = '<h2>Структура дохода</h2><div class="sbar">' + parts.map(x => '<i style="width:' + (x[1] / tot * 100) + '%;background:' + x[2] + '"></i>').join('') + '</div><div class="slegend">' + parts.map(x => '<span style="color:' + x[2] + '">■</span> ' + x[0] + ': ' + Math.round(x[1] / tot * 100) + '%').join('<br>') + '</div>';
+ const names = {}; [].concat(hires, boosts, levelUps).forEach(it => names[it.id] = it.name);
+ const top = Object.keys(paybacks).filter(k => paybacks[k] > 0 && names[k] && !(boostsOwned(k))).sort((a, b) => paybacks[a] - paybacks[b]).slice(0, 5);
+ $('stop').innerHTML = top.length ? top.map((k, i) => (i + 1) + '. ' + names[k] + ' — окупится за ~' + fmtDur(paybacks[k])).join('<br>') : 'Пока нечего советовать.';
+}
+function boostsOwned(k) { return !!state.boosts[k]; }
+{ const _rs = renderStats; renderStats = function () { _rs(); renderCards(); }; }
+function prestigeGain() { return Math.floor(Math.sqrt(state.total / 50000)); }
+
+function spawnGolden() {
+ if ($('golden')) return;
+ const g = document.createElement('div');
+ g.id = 'golden';
+ g.className = 'golden';
+ g.textContent = '☕';
+ g.title = 'Золотая чашка!';
+ g.style.left = (10 + Math.random() * 75) + '%';
+ g.style.top = (15 + Math.random() * 60) + '%';
+ g.addEventListener('click', () => {
+  g.remove();
+  state.golden++;
+  wqAdd('gold', 1);
+  addBuff({ id: 'frenzy', name: '🌟 Заряд кофеина: клик ×7', click: 7, income: 1 }, 15);
+  toast('🌟 Золотая чашка! Клик ×7 на 15 секунд');
+  sndEvent(); save(); render();
+ });
+ document.body.appendChild(g);
+ if (vipLevel() >= 2) setTimeout(() => { if (g.isConnected) g.click(); }, 1800);
+ setTimeout(() => g.remove(), 8000);
+ sndEvent();
+}
+
+function triggerEvent() {
+ const pool = ['rush', 'golden', 'box'];
+ if (!currentEvent) {
+  pool.push('blogger');
+  if (state.money >= 100) pool.push('quest', 'quest');
+  if (state.flags.fight) pool.push('rival', 'rival');
+  if (incomePerSec() > 0) pool.push('break');
+ }
+ const pick = pool[Math.floor(Math.random() * pool.length)];
+ if (pick === 'quest') {
+  const q = questList();
+  showEvent(q[Math.floor(Math.random() * q.length)]);
+  sndEvent();
+  return;
+ }
+ if (pick === 'rush') {
+  addBuff({ id: 'rush', name: '🚶 Час пик: всё ×2', click: 2, income: 2 }, 20);
+  toast('🚶 Час пик! Всё приносит ×2 на 20 секунд');
+  sndEvent();
+ } else if (pick === 'golden') {
+  spawnGolden();
+ } else if (pick === 'blogger') {
+  showEvent({
+   text: '📸 Известный блогер зашёл в кофейню!', btn: 'Угостить кофе', dur: 12,
+   onClick: () => {
+    const gain = Math.max(100, incomePerSec() * 60);
+    earn(gain);
+    state.bloggers++;
+    toast('📸 Блогер оставил отзыв: +$' + fmt(gain));
+    sndEvent(); save();
+   }
+  });
+  sndEvent();
+ } else if (pick === 'box') {
+  spawnBox();
+ } else if (pick === 'rival') {
+  const cost = Math.max(50, Math.round(incomePerSec() * 30));
+  addBuff({ id: 'rival', name: '🏪 Акция конкурента: доход ×0.75', click: 1, income: 0.75 }, 40);
+  showEvent({ text: '🏪 Конкурент запустил акцию — клиентов меньше!', btn: 'Ответить акцией −$' + fmt(cost), btn2: 'Пережить', dur: 40,
+   onClick: () => { if (state.money >= cost) { state.money -= cost; removeBuff('rival'); toast('📣 Ответная акция удалась!'); sndBuy(); } else toast('Не хватает денег на акцию'); } });
+  sndBad();
+ } else {
+  addBuff({ id: 'break', name: '🔧 Поломка: доход ×0.5', click: 1, income: 0.5 }, 20);
+  showEvent({
+   text: '🔧 Сломалась кофемашина — доход ×0.5', btn: 'Починить', dur: 20,
+   onClick: () => { removeBuff('break'); state.fixes = (state.fixes || 0) + 1; save(); toast('🔧 Всё починено!'); sndBuy(); }
+  });
+  sndBad();
+ }
+}
+
+function updateTimers() {
+ const now = Date.now();
+ buffs = buffs.filter(b => b.until > now);
+ if (now - lastClickT > 1200) comboN = 0;
+ comboEl.textContent = comboN >= 10 ? '🔥 Комбо ×' + comboMult().toFixed(1) + ' (' + comboN + ')' : '';
+ buffsEl.innerHTML = buffs.map(b => '<span class="chip">' + b.name + ' <b>' + Math.ceil((b.until - now) / 1000) + ' с</b></span>').join('') + state.bk.dues.map(d => '<span class="chip red">' + (d.type === 'rent' ? '🏠 Аренда' : '🧾 Налог') + ' $<b>' + fmt(d.amt) + '</b>' + (d.late ? ' — просрочено' : '') + '</span>').join('');
+ if (currentEvent) {
+  const left = Math.ceil((currentEvent.until - now) / 1000);
+  if (left <= 0) hideEvent(); else eventTimeEl.textContent = left + ' с';
+ }
+ if (now >= nextEventAt) {
+  if (state.total >= 50) triggerEvent();
+  nextEventAt = now + (32000 + Math.random() * 38000) * Math.pow(0.9, lvl('luck')) * (season() ? 0.85 : 1);
+ }
+}
+
+let paybacks = {}, bestBuyId = null;
+function fmtDur(sec) { return sec < 90 ? Math.round(sec) + ' с' : sec < 5400 ? Math.round(sec / 60) + ' мин' : sec < 172800 ? (sec / 3600).toFixed(1) + ' ч' : Math.round(sec / 86400) + ' дн'; }
+function evalBestBuy() {
+ const base = incomePerSec(), si = stageIdx(); let best = null; paybacks = {};
+ const test = (id, cost, apply, undo) => {
+  apply(); const d = incomePerSec() - base; undo();
+  if (d <= 1e-9 || !(cost > 0)) return;
+  const pb = cost / d; paybacks[id] = pb;
+  if (!best || pb < best.pb) best = { id: id, pb: pb };
+ };
+ hires.forEach(h => { if (STAGE_REQ[h.id] > si) return; test(h.id, costOf(h.base, state.owned[h.id] || 0, HIRE_GROWTH), () => { state.owned[h.id] = (state.owned[h.id] || 0) + 1; }, () => { state.owned[h.id]--; }); });
+ boosts.forEach(bo => { if (state.boosts[bo.id] || STAGE_REQ[bo.id] > si) return; test(bo.id, bo.cost, () => { state.boosts[bo.id] = true; }, () => { delete state.boosts[bo.id]; }); });
+ ['auto', 'quality'].forEach(id => { const u = levelUps.find(x => x.id === id), n = lvl(id); if (u.max && n >= u.max) return; test(id, costOf(u.base, n, u.growth), () => { state.lv[id] = n + 1; }, () => { state.lv[id] = n; }); });
+ bestBuyId = best ? best.id : null;
+}
+function render() {
+ checkAchievements();
+ renderBank();
+ renderFriends();
+ renderWq();
+ titleEl.textContent = '☕ ' + displayName();
+ document.title = displayName();
+ const si = stageIdx();
+ if (si > (state.stage || 0)) { state.stage = si; toast('🎉 Новый этап: ' + stages[si].name + '!'); sndAch(); save(); }
+ stageNameEl.textContent = stages[si].icon + ' ' + stages[si].name;
+ const nx = stages[si + 1];
+ stageBarEl.style.width = nx ? Math.min(100, (state.total - stages[si].at) / (nx.at - stages[si].at) * 100) + '%' : '100%';
+ stageNextEl.textContent = nx ? 'До этапа «' + nx.name + '»: $' + fmt(Math.max(0, nx.at - state.total)) : 'Высший этап достигнут';
+ moneyEl.textContent = '$' + fmt(state.money);
+ incomeEl.textContent = '+' + fmt1(incomePerSec()) + ' $/сек';
+ clickInfoEl.textContent = '+' + fmt1(clickGain()) + ' $ за клик';
+ muteBtn.textContent = state.muted ? '🔇 Звук выкл' : '🔊 Звук вкл';
+ musicBtn.textContent = state.music ? '🎵 Музыка вкл' : '🎵 Музыка выкл';
+
+ const cb = buttons[upgrade.id];
+ const pc = plan(upgrade.base, state.clickLvl, upgrade.growth), cc = pc.cost;
+ cb.querySelector('.cost').textContent = (pc.q > 1 ? '×' + pc.q + ' · ' : '') + '$' + fmt(cc);
+ cb.querySelector('.count').textContent = state.clickLvl;
+ cb.disabled = state.money < cc;
+
+ hires.forEach(h => {
+  const n = state.owned[h.id] || 0;
+  const ph = plan(h.base, n, HIRE_GROWTH), c = ph.cost;
+  const b = buttons[h.id];
+  b.querySelector('.cost').textContent = (ph.q > 1 ? '×' + ph.q + ' · ' : '') + '$' + fmt(c);
+  b.querySelector('.count').textContent = n;
+  b.disabled = state.money < c;
+  const nxm = MILESTONES.find(m => m > n);
+  b.querySelector('.desc').textContent = h.desc + (nxm ? ' · ' + nxm + ' шт: ×' + MS_MULT + ' (ещё ' + (nxm - n) + ')' : ' · все вехи взяты');
+ });
+
+ boosts.forEach(bo => {
+  const b = buttons[bo.id];
+  if (state.boosts[bo.id]) {
+   b.classList.add('bought');
+   b.disabled = true;
+   b.querySelector('.cost').textContent = '';
+   b.querySelector('.count').textContent = '✓';
+  } else {
+   b.classList.remove('bought');
+   b.querySelector('.cost').textContent = '$' + fmt(bo.cost);
+   b.querySelector('.count').textContent = '';
+   b.disabled = state.money < bo.cost;
+  }
+ });
+
+ levelUps.forEach(u => {
+  const n = lvl(u.id), b = buttons[u.id], maxed = u.max && n >= u.max, c = costOf(u.base, n, u.growth);
+  b.querySelector('.cost').textContent = maxed ? 'MAX' : '$' + fmt(c);
+  b.querySelector('.count').textContent = n;
+  b.disabled = maxed || state.money < c;
+ });
+ const pg = prestigeGain();
+ $('prestige').style.display = (state.total >= 200000 || state.beans > 0) ? '' : 'none';
+ const bn = state.beans || 0, gainPct = Math.round(300 * pg / (100 + 3 * bn)), nextAt = 50000 * Math.pow(pg + 1, 2);
+ $('pInfo').textContent = 'Кофейные зёрна: ' + bn + ' (сейчас +' + bn * 3 + '% к доходу и клику навсегда). Если открыть франшизу сейчас, получишь ещё ' + pg + ': твой общий множитель вырастет примерно на ' + gainPct + '%. Следующее зерно — через $' + fmt(Math.max(0, nextAt - state.total)) + '. ' + (pg < 1 ? '' : gainPct < 15 ? 'Совет: лучше подождать, прирост пока небольшой.' : gainPct >= 60 ? 'Хороший момент для новой франшизы!' : '');
+ $('pBtn').disabled = pg < 1;
+ const jn = $('jrNext'), nxc = story[state.chapter];
+ if (jn && nxc) jn.textContent = 'Следующая глава откроется, когда ты заработаешь ещё $' + fmt(Math.max(0, nxc.at - state.total));
+ Object.keys(STAGE_REQ).forEach(id => {
+  const b = buttons[id], req = STAGE_REQ[id];
+  if (si < req && !state.boosts[id] && !(state.owned[id] > 0)) {
+   b.disabled = true; b.dataset.lk = 1; b.title = 'Откроется на этапе «' + stages[req].name + '»';
+   b.querySelector('.cost').textContent = '🔒 Этап ' + (req + 1);
+  } else { b.title = ''; delete b.dataset.lk; }
+ });
+ if (tickCount % 10 === 0 || bestBuyId === null) evalBestBuy();
+ [].concat(hires, boosts, levelUps).forEach(it => {
+  const b = buttons[it.id]; if (!b) return;
+  const pb = paybacks[it.id], isBest = it.id === bestBuyId && !b.classList.contains('bought');
+  b.classList.toggle('best', isBest);
+  if (isBest) b.dataset.badge = ' ⭐ окупится за ~' + fmtDur(pb);
+  if (!b.dataset.lk) b.title = pb ? 'Окупится примерно за ' + fmtDur(pb) + ' (без учёта ручных кликов)' : '';
+ });
+ $('seasonBtn').textContent = state.seasonOff ? '🎄 Выкл' : '🎄 Вкл';
+ { const sr = seasonRaw(); $('seasonLbl').textContent = 'Сезонный декор' + (sr ? ' (сейчас: ' + SEASONS[sr].name + ')' : ' (сейчас праздников нет)'); }
+ let got = 0;
+ achievements.forEach(a => {
+  const has = !!state.ach[a.id];
+  achCells[a.id].classList.toggle('locked', !has);
+  if (a.secret && has) {
+   const d = achCells[a.id];
+   d.querySelector('.ai').textContent = a.icon; d.querySelector('.an').textContent = a.name; d.querySelector('.ad').textContent = a.desc;
+  }
+  if (has) got++;
+ });
+ achCountEl.textContent = got + ' / ' + achievements.length;
+}
+
+function drawChart() {
+ const w = canvas.width, h = canvas.height, n = history.length;
+ ctx.clearRect(0, 0, w, h);
+ const raw = history.concat([history[n - 1]]);
+ const v = raw.map((x, i) => (raw[Math.max(0, i - 1)] + 2 * x + raw[Math.min(raw.length - 1, i + 1)]) / 4);
+ const max = Math.max.apply(null, v.concat([1])) * 1.1;
+ const step = w / (n - 1), frac = (tickCount % 10) / 10;
+ const pts = v.map((x, i) => [(i - frac) * step, h - 8 - (x / max) * (h - 18)]);
+ const path = () => {
+  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length - 1; i++) ctx.quadraticCurveTo(pts[i][0], pts[i][1], (pts[i][0] + pts[i + 1][0]) / 2, (pts[i][1] + pts[i + 1][1]) / 2);
+  const l = pts[pts.length - 1]; ctx.lineTo(l[0], l[1]);
+ };
+ path();
+ ctx.lineTo(pts[pts.length - 1][0], h); ctx.lineTo(pts[0][0], h); ctx.closePath();
+ const g = ctx.createLinearGradient(0, 0, 0, h);
+ g.addColorStop(0, 'rgba(255,224,178,.35)'); g.addColorStop(1, 'rgba(255,224,178,0)');
+ ctx.fillStyle = g; ctx.fill();
+ path();
+ ctx.strokeStyle = '#ffe0b2'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+}
+
+let customers = [], particles = [], clock = 0, spawnTimer = 0, lastTime = performance.now();
+const shirts = ['#64b5f6', '#81c784', '#ba68c8', '#b0bec5', '#ff8a65', '#ffd54f', '#4db6ac', '#e57373'];
+const custColors = ['#ef5350', '#42a5f5', '#66bb6a', '#ffa726', '#ab47bc', '#26c6da', '#ec407a'];
+const skins = ['#ffcc80', '#e0ac69', '#8d5524', '#f1c27d'];
+
+function rrect(c, x, y, w, h, r) {
+ c.beginPath();
+ c.moveTo(x + r, y);
+ c.arcTo(x + w, y, x + w, y + h, r);
+ c.arcTo(x + w, y + h, x, y + h, r);
+ c.arcTo(x, y + h, x, y, r);
+ c.arcTo(x, y, x + w, y, r);
+ c.closePath();
+}
+
+const VIP_PAT = 14;
+let vipTimer = 40;
+function yearSeason() { const m = new Date().getMonth(); return m === 11 || m < 2 ? 'winter' : m < 5 ? 'spring' : m < 8 ? 'summer' : 'autumn'; }
+const YS = { winter: ['❄️', 'Зима'], spring: ['🌸', 'Весна'], summer: ['☀️', 'Лето'], autumn: ['🍂', 'Осень'] };
+function dayPhase() { const n = night(); return n > 0.7 ? 'Ночь' : n > 0.3 ? 'Вечер' : 'День'; }
+function spawnVip() {
+ if (customers.some(c => c.vip) || incomePerSec() <= 0) return;
+ customers.push({ x: -15, y: 176 + Math.random() * 20, tx: 230 + Math.random() * 120, color: '#ffd54f', skin: skins[0], state: 'in', wait: vipPat(), pat: vipPat(), vip: true, speed: 55, cup: false, order: '💎', hair: '#212121', seed: 3 });
+}
+function vipAt(e) {
+ const r = scene.getBoundingClientRect();
+ const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+ return customers.find(c => c.vip && c.state === 'wait' && Math.abs(x - c.x) < 16 && y > c.y - 44 && y < c.y + 6);
+}
+function catchVip(v, e) {
+ const bonus = Math.max(25, incomePerSec() * 6);
+ earn(bonus); v.state = 'out'; v.cup = true;
+ state.vips = (state.vips || 0) + 1; wqAdd('vip', 1); state.vipStreak = (state.vipStreak || 0) + 1; state.vipBest = Math.max(state.vipBest || 0, state.vipStreak);
+ for (let i = 0; i < 6; i++) particles.push({ kind: 'coin', x: v.x + (i - 3) * 4, y: v.y - 40, vx: (i - 3) * 10, vy: -50 - i * 3, g: 120, life: 1.1, max: 1.1 });
+ sndClick(); toast('👑 VIP доволен! +' + fmt(bonus)); render();
+}
+function spawnCustomer() {
+ if (customers.length >= 16) return;
+ customers.push({
+  x: -15, y: 172 + Math.random() * 30, tx: 190 + Math.random() * 250,
+  color: custColors[Math.floor(Math.random() * custColors.length)],
+  skin: skins[Math.floor(Math.random() * skins.length)],
+  state: 'in', wait: 0.8 + Math.random() * 1.2, speed: 50 + Math.random() * 30,
+  cup: false, order: ['☕','🥐','🍰','🧁','🍪','🥤'][Math.floor(Math.random() * 6)], hair: ['#3e2723', '#212121', '#8d6e63', '#d7a86e', '#b71c1c'][Math.floor(Math.random() * 5)], seed: Math.random() * 10
+ });
+}
+
+const kitty = { x: 70, y: 208, dir: 1, mode: 'walk', t: 3, bubble: 0, say: 'мяу!' };
+function updateKitty(dt) {
+ kitty.t -= dt;
+ if (kitty.bubble > 0) kitty.bubble -= dt;
+ if (kitty.mode === 'walk') {
+  kitty.x += kitty.dir * 16 * dt;
+  if (kitty.x < 24) { kitty.x = 24; kitty.dir = 1; }
+  if (kitty.x > 150) { kitty.x = 150; kitty.dir = -1; }
+  if (kitty.t <= 0) { kitty.mode = Math.random() < 0.5 ? 'sit' : 'sleep'; kitty.t = 4 + Math.random() * 6; }
+ } else if (kitty.t <= 0) {
+  kitty.mode = 'walk'; kitty.t = 3 + Math.random() * 4;
+  if (Math.random() < 0.5) kitty.dir *= -1;
+ }
+ if (kitty.mode === 'sleep' && Math.random() < dt * 0.8) particles.push({ kind: 'zzz', x: kitty.x + kitty.dir * 12, y: kitty.y - 16, vx: 6, vy: -10, life: 1.6, max: 1.6 });
+}
+function drawKitty(c) {
+ const k = kitty, fur = '#e08a3c', dark = '#a85a1a';
+ c.save(); c.translate(k.x, k.y); c.scale(k.dir, 1);
+ c.fillStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(0, 0, 12, 3, 0, 0, Math.PI * 2); c.fill();
+ c.strokeStyle = fur; c.lineWidth = 3; c.lineCap = 'round';
+ const sw = Math.sin(clock * 2.5) * 3;
+ if (k.mode === 'sleep') {
+  c.fillStyle = fur; c.beginPath(); c.ellipse(0, -5, 12, 6, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = dark; c.fillRect(-5, -10, 2, 4); c.fillRect(0, -11, 2, 5);
+  c.fillStyle = fur; c.beginPath(); c.arc(9, -5, 5, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.moveTo(6, -9); c.lineTo(7, -14); c.lineTo(10, -9); c.fill();
+  c.strokeStyle = fur; c.beginPath(); c.arc(-9, -3, 6, Math.PI * 0.6, Math.PI * 1.6); c.stroke();
+  c.strokeStyle = '#3e2723'; c.lineWidth = 1; c.beginPath(); c.arc(11, -5, 1.6, 0, Math.PI); c.stroke();
+ } else {
+  const sit = k.mode === 'sit', leg = sit ? 0 : Math.sin(clock * 10) * 2;
+  if (sit) { c.fillStyle = fur; c.beginPath(); c.ellipse(-1, -8, 7, 8, 0, 0, Math.PI * 2); c.fill(); c.fillRect(1, -6, 3, 6); }
+  else {
+   c.fillStyle = dark; c.fillRect(-9 + leg, -5, 3, 5); c.fillRect(6 - leg, -5, 3, 5);
+   c.fillStyle = fur; c.beginPath(); c.ellipse(0, -9, 11, 6, 0, 0, Math.PI * 2); c.fill();
+   c.fillRect(-5 - leg, -6, 3, 6); c.fillRect(3 + leg, -6, 3, 6);
+   c.fillStyle = dark; c.fillRect(-4, -14, 2, 4); c.fillRect(1, -14, 2, 4);
+  }
+  c.strokeStyle = fur; c.lineWidth = 3;
+  c.beginPath(); c.moveTo(sit ? -7 : -10, sit ? -3 : -10); c.quadraticCurveTo(-16 + sw, sit ? -6 : -16, -14 + sw, sit ? -15 : -22); c.stroke();
+  const hx = sit ? 4 : 11, hy = sit ? -19 : -13;
+  c.fillStyle = fur; c.beginPath(); c.arc(hx, hy, 5.5, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.moveTo(hx - 5, hy - 2); c.lineTo(hx - 4, hy - 9); c.lineTo(hx - 0.5, hy - 4); c.fill();
+  c.beginPath(); c.moveTo(hx + 0.5, hy - 4); c.lineTo(hx + 4, hy - 9); c.lineTo(hx + 5, hy - 2); c.fill();
+  c.fillStyle = '#fff'; c.fillRect(hx + 0.5, hy - 2, 2.5, 2.5); c.fillRect(hx + 3.5, hy - 2, 2, 2.5);
+  if ((clock * 0.8 + 1) % 4 < 0.14) { c.fillStyle = '#5d3a12'; c.fillRect(hx + 0.8, hy - 0.8, 2.2, 0.8); c.fillRect(hx + 3.5, hy - 0.8, 2, 0.8); }
+  else { c.fillStyle = '#2e7d32'; c.fillRect(hx + 1.5, hy - 1.8, 1.3, 2); c.fillRect(hx + 4, hy - 1.8, 1.2, 2); }
+  c.fillStyle = '#f48fb1'; c.fillRect(hx + 4, hy + 1, 2, 1.5);
+ }
+ c.restore();
+ if (k.bubble > 0) {
+  const bx = k.x - 14, by = k.y - 42;
+  c.fillStyle = 'rgba(255,255,255,.95)'; rrect(c, bx, by, 32, 14, 6); c.fill();
+  c.beginPath(); c.moveTo(k.x - 3, by + 13); c.lineTo(k.x, by + 18); c.lineTo(k.x + 3, by + 13); c.fill();
+  c.fillStyle = '#5d4037'; c.font = 'bold 9px Arial'; c.textAlign = 'center'; c.fillText(k.say, k.x + 2, by + 10); c.textAlign = 'left';
+ }
+}
+function overKitty(e) {
+ const r = scene.getBoundingClientRect();
+ const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+ return Math.abs(x - kitty.x) < 22 && y > kitty.y - 32 && y < kitty.y + 8;
+}
+scene.addEventListener('mousemove', e => { scene.style.cursor = (overKitty(e) || vipAt(e)) ? 'pointer' : 'default'; });
+scene.addEventListener('click', e => {
+ { const v = vipAt(e); if (v) { catchVip(v, e); return; } }
+ if (overKitty(e)) {
+  kitty.say = ['мяу!', 'мур~', 'мрр♥', 'мяу?'][Math.floor(Math.random() * 4)];
+  kitty.bubble = 1.4; kitty.mode = 'sit'; kitty.t = 3;
+  for (let i = 0; i < 3; i++) particles.push({ kind: 'heart', x: kitty.x + (i - 1) * 8, y: kitty.y - 28, vx: (i - 1) * 8, vy: -26 - i * 4, life: 1.2, max: 1.2 });
+  sndClick();
+  state.pets = (state.pets || 0) + 1;
+  const nowT = Date.now();
+  kitty.streak = nowT - (kitty.lastPet || 0) < 3000 ? (kitty.streak || 0) + 1 : 1; kitty.lastPet = nowT;
+  if (kitty.streak >= 5 && nowT >= (kitty.coolUntil || 0)) {
+   kitty.streak = 0; kitty.coolUntil = nowT + 150000; state.purrs = (state.purrs || 0) + 1;
+   addBuff({ id: 'purr', name: '🐱 Мурлыканье: доход ×1.25', click: 1, income: 1.25 }, 45);
+   kitty.say = 'мрр♥♥'; kitty.bubble = 2.5;
+   toast('🐱 Кот замурлыкал! Доход ×1.25 на 45 секунд'); sndEvent(); save(); render();
+  }
+ }
+});
+scene.title = 'Погладь кота 5 раз подряд — он замурлыкает и принесёт удачу';
+
+// ---------- сезонные праздники ----------
+const SEASONS = {
+ halloween: { name: 'Хэллоуин', icon: '🎃', text: 'Хэллоуин в кофейне! События случаются на 15% чаще' },
+ newyear:   { name: 'Новый год', icon: '🎄', text: 'Новогодняя кофейня! События случаются на 15% чаще' },
+ valentine: { name: 'День влюблённых', icon: '💝', text: 'В воздухе любовь! События случаются на 15% чаще' }
+};
+let seasonStamp = 0, seasonVal = null;
+function seasonRaw() {
+ const now = Date.now();
+ if (now - seasonStamp < 2000) return seasonVal;
+ seasonStamp = now; seasonVal = null;
+ const q = new URLSearchParams(location.search).get('season');
+ if (q) { seasonVal = SEASONS[q] ? q : null; return seasonVal; }
+ const d = new Date(), m = d.getMonth() + 1, day = d.getDate();
+ if ((m === 10 && day >= 18) || (m === 11 && day <= 2)) seasonVal = 'halloween';
+ else if ((m === 12 && day >= 10) || (m === 1 && day <= 10)) seasonVal = 'newyear';
+ else if (m === 2 && day >= 8 && day <= 15) seasonVal = 'valentine';
+ return seasonVal;
+}
+function season() { return state.seasonOff ? null : seasonRaw(); }
+function heartPath(c, x, y, sz) {
+ c.beginPath(); c.moveTo(x, y + sz * 0.35);
+ c.bezierCurveTo(x - sz, y - sz * 0.4, x - sz * 0.5, y - sz, x, y - sz * 0.4);
+ c.bezierCurveTo(x + sz * 0.5, y - sz, x + sz, y - sz * 0.4, x, y + sz * 0.35); c.closePath();
+}
+function bat(c, x, y, sz, flap) {
+ const w = Math.sin(flap) * sz * 0.5;
+ c.fillStyle = '#1a1226';
+ c.beginPath(); c.ellipse(x, y, sz * 0.28, sz * 0.4, 0, 0, Math.PI * 2); c.fill();
+ c.beginPath(); c.moveTo(x - sz * 0.2, y - sz * 0.1); c.quadraticCurveTo(x - sz * 0.8, y - sz * 0.5 - w, x - sz * 1.1, y + sz * 0.1 - w * 0.4); c.quadraticCurveTo(x - sz * 0.7, y + sz * 0.05, x - sz * 0.5, y + sz * 0.3); c.quadraticCurveTo(x - sz * 0.3, y + sz * 0.1, x - sz * 0.2, y + sz * 0.2); c.closePath(); c.fill();
+ c.beginPath(); c.moveTo(x + sz * 0.2, y - sz * 0.1); c.quadraticCurveTo(x + sz * 0.8, y - sz * 0.5 - w, x + sz * 1.1, y + sz * 0.1 - w * 0.4); c.quadraticCurveTo(x + sz * 0.7, y + sz * 0.05, x + sz * 0.5, y + sz * 0.3); c.quadraticCurveTo(x + sz * 0.3, y + sz * 0.1, x + sz * 0.2, y + sz * 0.2); c.closePath(); c.fill();
+ c.fillStyle = '#ff5252'; c.fillRect(x - sz * 0.14, y - sz * 0.15, 1.2, 1.2); c.fillRect(x + sz * 0.06, y - sz * 0.15, 1.2, 1.2);
+}
+function pumpkin(c, x, y, r, nt) {
+ if (nt > 0.25) { const g = c.createRadialGradient(x, y, 1, x, y, r * 3.2); g.addColorStop(0, 'rgba(255,190,60,' + (0.45 * nt) + ')'); g.addColorStop(1, 'rgba(255,190,60,0)'); c.fillStyle = g; c.fillRect(x - r * 3.2, y - r * 3.2, r * 6.4, r * 6.4); }
+ c.fillStyle = 'rgba(0,0,0,.22)'; c.beginPath(); c.ellipse(x, y + r * 0.85, r * 1.1, r * 0.3, 0, 0, Math.PI * 2); c.fill();
+ c.fillStyle = '#e65100'; c.beginPath(); c.ellipse(x, y, r, r * 0.82, 0, 0, Math.PI * 2); c.fill();
+ c.fillStyle = '#ef6c00'; c.beginPath(); c.ellipse(x - r * 0.45, y, r * 0.55, r * 0.8, 0, 0, Math.PI * 2); c.fill();
+ c.beginPath(); c.ellipse(x + r * 0.45, y, r * 0.55, r * 0.8, 0, 0, Math.PI * 2); c.fill();
+ c.strokeStyle = 'rgba(120,40,0,.45)'; c.lineWidth = 0.8; c.beginPath(); c.ellipse(x, y, r * 0.5, r * 0.8, 0, 0, Math.PI * 2); c.stroke();
+ c.fillStyle = '#33691e'; c.fillRect(x - 1.2, y - r * 0.82 - 3, 2.4, 4);
+ c.fillStyle = nt > 0.25 ? '#fff59d' : '#3e1f00';
+ c.beginPath(); c.moveTo(x - r * 0.5, y - r * 0.1); c.lineTo(x - r * 0.15, y - r * 0.1); c.lineTo(x - r * 0.33, y - r * 0.42); c.closePath(); c.fill();
+ c.beginPath(); c.moveTo(x + r * 0.15, y - r * 0.1); c.lineTo(x + r * 0.5, y - r * 0.1); c.lineTo(x + r * 0.33, y - r * 0.42); c.closePath(); c.fill();
+ c.beginPath(); c.moveTo(x - r * 0.5, y + r * 0.25); c.lineTo(x - r * 0.25, y + r * 0.2); c.lineTo(x - r * 0.1, y + r * 0.4); c.lineTo(x + r * 0.1, y + r * 0.2); c.lineTo(x + r * 0.25, y + r * 0.4); c.lineTo(x + r * 0.5, y + r * 0.25); c.lineTo(x + r * 0.3, y + r * 0.5); c.lineTo(x - r * 0.3, y + r * 0.5); c.closePath(); c.fill();
+}
+function swag(c, x0, x1, y, sag, count, colors, nt, kind) {
+ c.strokeStyle = kind === 'love' ? '#ad1457' : '#2e7d32'; c.lineWidth = 1.8;
+ c.beginPath(); c.moveTo(x0, y); c.quadraticCurveTo((x0 + x1) / 2, y + sag * 2, x1, y); c.stroke();
+ for (let i = 1; i <= count; i++) {
+  const t = i / (count + 1), u = 1 - t;
+  const px = u * u * x0 + 2 * u * t * ((x0 + x1) / 2) + t * t * x1, py = u * u * y + 2 * u * t * (y + sag * 2) + t * t * y;
+  const col = colors[(i + Math.floor(x0 / 80)) % colors.length], blink = 0.55 + 0.45 * Math.sin(clock * 3 + i * 1.3 + x0);
+  if (kind !== 'love' && nt > 0.15) { c.fillStyle = col; c.globalAlpha = 0.25 * blink * (0.4 + nt); c.beginPath(); c.arc(px, py + 3, 6, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1; }
+  c.fillStyle = col; c.globalAlpha = kind === 'love' ? 1 : 0.55 + 0.45 * blink;
+  if (kind === 'love') { heartPath(c, px, py + 3, 4.5); c.fill(); } else { c.beginPath(); c.ellipse(px, py + 3, 2, 3, 0, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 1;
+ }
+}
+function drawSeason(c) {
+ const sn = season(); if (!sn) return;
+ const nt = night();
+ if (sn === 'halloween') {
+  c.save(); c.beginPath(); c.rect(20, 18, 90, 74); c.clip();
+  c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 0.8;
+  [[34, 0], [30, 14], [22, 24], [10, 32], [0, 34]].forEach(l => { c.beginPath(); c.moveTo(22, 20); c.lineTo(22 + l[0], 20 + l[1]); c.stroke(); });
+  [10, 19, 28].forEach(r => { c.beginPath(); c.arc(22, 20, r, 0.05, Math.PI / 2 - 0.05); c.stroke(); });
+  const L = 18 + Math.sin(clock * 1.3) * 6;
+  c.beginPath(); c.moveTo(84, 18); c.lineTo(84, 18 + L); c.stroke();
+  c.fillStyle = '#111'; c.beginPath(); c.arc(84, 18 + L + 3, 3.2, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#111'; c.lineWidth = 0.9;
+  for (let k = -1; k <= 1; k += 2) for (let j = 0; j < 3; j++) { c.beginPath(); c.moveTo(84, 18 + L + 3); c.lineTo(84 + k * (5 + j), 18 + L + 1 + j * 2.2); c.stroke(); }
+  const bx = 125 - ((clock * 17) % 130), by = 44 + Math.sin(clock * 2.6) * 9;
+  bat(c, bx, by, 7, clock * 15);
+  bat(c, 125 - ((clock * 11 + 60) % 130), 70 + Math.sin(clock * 2 + 1) * 6, 5, clock * 13 + 1);
+  c.restore();
+  [[226, 12, 5], [322, 9, 4], [384, 12, 5]].forEach(b => bat(c, b[0], b[1], b[2], 0.9));
+  pumpkin(c, 472, 115, 7, nt); pumpkin(c, 34, 196, 11, nt); pumpkin(c, 352, 76, 4.5, nt);
+ } else if (sn === 'newyear') {
+  const cols = ['#ef5350', '#ffd54f', '#42a5f5', '#66bb6a', '#ec407a'];
+  for (let x = 0; x < W; x += 96) swag(c, x, x + 96, 2, 6, 5, cols, nt, 'xmas');
+  c.save(); c.beginPath(); c.rect(20, 18, 90, 74); c.clip();
+  c.fillStyle = 'rgba(255,255,255,.9)';
+  for (let i = 0; i < 16; i++) { const fx = 20 + ((i * 37 + Math.sin(clock * 0.9 + i) * 7 + 90) % 90), fy = 18 + ((clock * (14 + i % 4 * 4) + i * 17) % 74); c.beginPath(); c.arc(fx, fy, 0.9 + (i % 3) * 0.4, 0, Math.PI * 2); c.fill(); }
+  c.restore();
+  c.fillStyle = '#f5f5f5'; rrect(c, 18, 89, 94, 5, 2.5); c.fill();
+  const tx = 456, ty = 202;
+  if (nt > 0.2) { const g = c.createRadialGradient(tx, ty - 40, 4, tx, ty - 40, 60); g.addColorStop(0, 'rgba(255,230,150,' + (0.3 * nt) + ')'); g.addColorStop(1, 'rgba(255,230,150,0)'); c.fillStyle = g; c.fillRect(tx - 60, ty - 100, 120, 120); }
+  c.fillStyle = 'rgba(0,0,0,.22)'; c.beginPath(); c.ellipse(tx, ty + 1, 22, 5, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#5d4037'; c.fillRect(tx - 4, ty - 10, 8, 11);
+  [['#1b5e20', 48, 30, 32], ['#2e7d32', 38, 26, 54], ['#388e3c', 28, 24, 74]].forEach(l => { c.fillStyle = l[0]; c.beginPath(); c.moveTo(tx, ty - l[3] - 4 - l[2] + 8); c.lineTo(tx + l[1] / 2, ty - l[3] + 8); c.lineTo(tx - l[1] / 2, ty - l[3] + 8); c.closePath(); c.fill(); });
+  c.fillStyle = '#ffd54f'; c.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 2.6 : 6; c.lineTo(tx + Math.cos(a) * r, ty - 80 + Math.sin(a) * r); } c.closePath(); c.fill();
+  [[-9, -22, '#ef5350'], [8, -30, '#42a5f5'], [-3, -42, '#ffd54f'], [11, -50, '#ec407a'], [-8, -58, '#66bb6a'], [4, -66, '#ef5350'], [-13, -14, '#ffd54f']].forEach((o, i) => {
+   const bl = 0.6 + 0.4 * Math.sin(clock * 3 + i * 1.7);
+   c.fillStyle = o[2]; c.globalAlpha = 0.7 + 0.3 * bl; c.beginPath(); c.arc(tx + o[0], ty + o[1], 2.4, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+  });
+ } else if (sn === 'valentine') {
+  const cols = ['#ec407a', '#e53935', '#f48fb1', '#ff7043'];
+  for (let x = 0; x < W; x += 96) swag(c, x, x + 96, 2, 6, 5, cols, nt, 'love');
+  c.fillStyle = '#e53935'; heartPath(c, 160, 70, 9); c.fill();
+  c.fillStyle = 'rgba(255,255,255,.35)'; c.beginPath(); c.ellipse(157, 64, 2.5, 1.5, -0.6, 0, Math.PI * 2); c.fill();
+ }
+}
+function updateSeasonFx(dt) { if (season() === 'valentine' && Math.random() < dt * 0.7) particles.push({ kind: 'heart', x: 30 + Math.random() * 420, y: 150 + Math.random() * 50, vx: (Math.random() - 0.5) * 8, vy: -22, life: 2.2, max: 2.2 }); }
+function updateScene(dt) {
+ clock += dt;
+ updateKitty(dt); updateSeasonFx(dt); weatherTick(dt);
+ vipTimer -= dt;
+ if (vipTimer <= 0) { spawnVip(); vipTimer = (55 + Math.random() * 40) * (vipLevel() >= 2 ? 0.7 : 1); }
+ spawnTimer -= dt;
+ if (spawnTimer <= 0) {
+  spawnCustomer();
+  const rate = Math.min(2.5, 0.25 + Math.sqrt(incomePerSec()) * 0.12) * wxFlow();
+  spawnTimer = (1 / rate) * (0.7 + Math.random() * 0.6);
+ }
+ customers.forEach(c => {
+  if (c.state === 'in') {
+   c.x += c.speed * dt;
+   if (c.x >= c.tx) { c.x = c.tx; c.state = 'wait'; }
+  } else if (c.state === 'wait') {
+   c.wait -= dt; c.wt = (c.wt || 0) + dt;
+   if (c.wait <= 0 && c.vip) { c.state = 'out'; c.angry = true; state.vipMissed = (state.vipMissed || 0) + 1; state.vipStreak = 0; particles.push({ kind: 'zzz', x: c.x, y: c.y - 46, vy: -14, life: 1, max: 1 }); }
+   else if (c.wait <= 0) {
+    c.state = 'out';
+    c.cup = true;
+    wqAdd('cust', 1);
+    particles.push({ kind: 'coin', x: c.x, y: c.y - 38, vy: -30, life: 1, max: 1 });
+    if (Math.random() < 0.5) particles.push({ kind: 'heart', x: c.x + 6, y: c.y - 50, vx: 6, vy: -22, life: 1.2, max: 1.2 });
+   }
+  } else {
+   c.x += c.speed * dt;
+  }
+ });
+ customers = customers.filter(c => c.x < W + 20);
+ if (Math.random() < dt * 8) {
+  particles.push({ kind: 'steam', x: 185 + (Math.random() * 8 - 4), y: 84, vx: (Math.random() - 0.5) * 6, vy: -18, life: 1.2, max: 1.2 });
+ }
+ particles.forEach(p => {
+  p.x += (p.vx || 0) * dt;
+  p.y += p.vy * dt;
+  if (p.g) p.vy += p.g * dt;
+  p.life -= dt;
+ });
+ particles = particles.filter(p => p.life > 0);
+}
+
+// ---- общие помощники для 2D-моделей ----
+function shade(hex, k) { const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.replace(/./g, '$&$&') : h, 16); const r = Math.max(0, Math.min(255, (n >> 16) + k)), g = Math.max(0, Math.min(255, ((n >> 8) & 255) + k)), b = Math.max(0, Math.min(255, (n & 255) + k)); return 'rgb(' + r + ',' + g + ',' + b + ')'; }
+function drawFace(c, x, y, seed, mood, t) {
+ // глаза с бликами, моргание, румянец, рот
+ const blink = ((t * 0.7 + seed) % 4) < 0.12;
+ c.fillStyle = '#2b1b17';
+ if (blink) { c.fillRect(x - 3.2, y, 2.2, 0.8); c.fillRect(x + 1, y, 2.2, 0.8); }
+ else { c.beginPath(); c.ellipse(x - 2.1, y, 1.1, 1.4, 0, 0, 7); c.ellipse(x + 2.1, y, 1.1, 1.4, 0, 0, 7); c.fill(); c.fillStyle = '#fff'; c.fillRect(x - 2.5, y - 1, 0.7, 0.7); c.fillRect(x + 1.7, y - 1, 0.7, 0.7); }
+ c.fillStyle = 'rgba(255,120,120,.35)'; c.beginPath(); c.ellipse(x - 3.6, y + 2, 1.4, 0.9, 0, 0, 7); c.ellipse(x + 3.6, y + 2, 1.4, 0.9, 0, 0, 7); c.fill();
+ c.strokeStyle = '#5d2f24'; c.lineWidth = 0.8; c.lineCap = 'round'; c.beginPath();
+ if (mood === 'sad') c.arc(x, y + 4.2, 1.4, Math.PI * 1.15, Math.PI * 1.85); else c.arc(x, y + 2.2, 1.6, 0.15 * Math.PI, 0.85 * Math.PI);
+ c.stroke();
+}
+function drawHair(c, x, y, style, color) {
+ c.fillStyle = color;
+ if (style === 0) { c.beginPath(); c.arc(x, y - 1.5, 6.2, Math.PI, 0); c.fill(); c.fillRect(x - 6.2, y - 2, 2, 5); c.fillRect(x + 4.2, y - 2, 2, 5); }
+ else if (style === 1) { c.beginPath(); c.arc(x, y - 1.5, 6.2, Math.PI, 0); c.fill(); c.beginPath(); c.arc(x, y - 7.5, 3, 0, 7); c.fill(); }
+ else if (style === 2) { c.beginPath(); c.arc(x, y - 1, 6.4, Math.PI * 0.95, Math.PI * 2.05); c.fill(); rrect(c, x - 6.6, y - 2, 3, 11, 1.5); c.fill(); rrect(c, x + 3.6, y - 2, 3, 11, 1.5); c.fill(); }
+ else { c.beginPath(); c.arc(x, y - 1.5, 6.2, Math.PI, 0); c.fill(); c.fillRect(x - 6, y - 3, 12, 2); }
+}
+function drawPerson(c, o) {
+ // o: x,y(ноги), color, skin, hair, style, seed, walk(0..1 фаза), moving, arms:'down'|'carry'|'wave', apron, hat, cup, t, mood, scale
+ const x = o.x, y = o.y, t = o.t, sc = o.scale || 1;
+ const ph = Math.sin(t * 12 + o.seed) * (o.moving ? 1 : 0);
+ const bob = o.moving ? Math.abs(ph) * -1.2 : Math.sin(t * 2 + o.seed) * 0.5;
+ c.save(); c.translate(x, y); c.scale(sc, sc);
+ // тень
+ c.fillStyle = 'rgba(0,0,0,.28)'; c.beginPath(); c.ellipse(0, 0.5, 8.5, 3, 0, 0, 7); c.fill();
+ // ноги и обувь
+ const l1 = ph * 2.6, l2 = -ph * 2.6;
+ c.fillStyle = o.pants || '#37474f'; rrect(c, -5, -8, 4, 8 + Math.max(0, l1) * 0.4, 1.5); c.fill(); rrect(c, 1, -8, 4, 8 + Math.max(0, l2) * 0.4, 1.5); c.fill();
+ c.fillStyle = '#212121'; c.beginPath(); c.ellipse(-3 + l1 * 0.5, 0.2, 3.2, 1.6, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(3 + l2 * 0.5, 0.2, 3.2, 1.6, 0, 0, 7); c.fill();
+ // торс с объёмом
+ const by = -23 + bob;
+ const bg = c.createLinearGradient(-7, 0, 7, 0); bg.addColorStop(0, shade(o.color, 18)); bg.addColorStop(0.55, o.color); bg.addColorStop(1, shade(o.color, -32));
+ c.fillStyle = bg; rrect(c, -7, by, 14, 17, 4.5); c.fill();
+ c.strokeStyle = 'rgba(0,0,0,.28)'; c.lineWidth = 0.7; rrect(c, -7, by, 14, 17, 4.5); c.stroke();
+ if (o.apron) { c.fillStyle = o.apron; rrect(c, -5, by + 5, 10, 12, 2.5); c.fill(); c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(-5, by + 5, 10, 1); }
+ if (o.tie) { c.fillStyle = o.tie; c.beginPath(); c.moveTo(0, by + 1); c.lineTo(2, by + 5); c.lineTo(0, by + 11); c.lineTo(-2, by + 5); c.closePath(); c.fill(); }
+ // воротник
+ c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.moveTo(-3.5, by); c.lineTo(0, by + 3.5); c.lineTo(3.5, by); c.closePath(); c.fill();
+ // руки
+ const sw = o.moving ? ph * 3 : 0;
+ const arm = (side, mode) => {
+  c.strokeStyle = shade(o.color, -12); c.lineWidth = 3.4; c.lineCap = 'round';
+  const sx = side * 7, sy = by + 3;
+  let ex, ey;
+  if (mode === 'carry') { ex = side * 8; ey = by + 9 + Math.sin(t * 3 + o.seed) * 0.6; c.beginPath(); c.moveTo(sx, sy); c.quadraticCurveTo(side * 11, by + 7, ex, ey); c.stroke(); }
+  else if (mode === 'wave') { ex = side * 10; ey = by - 3 + Math.sin(t * 9) * 3; c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.stroke(); }
+  else { ex = side * 9 + side * sw * 0.2; ey = by + 12 + side * sw; c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.stroke(); }
+  c.fillStyle = o.skin; c.beginPath(); c.arc(ex, ey, 1.9, 0, 7); c.fill();
+  return [ex, ey];
+ };
+ const aL = arm(-1, o.armL || o.arms || 'down'), aR = arm(1, o.armR || o.arms || 'down');
+ if (o.cup) { const [cx, cy] = aR; c.fillStyle = '#fafafa'; rrect(c, cx - 2.5, cy - 5, 5, 6, 1.2); c.fill(); c.fillStyle = '#6d4c41'; c.fillRect(cx - 2.5, cy - 5, 5, 2); c.strokeStyle = '#fafafa'; c.lineWidth = 0.9; c.beginPath(); c.arc(cx + 3, cy - 2, 1.5, -1.2, 1.2); c.stroke(); }
+ // шея и голова
+ const hy = by - 5.5;
+ c.fillStyle = shade(o.skin.startsWith('#') ? o.skin : '#e0ac69', -18); c.fillRect(-2, by - 1, 4, 3);
+ const hg = c.createRadialGradient(-2, hy - 2, 1, 0, hy, 7); hg.addColorStop(0, shade(o.skin, 14)); hg.addColorStop(1, shade(o.skin, -16));
+ c.fillStyle = hg; c.beginPath(); c.arc(0, hy, 6, 0, 7); c.fill();
+ c.fillStyle = shade(o.skin, -22); c.beginPath(); c.ellipse(-6, hy + 0.5, 1.3, 2, 0, 0, 7); c.ellipse(6, hy + 0.5, 1.3, 2, 0, 0, 7); c.fill();
+ drawHair(c, 0, hy - 1, o.style || 0, o.hair);
+ drawFace(c, 0, hy + 0.5, o.seed, o.mood, t);
+ if (o.glasses) { c.strokeStyle = '#212121'; c.lineWidth = 0.8; c.beginPath(); c.arc(-2.4, hy + 0.5, 1.9, 0, 7); c.moveTo(4.3, hy + 0.5); c.arc(2.4, hy + 0.5, 1.9, 0, 7); c.moveTo(-0.5, hy + 0.5); c.lineTo(0.5, hy + 0.5); c.stroke(); }
+ if (o.hat === 'chef') { c.fillStyle = '#fff'; c.fillRect(-5.5, hy - 7.5, 11, 4); c.beginPath(); c.arc(-3, hy - 9, 3.2, 0, 7); c.arc(0, hy - 11, 3.6, 0, 7); c.arc(3, hy - 9, 3.2, 0, 7); c.fill(); c.fillStyle = 'rgba(0,0,0,.1)'; c.fillRect(-5.5, hy - 4.5, 11, 1); }
+ else if (o.hat === 'cap') { c.fillStyle = o.hatColor || '#8d6e63'; c.beginPath(); c.arc(0, hy - 2, 6.4, Math.PI, 0); c.fill(); c.fillRect(0, hy - 3, 8, 1.8); }
+ c.restore();
+}
+function drawStaff(c, x, tier, i) {
+ const fy = 126, t = clock + i * 1.3;
+ if (tier === 3) { // робот
+  const bob = Math.sin(clock * 5 + i * 1.3) * 1.2, ay = Math.sin(clock * 4 + i) * 4;
+  c.fillStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(x, fy - 5, 9, 2.5, 0, 0, 7); c.fill();
+  const g = c.createLinearGradient(x - 8, 0, x + 8, 0); g.addColorStop(0, '#eceff1'); g.addColorStop(0.6, '#b0bec5'); g.addColorStop(1, '#78909c');
+  c.fillStyle = g; rrect(c, x - 8, fy - 25 + bob, 16, 20, 4); c.fill(); c.strokeStyle = '#546e7a'; c.lineWidth = 0.8; rrect(c, x - 8, fy - 25 + bob, 16, 20, 4); c.stroke();
+  c.fillStyle = '#263238'; rrect(c, x - 4.5, fy - 21 + bob, 9, 6, 2); c.fill();
+  c.fillStyle = Math.sin(clock * 3 + i) > 0 ? '#00e5ff' : '#69f0ae'; c.fillRect(x - 3, fy - 19 + bob, 2, 2); c.fillRect(x + 1, fy - 19 + bob, 2, 2);
+  c.strokeStyle = '#78909c'; c.lineWidth = 2.4; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(x - 8, fy - 20 + bob); c.lineTo(x - 12, fy - 13 + bob + ay * 0.2); c.moveTo(x + 8, fy - 20 + bob); c.lineTo(x + 12, fy - 14 + bob - ay * 0.3); c.stroke();
+  const hg = c.createLinearGradient(x - 7, 0, x + 7, 0); hg.addColorStop(0, '#eceff1'); hg.addColorStop(1, '#90a4ae');
+  c.fillStyle = hg; rrect(c, x - 7, fy - 38 + bob, 14, 12, 3.5); c.fill(); c.strokeStyle = '#546e7a'; rrect(c, x - 7, fy - 38 + bob, 14, 12, 3.5); c.stroke();
+  c.fillStyle = '#00e5ff'; c.shadowColor = '#00e5ff'; c.shadowBlur = 5; c.beginPath(); c.arc(x - 2.8, fy - 32 + bob, 1.7, 0, 7); c.arc(x + 2.8, fy - 32 + bob, 1.7, 0, 7); c.fill(); c.shadowBlur = 0;
+  c.strokeStyle = '#78909c'; c.lineWidth = 1.3; c.beginPath(); c.moveTo(x, fy - 38 + bob); c.lineTo(x, fy - 43 + bob); c.stroke();
+  c.fillStyle = Math.sin(clock * 6 + i) > 0 ? '#ef5350' : '#ffcdd2'; c.beginPath(); c.arc(x, fy - 44 + bob, 2, 0, 7); c.fill();
+  return;
+ }
+ const arms = { 0: 'carry', 1: 'carry', 2: 'down', 4: 'carry', 5: 'down', 6: 'carry', 7: 'down' }[tier] || 'carry';
+ const bob = Math.sin(t * 2.6) * 0.8;
+ drawPerson(c, { x, y: fy - 5 + bob * 0.3, color: shirts[tier] || '#8d6e63', skin: skins[(i + tier) % skins.length], hair: ['#3e2723', '#212121', '#6d4c41', '#bf360c'][(i + tier) % 4], style: (i + tier) % 4, seed: i * 1.7, moving: false,
+  arms: (tier === 1 || tier === 0) ? (Math.sin(t * 1.3) > 0.2 ? 'carry' : 'down') : arms, armR: tier <= 1 && Math.sin(t * 1.3) > 0.2 ? 'carry' : undefined, cup: tier <= 1 && Math.sin(t * 1.3) > 0.2,
+  apron: tier === 1 ? '#fafafa' : tier === 0 ? '#8d6e63' : null, tie: tier === 2 ? '#b71c1c' : tier >= 4 ? '#ffd54f' : null, glasses: tier === 2 || tier === 6,
+  hat: state.boosts.training ? 'chef' : (tier === 0 ? 'cap' : null), hatColor: '#ef6c00', t, mood: 'happy', scale: 0.94 });
+}
+
+function drawCustomer(c, cu) {
+ const walking = cu.state !== 'wait';
+ const mood = cu.vip ? (cu.angry ? 'sad' : 'happy') : (cu.state === 'wait' && cu.wt > 4 ? 'sad' : 'happy');
+ drawPerson(c, { x: cu.x, y: cu.y, color: cu.color, skin: cu.skin, hair: cu.hair, style: Math.floor(cu.seed * 7) % 4, seed: cu.seed, moving: walking, arms: cu.state === 'wait' ? 'down' : 'down', armR: cu.cup ? 'carry' : (cu.state === 'wait' && cu.wt < 1 ? 'wave' : undefined), cup: !!cu.cup, glasses: Math.floor(cu.seed * 13) % 5 === 0, pants: ['#37474f', '#4e342e', '#283593', '#455a64'][Math.floor(cu.seed * 5) % 4], t: clock, mood, scale: 1.02 + (cu.vip ? 0.05 : 0) });
+ const bob = walking ? Math.abs(Math.sin(clock * 12 + cu.seed)) * -1.2 : 0;
+ { const ys = yearSeason(), hx = cu.x, hy = cu.y - 28.5 + bob;
+  if (cu.vip) { c.fillStyle = '#ffd600'; c.strokeStyle = '#b8860b'; c.lineWidth = 0.6; c.beginPath(); c.moveTo(hx - 5, hy - 5); c.lineTo(hx - 5, hy - 12); c.lineTo(hx - 2.5, hy - 8); c.lineTo(hx, hy - 13); c.lineTo(hx + 2.5, hy - 8); c.lineTo(hx + 5, hy - 12); c.lineTo(hx + 5, hy - 5); c.closePath(); c.fill(); c.stroke(); c.fillStyle = '#e53935'; c.fillRect(hx - 0.7, hy - 8, 1.4, 1.4); }
+  else if (ys === 'winter') { c.fillStyle = '#e53935'; rrect(c, hx - 6.5, hy + 4, 13, 3.4, 1.5); c.fill(); c.fillRect(hx + 2, hy + 5, 3, 8); c.fillStyle = '#fafafa'; c.beginPath(); c.arc(hx, hy - 3.5, 6.4, Math.PI, 0); c.fill(); c.beginPath(); c.arc(hx, hy - 10.4, 1.8, 0, 7); c.fill(); c.fillStyle = '#e53935'; c.fillRect(hx - 6.4, hy - 4, 12.8, 1.6); }
+  else if (ys === 'summer') { c.fillStyle = '#111'; rrect(c, hx - 5.3, hy - 0.8, 4.4, 2.8, 1); c.fill(); rrect(c, hx + 0.9, hy - 0.8, 4.4, 2.8, 1); c.fill(); c.fillRect(hx - 1, hy, 2, 0.8); c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(hx - 4.4, hy - 0.4, 1.4, 0.8); }
+  else if (ys === 'spring') { c.fillStyle = '#f48fb1'; for (let k = 0; k < 5; k++) { c.beginPath(); c.arc(hx + 4.5 + Math.cos(k * 1.256) * 1.6, hy - 6 + Math.sin(k * 1.256) * 1.6, 1.1, 0, 7); c.fill(); } c.fillStyle = '#fff59d'; c.beginPath(); c.arc(hx + 4.5, hy - 6, 0.9, 0, 7); c.fill(); }
+  else { c.fillStyle = '#ef6c00'; rrect(c, hx - 6.5, hy + 4, 13, 3, 1.5); c.fill(); c.fillStyle = '#bf360c'; c.fillRect(hx - 5, hy + 4.6, 10, 0.8); } }
+ if (cu.vip && cu.state === 'wait') {
+  const f = Math.max(0, cu.wait / cu.pat), ry = cu.y - 66;
+  c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 3; c.beginPath(); c.arc(cu.x, ry, 7, 0, Math.PI * 2); c.stroke();
+  c.strokeStyle = f > 0.5 ? '#66bb6a' : f > 0.25 ? '#ffca28' : '#ef5350'; c.beginPath(); c.arc(cu.x, ry, 7, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * f); c.stroke();
+  c.font = '8px Arial'; c.textAlign = 'center'; c.fillStyle = '#000'; c.fillText('👑', cu.x, ry + 3); c.textAlign = 'left';
+  c.strokeStyle = 'rgba(255,214,0,.8)'; c.lineWidth = 1; c.beginPath(); c.ellipse(cu.x, cu.y - 13, 12, 22, 0, 0, Math.PI * 2); c.stroke();
+ }
+ if (cu.state === 'wait' && cu.order && !cu.vip) {
+  const pop = Math.min(1, (cu.wt || 0) * 5), sc = pop < 1 ? 0.4 + 0.6 * pop + Math.sin(pop * Math.PI) * 0.25 : 1;
+  c.save(); c.translate(cu.x, cu.y - 37 + bob); c.scale(sc, sc); c.translate(-cu.x, -(cu.y - 37 + bob)); c.globalAlpha = Math.min(1, pop * 1.5);
+  const by = cu.y - 58 + bob;
+  c.fillStyle = 'rgba(0,0,0,.18)'; rrect(c, cu.x - 10, by + 1.5, 20, 15, 5); c.fill();
+  c.fillStyle = 'rgba(255,255,255,.96)'; rrect(c, cu.x - 10, by, 20, 15, 5); c.fill();
+  c.beginPath(); c.moveTo(cu.x - 3, by + 14); c.lineTo(cu.x, by + 19); c.lineTo(cu.x + 3, by + 14); c.closePath(); c.fill();
+  c.font = '10px Arial'; c.textAlign = 'center'; c.fillStyle = '#000'; c.fillText(cu.order, cu.x, by + 11.5); c.textAlign = 'left';
+  c.restore();
+ }
+}
+
+function drawSceneBase() {
+ const c = sctx;
+ c.clearRect(0, 0, W, H);
+ const TH = [['#7b5846','#5d4037','#4e342e','#d7ccc8','#bcaaa4'],['#7b5846','#5d4037','#4e342e','#d7ccc8','#bcaaa4'],['#6f5a6b','#4f3d4c','#3e2f3b','#cfd8dc','#b0bec5'],['#4a5568','#2f3a4d','#263040','#cfd8dc','#90a4ae'],['#3d3a52','#26233a','#1b1930','#e0e0e0','#9e9e9e'],['#3a2f1c','#241b0d','#1a1208','#f5e6b8','#d4b96a']][stageIdx()];
+ const wg = c.createLinearGradient(0, 0, 0, 120); wg.addColorStop(0, TH[0]); wg.addColorStop(1, TH[1]);
+ c.fillStyle = wg; c.fillRect(0, 0, W, 120);
+ c.fillStyle = TH[2]; c.fillRect(0, 100, W, 20);
+ c.fillStyle = 'rgba(0,0,0,.18)'; for (let x = 8; x < W; x += 24) c.fillRect(x, 102, 2, 16);
+ c.fillStyle = '#8d6e63'; c.fillRect(0, 99, W, 2);
+ for (let row = 0; row < 5; row++) {
+  for (let col = 0; col < 16; col++) {
+   c.fillStyle = (row + col) % 2 ? TH[3] : TH[4];
+   c.fillRect(col * 30, 120 + row * 20, 30, 20);
+  }
+ }
+
+ const nt = night();
+ const sg = c.createLinearGradient(0, 18, 0, 92);
+ sg.addColorStop(0, mixc([79, 195, 247], [13, 18, 60], nt)); sg.addColorStop(1, mixc([179, 229, 252], [40, 53, 110], nt));
+ c.fillStyle = sg; c.fillRect(20, 18, 90, 74);
+ c.fillStyle = mixc([255, 241, 118], [236, 239, 241], nt); c.beginPath(); c.arc(88, 36 + nt * 6, 7, 0, Math.PI * 2); c.fill();
+ { const hg = c.createRadialGradient(88, 36 + nt * 6, 6, 88, 36 + nt * 6, 28); hg.addColorStop(0, nt > 0.5 ? 'rgba(220,230,255,.35)' : 'rgba(255,241,118,.4)'); hg.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = hg; c.fillRect(60, 18, 50, 50); }
+ if (nt > 0.4) { [[34, 30], [52, 44], [70, 26], [42, 66], [96, 60]].forEach((q, qi) => { c.fillStyle = 'rgba(255,255,255,' + (nt * (0.55 + 0.45 * Math.sin(clock * 3 + qi * 1.7))) + ')'; c.fillRect(q[0], q[1], 2, 2); }); }
+ if (state.boosts.franchise) {
+  c.fillStyle = '#7986cb';
+  c.fillRect(26, 50, 22, 42); c.fillRect(52, 36, 26, 56); c.fillRect(82, 56, 22, 36);
+  c.fillStyle = '#fff176';
+  [[30,56],[38,56],[30,68],[38,68],[57,42],[67,42],[57,54],[67,54],[57,66],[67,66],[86,62],[94,62]].forEach(p => c.fillRect(p[0], p[1], 5, 6));
+ } else {
+  c.fillStyle = 'rgba(255,255,255,' + (0.9 * (1 - nt)) + ')';
+  c.beginPath(); c.ellipse(45, 40, 14, 6, 0, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.ellipse(82, 55, 11, 5, 0, 0, Math.PI * 2); c.fill();
+ }
+ { const ys = yearSeason();
+  c.save(); c.beginPath(); c.rect(20, 18, 90, 74); c.clip();
+  const gc = { winter: '#eceff1', spring: '#7cb342', summer: '#558b2f', autumn: '#a1887f' }[ys];
+  c.fillStyle = mixc(hex2(gc), [10, 14, 30], nt * 0.6); c.fillRect(20, 80, 90, 12);
+  const tc = { winter: null, spring: '#f8bbd0', summer: '#388e3c', autumn: '#ef6c00' }[ys], tx = 38;
+  c.fillStyle = '#4e342e'; c.fillRect(tx - 2, 66, 4, 16);
+  if (tc) { c.fillStyle = mixc(hex2(tc), [10, 14, 30], nt * 0.6); c.beginPath(); c.arc(tx, 60, 10, 0, 7); c.arc(tx - 7, 66, 6, 0, 7); c.arc(tx + 7, 66, 6, 0, 7); c.fill(); }
+  else { c.strokeStyle = '#4e342e'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(tx, 68); c.lineTo(tx - 8, 56); c.moveTo(tx, 66); c.lineTo(tx + 8, 54); c.stroke(); c.fillStyle = 'rgba(255,255,255,.95)'; c.fillRect(tx - 9, 55, 5, 2); c.fillRect(tx + 6, 53, 5, 2); }
+  if (ys === 'winter' || ys === 'autumn' || ys === 'spring') {
+   for (let i = 0; i < 16; i++) { const fx = 20 + (i * 37 + Math.sin(clock * 0.9 + i) * 5 + clock * (ys === 'winter' ? 3 : 7)) % 90, fy = 18 + (i * 23 + clock * (ys === 'winter' ? 14 : 22)) % 74;
+    c.fillStyle = ys === 'winter' ? 'rgba(255,255,255,.9)' : ys === 'autumn' ? (i % 2 ? '#ef6c00' : '#c62828') : '#f8bbd0'; c.fillRect(fx, fy, ys === 'winter' ? 1.6 : 2.4, ys === 'winter' ? 1.6 : 1.6); }
+  }
+  if ((ys === 'summer' || ys === 'spring') && nt < 0.5) { const bx = 20 + (clock * 10) % 110, by = 34 + Math.sin(clock * 3) * 3; c.strokeStyle = '#37474f'; c.lineWidth = 1; c.beginPath(); c.moveTo(bx - 3, by); c.lineTo(bx, by + 2 + Math.sin(clock * 14) * 1.5); c.lineTo(bx + 3, by); c.stroke(); }
+  c.restore(); }
+ const rn = rain();
+ if (rn > 0.02) {
+  c.save(); c.beginPath(); c.rect(20, 18, 90, 74); c.clip();
+  c.fillStyle = 'rgba(70,80,105,' + (rn * 0.5) + ')'; c.fillRect(20, 18, 90, 74);
+  c.strokeStyle = 'rgba(210,230,255,' + (0.35 + rn * 0.4) + ')'; c.lineWidth = 1; c.beginPath();
+  for (let i = 0; i < 30; i++) { const rx = 20 + (i * 53) % 90, ry = 18 + (i * 29 + clock * 150) % 74; c.moveTo(rx, ry); c.lineTo(rx - 2, ry + 6); }
+  c.stroke();
+  c.fillStyle = 'rgba(220,235,255,.55)';
+  [[30, 40, 0], [58, 60, 1], [88, 30, 2], [100, 70, 3], [44, 78, 4]].forEach(d => { c.beginPath(); c.ellipse(d[0], d[1] + ((clock * 3 + d[2] * 5) % 14) * rn, 1.4, 2.2, 0, 0, Math.PI * 2); c.fill(); });
+  c.restore();
+ }
+ c.strokeStyle = '#efebe9';
+ c.lineWidth = 4;
+ c.strokeRect(20, 18, 90, 74);
+ c.lineWidth = 2;
+ c.beginPath(); c.moveTo(65, 18); c.lineTo(65, 92); c.moveTo(20, 55); c.lineTo(110, 55); c.stroke();
+
+ { const d = new Date(), cx = 162, cy = 40;
+  c.fillStyle = '#3e2723'; c.beginPath(); c.arc(cx, cy, 12, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#fff8e1'; c.beginPath(); c.arc(cx, cy, 10, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#8d6e63'; c.lineWidth = 1; for (let i = 0; i < 12; i += 3) { const a = i / 12 * Math.PI * 2; c.beginPath(); c.moveTo(cx + Math.sin(a) * 8, cy - Math.cos(a) * 8); c.lineTo(cx + Math.sin(a) * 9.5, cy - Math.cos(a) * 9.5); c.stroke(); }
+  const ha = ((d.getHours() % 12) + d.getMinutes() / 60) / 12 * Math.PI * 2, ma = d.getMinutes() / 60 * Math.PI * 2;
+  c.strokeStyle = '#3e2723'; c.lineCap = 'round'; c.lineWidth = 1.8; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.sin(ha) * 5, cy - Math.cos(ha) * 5); c.stroke();
+  c.lineWidth = 1.2; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.sin(ma) * 7.5, cy - Math.cos(ma) * 7.5); c.stroke(); }
+ { c.fillStyle = '#5d4037'; rrect(c, 119, 52, 36, 42, 3); c.fill(); c.fillStyle = '#263238'; c.fillRect(121, 54, 32, 38);
+  c.fillStyle = 'rgba(255,255,255,.85)'; c.font = 'bold 7px Arial'; c.textAlign = 'center'; c.fillText('МЕНЮ', 137, 63); c.textAlign = 'left';
+  c.font = '7px Arial'; ['☕ ·····', '🥐 ····', '🍰 ····'].forEach((t, i) => c.fillText(t, 124, 73 + i * 9)); }
+ c.fillStyle = '#6d4c41'; c.fillRect(334, 78, 58, 4); c.fillStyle = '#3e2723'; c.fillRect(338, 82, 3, 5); c.fillRect(385, 82, 3, 5);
+ [[341, 0], [375, 1]].forEach(q => { c.fillStyle = '#fafafa'; rrect(c, q[0], 69, 8, 9, 2); c.fill(); c.strokeStyle = '#fafafa'; c.lineWidth = 1.4; c.beginPath(); c.arc(q[0] + 9, 73, 2.5, -1.2, 1.2); c.stroke(); });
+ c.fillStyle = 'rgba(179,229,252,.4)'; rrect(c, 356, 62, 13, 16, 3); c.fill();
+ c.fillStyle = '#4e342e'; for (let i = 0; i < 6; i++) { c.beginPath(); c.ellipse(359 + (i % 3) * 3.5, 74.5 - Math.floor(i / 3) * 3, 1.8, 1.2, 0.5, 0, Math.PI * 2); c.fill(); }
+ c.fillStyle = '#ffb74d'; c.fillRect(355, 60, 15, 3);
+ c.fillStyle = '#3e2723'; rrect(c, 208, 26, 124, 28, 6); c.fill();
+ c.strokeStyle = '#8d6e63'; c.lineWidth = 1.5; rrect(c, 208, 26, 124, 28, 6); c.stroke();
+ const nm = (window.TR ? TR(displayName()) : displayName()).toUpperCase();
+ let fs = 20; c.font = 'bold ' + fs + 'px Arial';
+ while (fs > 8 && c.measureText(nm).width > 112) { fs--; c.font = 'bold ' + fs + 'px Arial'; }
+ c.textAlign = 'center';
+ if (state.boosts.sign) { c.shadowColor = '#ffeb3b'; c.shadowBlur = 14; c.fillStyle = '#fff59d'; }
+ else c.fillStyle = '#bcaaa4';
+ c.fillText(nm, 270, 40 + fs * 0.35);
+ c.shadowBlur = 0;
+ if (vipLevel() >= 3) { c.font = '13px Arial'; c.fillStyle = '#ffd54f'; c.fillText('👑', 270, 24); }
+ if (state.boosts.ads) {
+  c.fillStyle = '#f06292';
+  rrect(c, 395, 22, 50, 64, 4); c.fill();
+  c.fillStyle = '#fff';
+  c.font = 'bold 14px Arial';
+  c.fillText('-20%', 420, 46);
+  c.font = '20px Arial';
+  c.fillText('☕', 420, 74);
+ }
+ c.textAlign = 'left';
+
+ const staffList = [];
+ for (let t = hires.length - 1; t >= 0; t--) {
+  const n = state.owned[hires[t].id] || 0;
+  for (let k = 0; k < n && staffList.length < 10; k++) staffList.push(t);
+ }
+ staffList.forEach((tier, i) => drawStaff(c, 222 + i * 22, tier, i));
+ const extra = staffCount() - staffList.length;
+ if (extra > 0) {
+  c.fillStyle = '#ffcc80';
+  c.font = 'bold 13px Arial';
+  c.fillText('+' + extra, 446, 108);
+ }
+
+ c.fillStyle = '#3e2723'; c.fillRect(140, 118, 340, 34);
+ c.fillStyle = '#8d6e63'; c.fillRect(140, 118, 340, 6);
+ { const rx = 146, ry = 118; c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(rx - 1, ry - 1, 25, 2);
+  c.fillStyle = '#455a64'; rrect(c, rx, ry - 9, 14, 9, 2); c.fill(); c.fillStyle = '#263238'; rrect(c, rx + 2, ry - 15, 10, 6, 1.5); c.fill();
+  c.fillStyle = Math.sin(clock * 2) > 0 ? '#69f0ae' : '#43a047'; c.fillRect(rx + 3, ry - 13.5, 5, 1.6); c.fillStyle = '#ffd54f'; c.fillRect(rx + 3, ry - 11, 3, 1);
+  c.fillStyle = '#eceff1'; for (let k = 0; k < 3; k++) c.fillRect(rx + 2 + k * 4, ry - 6, 3, 1.4);
+  if (state.bk.till > 1) { c.fillStyle = '#81c784'; c.fillRect(rx + 1, ry - 2.6, 12, 1.6); c.fillStyle = '#a5d6a7'; c.fillRect(rx + 3, ry - 3.8, 8, 1.4); }
+  c.fillStyle = '#37474f'; rrect(c, rx + 17, ry - 6.5, 6, 6.5, 1.2); c.fill(); c.fillStyle = Math.sin(clock * 3) > 0.6 ? '#fff59d' : '#80deea'; c.fillRect(rx + 18, ry - 5.5, 4, 2.2); c.fillStyle = '#90a4ae'; c.fillRect(rx + 18, ry - 2.5, 4, 1.2); }
+ c.fillStyle = 'rgba(255,255,255,.07)'; c.fillRect(140, 124, 340, 3);
+ c.fillStyle = 'rgba(0,0,0,.2)'; for (let x = 174; x < 480; x += 34) c.fillRect(x, 128, 2, 22);
+ { const rg = c.createLinearGradient(0, 149, 0, 153); rg.addColorStop(0, '#f2d27a'); rg.addColorStop(1, '#a8802c'); c.fillStyle = rg; c.fillRect(140, 149, 340, 3); }
+ { const sh = c.createLinearGradient(0, 152, 0, 168); sh.addColorStop(0, 'rgba(0,0,0,.3)'); sh.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = sh; c.fillRect(140, 152, 340, 16); }
+
+ c.fillStyle = '#546e7a'; rrect(c, 168, 84, 34, 34, 4); c.fill();
+ c.fillStyle = '#78909c'; c.fillRect(172, 92, 26, 16);
+ c.fillStyle = Math.sin(clock * 4) > 0 ? '#ef5350' : '#4caf50';
+ c.beginPath(); c.arc(195, 88, 2.5, 0, Math.PI * 2); c.fill();
+ c.fillStyle = '#efebe9'; c.fillRect(181, 108, 9, 8);
+
+ if (state.boosts.premium) {
+  c.fillStyle = 'rgba(255,215,0,0.35)';
+  rrect(c, 146, 96, 16, 22, 3); c.fill();
+  c.fillStyle = '#5d4037';
+  rrect(c, 148, 104, 12, 12, 2); c.fill();
+  c.strokeStyle = '#ffd54f'; c.lineWidth = 1.5;
+  rrect(c, 146, 96, 16, 22, 3); c.stroke();
+ }
+
+
+ [185, 355].forEach(lx => {
+  c.strokeStyle = '#3e2723'; c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(lx, 0); c.lineTo(lx, 14); c.stroke();
+  c.fillStyle = '#ffb74d';
+  c.beginPath(); c.moveTo(lx - 10, 26); c.lineTo(lx - 3, 14); c.lineTo(lx + 3, 14); c.lineTo(lx + 10, 26); c.closePath(); c.fill();
+  c.fillStyle = '#fff3c4'; c.beginPath(); c.arc(lx, 27, 3, 0, Math.PI * 2); c.fill();
+ });
+ if (state.boosts.wifi) {
+  c.strokeStyle = '#81d4fa'; c.lineWidth = 2;
+  for (let r = 1; r <= 3; r++) { c.beginPath(); c.arc(132, 56, r * 6, Math.PI * 1.25, Math.PI * 1.75); c.stroke(); }
+  c.fillStyle = '#81d4fa'; c.beginPath(); c.arc(132, 56, 2, 0, Math.PI * 2); c.fill();
+ }
+ if (state.boosts.music) {
+  c.fillStyle = 'rgba(255,224,178,.85)'; c.font = '16px Arial';
+  for (let k = 0; k < 3; k++) {
+   const ph = (clock * 0.4 + k / 3) % 1;
+   c.globalAlpha = Math.sin(ph * Math.PI);
+   c.fillText(k % 2 ? '♪' : '♫', 300 + k * 14 + Math.sin(clock * 2 + k) * 4, 100 - ph * 50);
+  }
+  c.globalAlpha = 1;
+ }
+ if (state.boosts.terrace) {
+  [[48, 150], [102, 156]].forEach(t => {
+   c.fillStyle = 'rgba(0,0,0,.2)'; c.beginPath(); c.ellipse(t[0], t[1] + 12, 14, 4, 0, 0, Math.PI * 2); c.fill();
+   c.fillStyle = '#5d4037'; c.fillRect(t[0] - 1, t[1] - 4, 2, 16);
+   c.fillStyle = '#ef9a9a'; c.beginPath(); c.arc(t[0], t[1] - 14, 14, Math.PI, 0); c.fill();
+   c.fillStyle = '#8d6e63'; c.beginPath(); c.ellipse(t[0], t[1] + 2, 12, 4, 0, 0, Math.PI * 2); c.fill();
+  });
+ }
+ if (state.boosts.app) {
+  c.fillStyle = '#263238'; rrect(c, 456, 24, 20, 34, 4); c.fill();
+  c.fillStyle = '#66bb6a'; c.fillRect(459, 29, 14, 22);
+  c.fillStyle = '#fff'; c.font = '11px Arial'; c.textAlign = 'center'; c.fillText('☕', 466, 44); c.textAlign = 'left';
+ }
+ if (state.boosts.pastry) {
+  c.fillStyle = 'rgba(179,229,252,.35)'; rrect(c, 236, 126, 90, 22, 4); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 1; rrect(c, 236, 126, 90, 22, 4); c.stroke();
+  ['#f48fb1', '#ffcc80', '#ce93d8', '#fff59d', '#a5d6a7'].forEach((col, i) => { c.fillStyle = col; c.beginPath(); c.arc(248 + i * 16, 140, 5, 0, Math.PI * 2); c.fill(); });
+ }
+ if (state.boosts.plants) {
+  c.fillStyle = '#a1887f'; c.fillRect(6, 124, 16, 14);
+  c.fillStyle = '#66bb6a';
+  [[8, 114, 7], [16, 108, 8], [22, 116, 6]].forEach(l => { c.beginPath(); c.arc(l[0], l[1], l[2], 0, Math.PI * 2); c.fill(); });
+ }
+ if (state.boosts.stars) {
+  c.fillStyle = '#ffd54f'; c.font = '14px Arial'; c.textAlign = 'center'; c.fillText('★ ★ ★', 270, 20); c.textAlign = 'left';
+ }
+ if (state.boosts.delivery) { c.font = '18px Arial'; c.fillText('🛵', (W + 30) - ((clock * 55) % (W + 60)), 218); }
+
+ drawSeason(c);
+ customers.slice().sort((a, b) => a.y - b.y).forEach(cu => drawCustomer(c, cu));
+ drawKitty(c);
+
+ particles.forEach(p => {
+  const a = Math.max(0, Math.min(1, p.life / p.max));
+  if (p.kind === 'steam') {
+   c.fillStyle = 'rgba(255,255,255,' + (a * 0.5) + ')';
+   c.beginPath(); c.arc(p.x, p.y, 2 + (1 - a) * 4, 0, Math.PI * 2); c.fill();
+  } else if (p.kind === 'heart') {
+   c.globalAlpha = a; c.fillStyle = '#f48fb1'; c.font = '12px Arial'; c.fillText('♥', p.x, p.y); c.globalAlpha = 1;
+  } else if (p.kind === 'zzz') {
+   c.globalAlpha = a; c.fillStyle = '#e3f2fd'; c.font = 'bold 11px Arial'; c.fillText('z', p.x, p.y); c.globalAlpha = 1;
+  } else if (p.kind === 'cup') {
+   c.globalAlpha = a;
+   c.font = '14px Arial';
+   c.fillText('☕', p.x, p.y);
+   c.globalAlpha = 1;
+  } else {
+   c.globalAlpha = a;
+   c.fillStyle = '#ffca28';
+   c.beginPath(); c.arc(p.x, p.y, 7, 0, Math.PI * 2); c.fill();
+   c.fillStyle = '#795548';
+   c.font = 'bold 10px Arial';
+   c.textAlign = 'center';
+   c.fillText('$', p.x, p.y + 3.5);
+   c.textAlign = 'left';
+   c.globalAlpha = 1;
+  }
+ });
+}
+
+function rain() { return wA ? Math.max(wA.rain, wA.storm) : 0; }
+function night() { return Math.max(0, Math.min(1, (1 - Math.cos(clock * 0.05)) * 0.7 - 0.1)); }
+function hex2(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+function mixc(a, b, t) { return 'rgb(' + a.map((x, i) => Math.round(x + (b[i] - x) * t)).join(',') + ')'; }
+function drawScene() {
+ drawSceneBase();
+ const c = sctx, nt = night();
+ if (nt < 0.7) {
+  c.fillStyle = 'rgba(255,244,200,' + (0.12 * (1 - nt)) + ')';
+  c.beginPath(); c.moveTo(20, 92); c.lineTo(110, 92); c.lineTo(230, 220); c.lineTo(90, 220); c.closePath(); c.fill();
+ }
+ if (nt < 0.7) {
+  for (let i = 0; i < 14; i++) {
+   const u = (i * 0.137 + clock * 0.03) % 1, v = (i * 0.311 + clock * 0.02) % 1, y = 92 + u * 120;
+   const l = 20 + (y - 92) * 0.547, r = 110 + (y - 92) * 0.94, x = l + v * (r - l) + Math.sin(clock * 0.8 + i) * 3;
+   c.fillStyle = 'rgba(255,248,220,' + (0.55 * Math.sin(u * Math.PI) * (1 - nt)) + ')'; c.fillRect(x, y, 1.6, 1.6);
+  }
+ }
+ { const fg = c.createLinearGradient(0, 120, 0, 220); fg.addColorStop(0, 'rgba(255,255,255,.1)'); fg.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = fg; c.fillRect(0, 120, W, 100); }
+ [185, 355].forEach(lx => {
+  c.save(); c.translate(lx, 185); c.scale(1, 0.28);
+  const pg = c.createRadialGradient(0, 0, 4, 0, 0, 85); pg.addColorStop(0, 'rgba(255,214,140,' + (0.2 + nt * 0.25) + ')'); pg.addColorStop(1, 'rgba(255,214,140,0)');
+  c.fillStyle = pg; c.beginPath(); c.arc(0, 0, 85, 0, Math.PI * 2); c.fill(); c.restore();
+ });
+ if (nt > 0) { c.fillStyle = 'rgba(20,16,60,' + (nt * 0.32) + ')'; c.fillRect(0, 0, W, H); }
+ [185, 355].forEach(lx => {
+  const g = c.createRadialGradient(lx, 30, 2, lx, 30, 95);
+  g.addColorStop(0, 'rgba(255,214,140,' + (0.22 + nt * 0.4) + ')'); g.addColorStop(1, 'rgba(255,214,140,0)');
+  c.fillStyle = g; c.fillRect(lx - 95, 0, 190, 160);
+ });
+ drawWeatherFx(c);
+ { const ys = yearSeason(), txt = YS[ys][0] + ' ' + YS[ys][1] + ' · ' + dayPhase() + (vipLevel() ? ' · 👑 VIP' : '') + (wx && WI[wx.t] ? ' · ' + WI[wx.t] : '');
+  c.font = 'bold 9px Arial'; const tw = c.measureText(txt).width + 12;
+  c.fillStyle = 'rgba(0,0,0,.35)'; rrect(c, 6, 3, tw, 13, 6); c.fill();
+  c.fillStyle = '#fff'; c.fillText(txt, 12, 12.5); }
+ if (state.bk.prem.hall === 'own') { c.fillStyle = 'rgba(255,214,0,.9)'; c.font = '10px Arial'; c.fillText('🏠', 6, 30 + 0); }
+ const sg2 = stages[stageIdx()];
+ c.fillStyle = 'rgba(255,246,234,.8)'; c.font = 'bold 11px Arial'; c.textAlign = 'right';
+ c.fillText(sg2.icon + ' ' + sg2.name, W - 8, H - 8); c.textAlign = 'left';
+ const v = c.createRadialGradient(W / 2, H / 2, 90, W / 2, H / 2, 290);
+ v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.35)');
+ c.fillStyle = v; c.fillRect(0, 0, W, H);
+}
+
+function frame(now) {
+ const dt = Math.min(0.1, (now - lastTime) / 1000);
+ lastTime = now;
+ updateScene(dt);
+ drawScene();
+ requestAnimationFrame(frame);
+}
+
+$('work').addEventListener('click', (e) => {
+ const nowT = Date.now();
+ comboN = nowT - lastClickT < 1200 ? comboN + 1 : 1; lastClickT = nowT;
+ if (comboN > (state.bestCombo || 0)) state.bestCombo = comboN;
+ clickTimes.push(nowT); clickTimes = clickTimes.filter(t => nowT - t < 2000);
+ if (night() > 0.9) state.secNight = 1;
+ if (Math.floor(state.money) === 777) state.sec777 = 1;
+ const crit = Math.random() < 0.05;
+ const gain = clickGain() * (crit ? 3 : 1);
+ state.clicks++;
+ wqAdd('click', 1);
+ if (crit) { state.crits = (state.crits || 0) + 1; wqAdd('crit', 1); }
+ earn(gain);
+ sndClick();
+ if (crit) { try { sweep(520, 1040, 0.18, 'triangle', 0.12); } catch (x) {} for (let i = 0; i < 7; i++) particles.push({ kind: 'coin', x: 180 + (i - 3) * 6, y: 96, vx: (i - 3) * 22, vy: -90 - (i % 3) * 14, g: 170, life: 1, max: 1 }); }
+ workFx(e);
+ render();
+ particles.push({ kind: 'cup', x: 180, y: 100, vx: (Math.random() - 0.5) * 50, vy: -70, g: 160, life: 0.9, max: 0.9 });
+ if (Math.random() < 0.4) spawnCustomer();
+ const f = document.createElement('div');
+ f.className = 'float';
+ f.textContent = (crit ? 'CRIT! +' : '+') + fmt(gain);
+ if (crit) f.classList.add('crit');
+ f.style.left = e.clientX + 'px';
+ f.style.top = e.clientY + 'px';
+ document.body.appendChild(f);
+ setTimeout(() => f.remove(), crit ? 1100 : 800);
+});
+
+muteBtn.addEventListener('click', () => {
+ state.muted = !state.muted;
+ save(); render(); sndBuy();
+});
+
+musicBtn.addEventListener('click', () => {
+ state.music = !state.music;
+ save(); render(); sndBuy();
+ if (state.music) setTimeout(playMusic, 150);
+});
+
+$('reset').addEventListener('click', () => {
+ confirmBox('Начать заново?', 'Весь прогресс и достижения пропадут. Название кофейни и настройки звука останутся.', 'Да, начать заново', () => {
+  const keep = { muted: state.muted, music: state.music, name: state.name, sfxVol: state.sfxVol, musVol: state.musVol, seasonOff: state.seasonOff, fr: state.fr, wq: state.wq, theme: state.theme, btnSkin: state.btnSkin, btnIcon: state.btnIcon, clickSnd: state.clickSnd, btnSize: state.btnSize, vib: state.vib, fx: state.fx };
+  state = freshState();
+  Object.assign(state, keep);
+  history = new Array(30).fill(0);
+  earnedThisSecond = 0;
+  buffs = [];
+  hideEvent();
+  closeModal(); renderJournal();
+  document.querySelectorAll('.golden').forEach(x => x.remove());
+  save(); render(); drawChart();
+  toast('🔄 Начинаем с чистого листа!');
+ });
+});
+
+
+// ---------- БАНК ----------
+function freshBank() { return { prem: { hall: 'rent' }, upg: {}, dues: [], auto: true, till: 0, rentIn: 240, taxIn: 600, colIn: 90, robIn: 600, taxBase: 0, rentP: 0 }; }
+function freshLife() { return { rent: 0, tax: 0, taxes: 0, fees: 0, stolen: 0, late: 0 }; }
+const BK = { rent: 240, tax: 600, grace: 120, fine: 0.10, fee: 0.025, late: 0.85, card: [0.35, 0.5, 0.6, 0.7, 0.8, 0.85], taxRate: [0.04, 0.05, 0.06, 0.07, 0.08, 0.10] };
+const PREM = [
+ { id: 'hall', icon: '🏠', name: 'Торговый зал', desc: 'Основное помещение кофейни.', stage: 0, rentF: 0.04, floor: 12, lease: 0, own: 0.05, cost: 15000 },
+ { id: 'store', icon: '📦', name: 'Склад', desc: 'Запасы зёрен и выпечки под рукой.', stage: 1, rentF: 0.015, floor: 60, lease: 0.03, own: 0.05, cost: 250000 },
+ { id: 'floor2', icon: '🛋️', name: 'Второй зал', desc: 'Больше столиков и посетителей.', stage: 2, rentF: 0.02, floor: 500, lease: 0.045, own: 0.08, cost: 4000000 },
+ { id: 'bld', icon: '🏢', name: 'Здание целиком', desc: 'Вся недвижимость — твоя.', stage: 3, rentF: 0.03, floor: 5000, lease: 0.07, own: 0.12, cost: 100000000 }
+];
+const BKU = [
+ { id: 'pos', icon: '💳', name: 'Эквайринг-терминал', desc: 'Комиссия за оплату картой снижается вдвое', cost: 3000, stage: 0 },
+ { id: 'safe', icon: '🔐', name: 'Сейф', desc: 'Потери при ограблении кассы −70%', cost: 8000, stage: 0 },
+ { id: 'collector', icon: '🚚', name: 'Инкассатор', desc: 'Сам сдаёт выручку в банк каждые 90 секунд', cost: 25000, stage: 1 },
+ { id: 'acc', icon: '🧮', name: 'Бухгалтер', desc: 'Налог на прибыль −25%', cost: 60000, stage: 1 }
+];
+function bankNormalize() {
+ const had = hadBk;
+ state.bk = Object.assign(freshBank(), state.bk || {});
+ state.bk.prem = Object.assign({ hall: 'rent' }, state.bk.prem || {}); state.bk.upg = state.bk.upg || {}; state.bk.dues = state.bk.dues || [];
+ state.bkLife = Object.assign(freshLife(), state.bkLife || {});
+ if (!had) state.bk.taxBase = state.total;
+}
+function cardShare() { return BK.card[stageIdx()]; }
+function cardFee() { return BK.fee * (state.bk.upg.pos ? 0.5 : 1); }
+function premStatus(id) { return state.bk.prem[id] || 'none'; }
+function bankBonus() { let b = 0; PREM.forEach(p => { const st = premStatus(p.id); if (st === 'own') b += p.own; else if (st === 'rent') b += p.lease; }); return b; }
+function bankMult() { return (1 + bankBonus()) * (state.bk.dues.some(d => d.late) ? BK.late : 1); }
+function rentOf(p) { return Math.max(p.floor, Math.round(p.rentF * incomePerSec() * BK.rent)); }
+function rentTotal() { return PREM.reduce((a, p) => a + (premStatus(p.id) === 'rent' ? rentOf(p) : 0), 0); }
+function taxRate() { return BK.taxRate[stageIdx()] * (state.bk.upg.acc ? 0.75 : 1); }
+function addDue(type, amt) {
+ const bk = state.bk, d = bk.dues.find(x => x.type === type);
+ if (d) d.amt += amt; else bk.dues.push({ type, amt, left: BK.grace, late: false });
+ toast((type === 'rent' ? '🏠 Выставлен счёт за аренду: $' : '🧾 Выставлен налог: $') + fmt(amt));
+}
+function payDue(d, auto) {
+ const bk = state.bk; if (state.money < d.amt) return false;
+ state.money -= d.amt;
+ if (d.type === 'rent') { bk.till = Math.max(0, bk.till - d.amt); bk.rentP += d.amt; state.bkLife.rent += d.amt; }
+ else { state.bkLife.tax += d.amt; state.bkLife.taxes++; }
+ bk.dues = bk.dues.filter(x => x !== d);
+ toast((auto ? '🏦 Автоплатёж: ' : '✅ Оплачено: ') + (d.type === 'rent' ? 'аренда −$' : 'налог −$') + fmt(d.amt)); sndBuy();
+ return true;
+}
+function bankTick(dt) {
+ const bk = state.bk;
+ bk.till = Math.min(bk.till, state.money);
+ bk.rentIn -= dt; if (bk.rentIn <= 0) { bk.rentIn += BK.rent; const t = rentTotal(); if (t > 0) addDue('rent', t); }
+ bk.taxIn -= dt; if (bk.taxIn <= 0) {
+  bk.taxIn += BK.tax; const profit = Math.max(0, state.total - bk.taxBase - bk.rentP); bk.taxBase = state.total; bk.rentP = 0;
+  const t = profit * taxRate(); if (t >= 1) addDue('tax', t);
+ }
+ bk.dues.forEach(d => { if (!d.late) { d.left -= dt; if (d.left <= 0) { d.late = true; d.amt *= 1 + BK.fine; state.bkLife.late++; toast('⚠️ Просрочка платежа! Штраф 10%, доход ×0.85 до оплаты'); } } });
+ if (bk.auto) bk.dues.slice().forEach(d => { if (state.money >= d.amt) payDue(d, true); });
+ if (bk.upg.collector || vipLevel() >= 3) { bk.colIn -= dt; if (bk.colIn <= 0) { bk.colIn = 90; bk.till = 0; } }
+ bk.robIn -= dt; if (bk.robIn <= 0) {
+  bk.robIn = 480 + Math.random() * 360;
+  if (stageIdx() >= 1 && bk.till >= 100) { const loss = bk.till * 0.25 * (bk.upg.safe ? 0.3 : 1); state.money -= loss; bk.till -= loss; state.bkLife.stolen += loss; toast('🦹 Ограбление! Из кассы украли $' + fmt(loss) + '. Сдавай выручку в банк!'); }
+ }
+}
+function buyPrem(p, mode) {
+ const bk = state.bk, st = premStatus(p.id);
+ if (stageIdx() < p.stage) return;
+ if (mode === 'rent' && st === 'none') { const dep = rentOf(p); if (state.money < dep) return; state.money -= dep; bk.rentP += dep; state.bkLife.rent += dep; bk.prem[p.id] = 'rent'; toast('🔑 Арендовано: ' + p.name); sndBuy(); }
+ else if (mode === 'own' && st !== 'own') { if (state.money < p.cost) return; state.money -= p.cost; bk.prem[p.id] = 'own'; toast('🏠 Выкуплено: ' + p.name + '!'); sndAch(); }
+ save(); render();
+}
+function fmtMS(sec) { sec = Math.max(0, Math.ceil(sec)); return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
+let bkBuilt = false, bkSig = '', bkTabTxt = '';
+function buildBank() {
+ const pr = $('bkPrem'), up = $('bkUp');
+ PREM.forEach(p => {
+  const d = document.createElement('div'); d.className = 'bkp'; d.id = 'pr_' + p.id;
+  d.innerHTML = '<div><div class="nm">' + p.icon + ' ' + p.name + '</div><div class="ds"></div></div><div class="pb"><button class="rb"></button><button class="ob"></button></div>';
+  d.querySelector('.rb').addEventListener('click', () => buyPrem(p, 'rent')); d.querySelector('.ob').addEventListener('click', () => buyPrem(p, 'own'));
+  pr.appendChild(d);
+ });
+ BKU.forEach(u => {
+  const d = document.createElement('div'); d.className = 'bkp'; d.id = 'bu_' + u.id;
+  d.innerHTML = '<div><div class="nm">' + u.icon + ' ' + u.name + '</div><div class="ds">' + u.desc + '</div></div><div class="pb"><button></button></div>';
+  d.querySelector('button').addEventListener('click', () => { if (state.bk.upg[u.id] || state.money < u.cost || stageIdx() < u.stage) return; state.money -= u.cost; state.bk.upg[u.id] = 1; sndBuy(); save(); render(); });
+  up.appendChild(d);
+ });
+ $('bkDeposit').addEventListener('click', () => { const t = state.bk.till; if (t < 1) return; state.bk.till = 0; toast('🏦 Выручка сдана в банк: $' + fmt(t)); sndBuy(); render(); });
+ $('bkAuto').addEventListener('click', () => { state.bk.auto = !state.bk.auto; save(); render(); });
+ bkBuilt = true;
+}
+function renderBank() {
+ if (!bkBuilt) return;
+ const bk = state.bk, tab = $('bkTab'), want = '🏦 Банк' + (bk.dues.length ? ' ❗' : '');
+ if (bkTabTxt !== want) { tab.textContent = want; bkTabTxt = want; }
+ if (!$('p6').classList.contains('on')) return;
+ const till = bk.till, card = Math.max(0, state.money - till);
+ $('bkCards').innerHTML = [['💵 Касса (наличные)', '$' + fmt(till)], ['💳 Карта (на счёте)', '$' + fmt(card)], ['📉 Комиссия за карты', (cardFee() * 100).toFixed(1) + '%'], ['🧾 Налог на прибыль', Math.round(taxRate() * 100) + '%'], ['💳 Доля оплат картой', Math.round(cardShare() * 100) + '%'], ['📈 Бонус помещений', '+' + Math.round(bankBonus() * 100) + '%']].map(x => '<div class="scard">' + x[0] + '<b>' + x[1] + '</b></div>').join('');
+ $('bkDeposit').disabled = till < 1;
+ $('bkAuto').textContent = bk.auto ? '🔁 Автоплатёж: вкл' : '🔁 Автоплатёж: выкл';
+ const sig = bk.dues.map(d => d.type + Math.round(d.amt) + d.late + (state.money >= d.amt)).join('|');
+ if (sig !== bkSig) {
+  bkSig = sig;
+  $('bkDues').innerHTML = bk.dues.length ? bk.dues.map((d, i) => '<div class="due' + (d.late ? ' late' : '') + '"><span>' + (d.type === 'rent' ? '🏠 Аренда' : '🧾 Налог на прибыль') + ': <b>$' + fmt(d.amt) + '</b>' + (d.late ? ' — просрочено' : '') + '</span><button class="bkbtn" data-i="' + i + '"' + (state.money < d.amt ? ' disabled' : '') + '>Оплатить</button></div>').join('') : '<div class="caption">Счетов нет — всё оплачено ✅</div>';
+  $('bkDues').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const d = bk.dues[+b.dataset.i]; if (d && payDue(d)) render(); }));
+ }
+ $('bkTimers').innerHTML = '<div class="caption">Следующая аренда через ' + fmtMS(bk.rentIn) + ' · $' + fmt(rentTotal()) + '</div><div class="tbar"><i style="width:' + (100 - bk.rentIn / BK.rent * 100) + '%"></i></div><div class="caption">Следующий налог через ' + fmtMS(bk.taxIn) + '</div><div class="tbar"><i style="width:' + (100 - bk.taxIn / BK.tax * 100) + '%"></i></div>';
+ PREM.forEach(p => {
+  const d = $('pr_' + p.id), st = premStatus(p.id), lock = stageIdx() < p.stage, rb = d.querySelector('.rb'), ob = d.querySelector('.ob');
+  d.classList.toggle('own', st === 'own'); d.classList.toggle('lock', lock && st === 'none');
+  d.querySelector('.ds').textContent = p.desc + ' · ' + (st === 'own' ? 'В собственности: +' + Math.round(p.own * 100) + '% к доходу, аренды нет' : st === 'rent' ? 'Арендуется: $' + fmt(rentOf(p)) + ' за цикл' + (p.lease ? ', +' + Math.round(p.lease * 100) + '% к доходу' : '') : lock ? 'Откроется на этапе «' + stages[p.stage].name + '»' : 'Не арендовано: $' + fmt(rentOf(p)) + ' за цикл, +' + Math.round(p.lease * 100) + '% к доходу');
+  rb.style.display = st === 'none' ? '' : 'none'; rb.textContent = 'Арендовать $' + fmt(rentOf(p)); rb.disabled = lock || state.money < rentOf(p);
+  ob.style.display = st === 'own' ? 'none' : ''; ob.textContent = 'Выкупить $' + fmt(p.cost); ob.disabled = lock || state.money < p.cost;
+ });
+ BKU.forEach(u => {
+  const d = $('bu_' + u.id), b = d.querySelector('button'), has = !!bk.upg[u.id], lock = stageIdx() < u.stage;
+  d.classList.toggle('done', has); d.classList.toggle('lock', lock && !has);
+  b.textContent = has ? 'Куплено ✓' : lock ? '🔒 Этап ' + (u.stage + 1) : '$' + fmt(u.cost); b.disabled = has || lock || state.money < u.cost;
+ });
+ const L = state.bkLife;
+ $('bkStats').innerHTML = ['🏠 Аренда выплачена: $' + fmt(L.rent), '🧾 Налогов выплачено: $' + fmt(L.tax) + ' (' + L.taxes + ' раз)', '💳 Комиссий банку: $' + fmt(L.fees), '🦹 Украдено из кассы: $' + fmt(L.stolen), '⚠️ Просрочек: ' + L.late].join('<br>');
+}
+
+
+// ---------- ДРУЗЬЯ И VIP ----------
+const FR_ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function freshFr() { return { id: '', friends: {}, from: '', trial: 0, dayLast: '', streak: 0, best: 0, claimed: {}, link: '' }; }
+function genId() { let r = ''; for (let i = 0; i < 6; i++) r += FR_ALPHA[Math.floor(Math.random() * FR_ALPHA.length)]; return r; }
+function frNormalize() { state.fr = Object.assign(freshFr(), state.fr || {}); state.fr.friends = state.fr.friends || {}; state.fr.claimed = state.fr.claimed || {}; if (!state.fr.id) state.fr.id = genId(); }
+function friendCount() { return Object.keys(state.fr.friends).length; }
+function vipLevel() { const f = friendCount(); let l = f >= 6 ? 3 : f >= 3 ? 2 : f >= 1 ? 1 : 0; if (Date.now() < state.fr.trial) l = Math.max(l, 1); return l; }
+function vipIncome() { return [1, 1, 1.03, 1.06][vipLevel()]; }
+function vipPat() { return VIP_PAT * (vipLevel() >= 2 ? 1.5 : 1); }
+function offlineEff() { return [0.5, 0.65, 0.8, 1][vipLevel()]; }
+function offlineCap() { return [7200, 14400, 21600, 28800][vipLevel()]; }
+function frChk(a, b) { let h = 2166136261; for (const ch of 'cs|' + a + '|' + b) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36).toUpperCase().padStart(6, '0').slice(-6); }
+function frClean(t) { return (t || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+const FR_MS = [
+ { n: 1, icon: '🥉', name: 'Первый друг', money: 900, beans: 0, text: 'VIP Бронза навсегда и скин «Королевский»' },
+ { n: 3, icon: '🥈', name: 'Три друга', money: 1800, beans: 0, text: 'VIP Серебро: золотые чашки ловятся сами' },
+ { n: 6, icon: '🥇', name: 'Шесть друзей', money: 3600, beans: 2, text: 'VIP Золото: бесплатный инкассатор, скин «Бриллиант» и корона на вывеске' },
+ { n: 10, icon: '💎', name: 'Десять друзей', money: 7200, beans: 3, text: 'Зёрна и большой денежный приз' }
+];
+function frMoney(mult, min) { return Math.max(min, Math.round(incomePerSec() * mult)); }
+function redeemFriend(raw) {
+ const fr = state.fr, code = frClean(raw).slice(0, 6);
+ if (code.length < 6 || ![...code].every(c => FR_ALPHA.includes(c))) return 'bad';
+ if (code === fr.id) return 'self';
+ if (fr.from) return 'used';
+ fr.from = code; fr.trial = Date.now() + 3 * 864e5;
+ const g = frMoney(600, 500); earn(g);
+ toast('🎁 Бонус за код друга: +$' + fmt(g) + ' и 3 дня VIP!'); sndAch(); save(); render();
+ return 'ok';
+}
+function frReply() { const fr = state.fr; return fr.from ? fr.id + '-' + frChk(fr.from, fr.id) : ''; }
+function confirmFriend(raw) {
+ const fr = state.fr, t = frClean(raw);
+ if (t.length < 12) return 'bad';
+ const fid = t.slice(0, 6), c = t.slice(6, 12);
+ if (fid === fr.id) return 'self';
+ if (c !== frChk(fr.id, fid)) return 'bad';
+ if (fr.friends[fid]) return 'used';
+ fr.friends[fid] = 1;
+ const n = friendCount();
+ FR_MS.forEach(m => { if (n >= m.n && !fr.claimed[m.n]) { fr.claimed[m.n] = 1; const g = frMoney(m.money, m.money); earn(g); state.beans = (state.beans || 0) + m.beans; toast(m.icon + ' Награда за друзей: +$' + fmt(g) + (m.beans ? ' и зёрна: ' + m.beans : '')); } });
+ toast('🤝 Друг засчитан!'); sndAch(); save(); render();
+ return 'ok';
+}
+function dailyToday() { return new Date().toDateString(); }
+function dailyReward() { const fr = state.fr, streak = (new Date(Date.now() - 864e5).toDateString() === fr.dayLast ? fr.streak : 0) + 1; return { streak, money: Math.max(150, Math.round(incomePerSec() * 120)) * (1 + vipLevel()) * (1 + 0.1 * Math.min(streak - 1, 6)) }; }
+function claimDaily() {
+ const fr = state.fr; if (fr.dayLast === dailyToday()) return;
+ const r = dailyReward(); fr.streak = r.streak; fr.best = Math.max(fr.best || 0, fr.streak); fr.dayLast = dailyToday();
+ earn(r.money); wqAdd('daily', 1); let extra = '';
+ if (fr.streak % 7 === 0) { state.beans = (state.beans || 0) + 1; extra = ' + 🫘'; }
+ toast('🎁 Ежедневная награда: +$' + fmt(r.money) + extra); sndAch(); save(); render();
+}
+const PERKS = [
+ [1, '🎁', 'Ежедневная награда ×2'], [1, '💤', 'Офлайн-доход 65% до 4 часов'], [1, '🎨', 'Скин кнопки «Королевский»'],
+ [2, '🎁', 'Ежедневная награда ×3'], [2, '💤', 'Офлайн-доход 80% до 6 часов'], [2, '🌟', 'Золотые чашки ловятся сами'], [2, '👑', 'VIP-клиенты ждут дольше и приходят чаще'], [2, '📈', '+3% к доходу'],
+ [3, '🎁', 'Ежедневная награда ×4'], [3, '💤', 'Офлайн-доход 100% до 8 часов'], [3, '🚚', 'Бесплатный инкассатор'], [3, '📈', '+6% к доходу'], [3, '🎨', 'Скин кнопки «Бриллиант»'], [3, '🏅', 'Корона на вывеске']
+];
+let frBuilt = false, frSig = '', frLastLvl = -1;
+function buildFriends() {
+ const copy = async (txt, ok) => { try { await navigator.clipboard.writeText(txt); toast(ok); } catch (e) { toast('📋 Выдели текст и скопируй вручную'); } };
+ const inv = () => (window.TR ? TR('Заходи в Coffee Shop Simulator! Мой код друга: ') : 'Заходи в Coffee Shop Simulator! Мой код друга: ') + state.fr.id + (window.TR ? TR('. Введи его в разделе «Друзья» и получи бонус.') : '. Введи его в разделе «Друзья» и получи бонус.') + (state.fr.link ? '\n' + state.fr.link : '');
+ const msg = $('frMsg'), link = $('frLink'); link.value = state.fr.link || '';
+ link.addEventListener('input', () => { state.fr.link = link.value.trim(); msg.value = inv(); save(); });
+ msg.value = inv();
+ $('frCopy').addEventListener('click', () => { msg.value = inv(); copy(msg.value, '📋 Приглашение скопировано'); });
+ $('frGo').addEventListener('click', () => {
+  const r = redeemFriend($('frIn').value);
+  if (r === 'bad') toast('❌ Неверный код друга'); else if (r === 'self') toast('❌ Это твой собственный код'); else if (r === 'used') toast('❌ Код друга уже введён');
+  else $('frIn').value = '';
+  frSig = '';
+ });
+ $('frGo2').addEventListener('click', () => {
+  const r = confirmFriend($('frIn2').value);
+  if (r === 'bad') toast('❌ Неверный ответный код'); else if (r === 'self') toast('❌ Это твой собственный код'); else if (r === 'used') toast('❌ Этот друг уже засчитан');
+  else $('frIn2').value = '';
+  frSig = '';
+ });
+ frBuilt = true;
+}
+function renderFriends() {
+ if (!frBuilt) return;
+ const fr = state.fr, lvl = vipLevel(), tab = $('frTab');
+ if (lvl !== frLastLvl) { if (frLastLvl >= 0) buildSkins(); frLastLvl = lvl; }
+ const can = fr.dayLast !== dailyToday();
+ const want = '🎁 Друзья' + (can ? ' ❗' : '');
+ if (frTabTxt !== want) { tab.textContent = want; frTabTxt = want; }
+ if (!$('p7').classList.contains('on')) return;
+ const n = friendCount(), nxt = [1, 3, 6].find(x => x > n), trialLeft = Math.max(0, fr.trial - Date.now()), th = Math.ceil(trialLeft / 36e5);
+ const dr = dailyReward();
+ const sig = [lvl, n, can, th, fr.from, fr.streak, Math.round(dr.money), Object.keys(fr.claimed).length].join('|');
+ if (sig !== frSig) {
+  frSig = sig;
+  $('frVip').innerHTML = '<div class="vcard"><div class="vt">' + (lvl ? '👑 VIP ' + ['', 'Бронза', 'Серебро', 'Золото'][lvl] : '👑 VIP не активен') + '</div><div class="caption" style="opacity:.85">' + (trialLeft > 0 ? 'Пробный VIP: осталось ' + th + ' ч · ' : '') + 'Друзей: ' + n + (nxt ? ' · до следующего уровня: ' + (nxt - n) : ' · максимальный уровень') + '</div></div>' +
+   PERKS.map(p => '<div class="perk' + (lvl >= p[0] ? '' : ' off') + '"><span>' + (lvl >= p[0] ? p[1] : '🔒') + '</span><span>' + p[2] + ' <i style="opacity:.6">(VIP ' + p[0] + ')</i></span></div>').join('');
+  $('frDaily').innerHTML = '<div class="bkrow" style="align-items:center"><button class="bkbtn" id="frDailyBtn"' + (can ? '' : ' disabled') + '>' + (can ? 'Забрать +$' + fmt(dr.money) : 'Уже получено сегодня') + '</button><span class="caption">Серия дней: ' + (can ? dr.streak - 1 : fr.streak) + ' · на 7-й день зёрна</span></div>';
+  $('frDailyBtn').addEventListener('click', claimDaily);
+  $('frReply').innerHTML = fr.from ? '<div class="caption" style="margin:8px 0">Отправь другу-пригласившему ответный код: <b style="user-select:all">' + frReply() + '</b></div>' : '';
+  $('frMs').innerHTML = FR_MS.map(m => '<div class="bkp' + (fr.claimed[m.n] ? ' done' : n >= m.n ? '' : ' lock') + '"><div><div class="nm">' + m.icon + ' ' + m.name + '</div><div class="ds">' + m.text + '</div></div><div class="pb" style="min-width:90px;text-align:right">' + (fr.claimed[m.n] ? '✓' : n + '/' + m.n) + '</div></div>').join('');
+  $('frMsg').value = $('frMsg').value;
+ }
+}
+let frTabTxt = '';
+
+// ---------- ПОГОДА ----------
+var WI = { clear: '', rain: '🌧', storm: '⛈', snow: '🌨', fog: '🌫', heat: '🔥' };
+var WX_MSG = { clear: '☀️ Погода прояснилась', rain: '🌧 Дождь: клиентов меньше, зато доход +4%', storm: '⛈ Гроза: клиентов мало, зато доход +6%', snow: '❄️ Снегопад: клиентов меньше, зато доход +5%', fog: '🌫 Туман: клиентов чуть меньше, доход +2%', heat: '🔥 Жара: клиентов больше, доход +3%' };
+var wA = { rain: 0, storm: 0, snow: 0, fog: 0, heat: 0 }, wFlash = 0;
+var wx = { t: 'clear', left: 200 };
+function wxPick(prev) {
+ const L = { winter: [['clear', 4], ['snow', 4], ['fog', 2]], spring: [['clear', 4], ['rain', 3], ['fog', 2]], summer: [['clear', 4], ['heat', 3], ['storm', 2], ['rain', 2]], autumn: [['clear', 3], ['rain', 4], ['fog', 2], ['storm', 1]] }[yearSeason()].filter(x => x[0] !== prev);
+ let r = Math.random() * L.reduce((a, x) => a + x[1], 0);
+ for (const x of L) { r -= x[1]; if (r <= 0) return x[0]; }
+ return L[0][0];
+}
+function wxIncome() { return wA ? 1 + wA.rain * 0.04 + wA.storm * 0.06 + wA.snow * 0.05 + wA.fog * 0.02 + wA.heat * 0.03 : 1; }
+function wxFlow() { return wA ? Math.max(0.3, 1 - wA.rain * 0.2 - wA.storm * 0.4 - wA.snow * 0.15 - wA.fog * 0.1 + wA.heat * 0.2) : 1; }
+function weatherTick(dt) {
+ wx.left -= dt;
+ if (wx.left <= 0) {
+  const prev = wx.t; wx.t = wxPick(prev); wx.left = 180 + Math.random() * 180;
+  if (wx.t !== prev) toast(WX_MSG[wx.t]);
+ }
+ for (const k in wA) wA[k] += ((wx.t === k ? 1 : 0) - wA[k]) * Math.min(1, dt * 0.4);
+ if (wA.storm > 0.5 && Math.random() < dt * 0.15) wFlash = 1;
+ wFlash = Math.max(0, wFlash - dt * 3);
+}
+{ wx.t = wxPick(''); wx.left = 90 + Math.random() * 120; if (wx.t !== 'clear') wA[wx.t] = 1; }
+function drawWeatherFx(c) {
+ const t = clock;
+ if (wA.snow > 0.02 || wA.fog > 0.02 || wA.heat > 0.02 || wFlash > 0.02) {
+  c.save(); c.beginPath(); c.rect(20, 18, 90, 74); c.clip();
+  if (wA.snow > 0.02) {
+   c.fillStyle = 'rgba(255,255,255,' + (0.9 * wA.snow) + ')';
+   for (let i = 0; i < 46; i++) { const fx = 20 + (i * 41 + Math.sin(t * 1.1 + i) * 6 + t * 6) % 90, fy = 18 + (i * 17 + t * (18 + (i % 4) * 5)) % 74; c.fillRect(fx, fy, i % 3 ? 1.6 : 2.4, i % 3 ? 1.6 : 2.4); }
+   c.fillStyle = 'rgba(245,250,255,' + (0.9 * wA.snow) + ')'; c.fillRect(20, 86, 90, 6);
+  }
+  if (wA.fog > 0.02) { c.fillStyle = 'rgba(225,230,236,' + (0.5 * wA.fog) + ')'; c.fillRect(20, 18, 90, 74); }
+  if (wA.heat > 0.02) { const g = c.createRadialGradient(98, 28, 2, 98, 28, 60); g.addColorStop(0, 'rgba(255,240,170,' + (0.75 * wA.heat) + ')'); g.addColorStop(1, 'rgba(255,200,80,0)'); c.fillStyle = g; c.fillRect(20, 18, 90, 74); }
+  if (wFlash > 0.02) { c.fillStyle = 'rgba(255,255,255,' + (0.6 * wFlash) + ')'; c.fillRect(20, 18, 90, 74); }
+  c.restore();
+ }
+ if (wA.fog > 0.02) { c.fillStyle = 'rgba(220,226,232,' + (0.1 * wA.fog) + ')'; c.fillRect(0, 0, W, H); }
+ if (wA.heat > 0.02) { c.fillStyle = 'rgba(255,190,70,' + (0.06 * wA.heat) + ')'; c.fillRect(0, 0, W, H); }
+ if (wFlash > 0.02) { c.fillStyle = 'rgba(255,255,255,' + (0.1 * wFlash) + ')'; c.fillRect(0, 0, W, H); }
+}
+
+// ---------- ЗАДАНИЯ НЕДЕЛИ ----------
+const WQ_POOL = {
+ click: { text: 'Сделай кликов: ', need: () => 1200 },
+ crit:  { text: 'Сделай критических кликов: ', need: () => 30 },
+ gold:  { text: 'Поймай золотых чашек: ', need: () => 6 },
+ vip:   { text: 'Обслужи VIP-клиентов: ', need: () => 8 },
+ cust:  { text: 'Обслужи клиентов: ', need: () => 250 },
+ daily: { text: 'Забери ежедневную награду раз: ', need: () => 5 },
+ earn:  { text: 'Заработай $', need: () => Math.max(5000, Math.round(incomePerSec() * 5400)) }
+};
+function wqWeek() { return Math.floor((Math.floor(Date.now() / 864e5) + 3) / 7); }
+function wqReward() { return Math.max(2000, Math.round(incomePerSec() * 1200)); }
+function wqNormalize() {
+ const wk = wqWeek();
+ if (state.wq && state.wq.wk === wk && Array.isArray(state.wq.q)) return;
+ const keys = Object.keys(WQ_POOL); let seed = wk * 9301 + 49297;
+ const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+ const pick = [];
+ while (pick.length < 3) { const k = keys[Math.floor(rnd() * keys.length)]; if (!pick.includes(k)) pick.push(k); }
+ state.wq = { wk: wk, q: pick.map(k => ({ k: k, need: WQ_POOL[k].need(), got: 0, claimed: 0 })), bonus: 0 };
+}
+function wqAdd(k, n) {
+ const w = state && state.wq; if (!w) return;
+ for (const q of w.q) if (q.k === k && q.got < q.need) q.got = Math.min(q.need, q.got + n);
+}
+function wqClaim(i) {
+ const q = state.wq.q[i]; if (!q || q.claimed || q.got < q.need) return;
+ q.claimed = 1; const r = wqReward(); earn(r);
+ toast('📋 Задание недели выполнено! +$' + fmt(r)); sndAch();
+ if (state.wq.q.every(x => x.claimed) && !state.wq.bonus) { state.wq.bonus = 1; state.beans = (state.beans || 0) + 1; toast('🫘 Все задания недели! +1 зерно'); }
+ wqSig = ''; save(); render();
+}
+let wqSig = '', wqTabTxt = '';
+function renderWq() {
+ if (!state.wq) return;
+ const w = state.wq, ready = w.q.some(q => !q.claimed && q.got >= q.need), tab = $('wqTab');
+ const want = '📋 Задания' + (ready ? ' ❗' : '');
+ if (wqTabTxt !== want) { tab.textContent = want; wqTabTxt = want; }
+ if (!$('p8').classList.contains('on')) return;
+ const left = (wqWeek() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now(), d = Math.max(0, Math.floor(left / 864e5)), h = Math.max(0, Math.floor(left % 864e5 / 36e5));
+ const sig = [w.wk, d, h, w.bonus, w.q.map(q => q.got + ':' + q.claimed).join(',')].join('|');
+ if (sig === wqSig) return; wqSig = sig;
+ $('wqList').innerHTML = '<div class="caption" style="margin-bottom:8px">Обновятся через ' + d + ' дн ' + h + ' ч · награда за каждое: $' + fmt(wqReward()) + '</div>' + w.q.map((q, i) => {
+  const T = WQ_POOL[q.k], done = q.got >= q.need;
+  return '<div class="bkp' + (q.claimed ? ' done' : '') + '"><div style="flex:1;min-width:0"><div class="nm">' + T.text + fmt(q.need) + '</div><div class="ds">' + fmt(q.got) + ' / ' + fmt(q.need) + '</div><div class="wqbar"><i style="width:' + (q.got / q.need * 100) + '%"></i></div></div>' +
+   (q.claimed ? '<div class="pb">✓</div>' : '<button class="bkbtn wqgo" data-i="' + i + '"' + (done ? '' : ' disabled') + '>Забрать</button>') + '</div>';
+ }).join('') + '<div class="caption" style="margin-top:8px">' + (w.bonus ? '🫘 Бонус недели получен' : 'За все три задания недели: +1 зерно') + '</div>';
+ $('wqList').querySelectorAll('.wqgo').forEach(b => b.addEventListener('click', () => wqClaim(+b.dataset.i)));
+}
+
+// ---------- ТЕМЫ И КНОПКА ----------
+const workEl = $('work');
+const CUP_SVG = '<svg viewBox="0 0 84 70" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="60" rx="30" ry="7" fill="#d7c4ad" stroke="#4e342e" stroke-width="2.5"/><ellipse cx="40" cy="58" rx="22" ry="4.5" fill="#efe3d3"/><path d="M61 30h6a8 8 0 0 1 0 16h-8" fill="none" stroke="#4e342e" stroke-width="4.5" stroke-linecap="round"/><path d="M61 30h6a8 8 0 0 1 0 16h-8" fill="none" stroke="#fff8ee" stroke-width="2" stroke-linecap="round"/><path d="M14 26h50v16a22 22 0 0 1-22 22h-6a22 22 0 0 1-22-22z" fill="#fff8ee" stroke="#4e342e" stroke-width="3" stroke-linejoin="round"/><path d="M20 32v10a16 16 0 0 0 6 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/><ellipse cx="39" cy="26" rx="25" ry="6.5" fill="#6d4c41" stroke="#4e342e" stroke-width="3"/><path d="M39 29c-5-3-8-5-8-7.5a3.6 3.6 0 0 1 8-1a3.6 3.6 0 0 1 8 1c0 2.5-3 4.5-8 7.5z" fill="#f2d8b6"/><path d="M26 5q-4 5 0 10M39 2q-4 6 0 12M52 5q-4 5 0 10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".75"><animate attributeName="opacity" values=".2;.85;.2" dur="2.4s" repeatCount="indefinite"/></path></svg>';
+function applyLook() {
+ const th = state.theme || 'classic';
+ if (th === 'classic') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', th);
+ try { localStorage.setItem('ctTheme', th); } catch (e) {}
+ { const rq = { royal: 1, diamond: 3 }[state.btnSkin]; if (rq && vipLevel() < rq) state.btnSkin = 'caramel'; }
+ workEl.dataset.skin = state.btnSkin || 'caramel'; workEl.dataset.size = state.btnSize || 'm';
+ { const ic = state.btnIcon || '☕', bi = workEl.querySelector('.bi'); if (bi.dataset.ic !== ic) { bi.dataset.ic = ic; if (ic === '☕') bi.innerHTML = CUP_SVG; else bi.textContent = ic; } }
+}
+function workFx(e) {
+ if (state.vib && navigator.vibrate) { try { navigator.vibrate(8); } catch (x) {} }
+ if (state.fx === false) return;
+ const r = workEl.getBoundingClientRect();
+ const rip = document.createElement('span'); rip.className = 'rip';
+ rip.style.setProperty('--rx', ((e.clientX || r.left + r.width / 2) - r.left) + 'px'); rip.style.setProperty('--ry', ((e.clientY || r.top + r.height / 2) - r.top) + 'px');
+ workEl.appendChild(rip); setTimeout(() => rip.remove(), 650);
+ const ic = state.btnIcon || '☕', n = comboN > 20 ? 2 : 1;
+ for (let i = 0; i < n; i++) {
+  const f = document.createElement('span'); f.className = 'fly'; f.textContent = ic;
+  f.style.left = (r.left + r.width / 2 + (Math.random() - 0.5) * r.width * 0.5) + 'px'; f.style.top = (r.top + r.height * 0.3) + 'px';
+  f.style.setProperty('--dx', ((Math.random() - 0.5) * 70) + 'px'); f.style.setProperty('--dy', (-40 - Math.random() * 30) + 'px'); f.style.setProperty('--rot', ((Math.random() - 0.5) * 100) + 'deg');
+  document.body.appendChild(f); setTimeout(() => f.remove(), 950);
+ }
+}
+function chipGroup(id, opts, key, after) {
+ const box = $(id); box.innerHTML = '';
+ opts.forEach(o => {
+  const b = document.createElement('button'); b.dataset.v = o[0];
+  b.innerHTML = (o[2] ? '<span class="sw" style="background:' + o[2] + '"></span>' : '') + '<span>' + o[1] + '</span>';
+  b.addEventListener('click', () => { if (o[3] && vipLevel() < o[3]) { toast('👑 Нужен VIP-статус: пригласи друзей'); return; } state[key] = o[0]; applyLook(); box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); if (after) after(); save(); });
+  if ((state[key] || opts[0][0]) === o[0]) b.classList.add('on');
+  box.appendChild(b);
+ });
+}
+function buildSkins() {
+ chipGroup('skinChips', [['caramel', 'Карамель', '#e8721f'], ['mocha', 'Мокко', '#6a4a3a'], ['matcha', 'Матча', '#5f9a3a'], ['berry', 'Ягода', '#d02a77'], ['neon', 'Неон', '#52e6dc'], ['gold', 'Золото', '#f5b92a'], ['royal', (vipLevel() >= 1 ? '' : '🔒 ') + 'Королевский', '#7b3fc4', 1], ['diamond', (vipLevel() >= 3 ? '' : '🔒 ') + 'Бриллиант', '#9be7ff', 3]], 'btnSkin');
+}
+function buildLook() {
+ chipGroup('themeChips', [['classic', 'Классика', '#6b4a38'], ['dark', 'Тёмная', '#111'], ['light', 'Светлая', '#fff7ec']], 'theme');
+ buildSkins();
+ chipGroup('iconChips', [['☕', '☕'], ['🍵', '🍵'], ['🧋', '🧋'], ['🥐', '🥐'], ['🍩', '🍩'], ['🍰', '🍰']], 'btnIcon');
+ chipGroup('sndChips', [['pent', 'Пентатоника'], ['bell', 'Колокольчик'], ['coin', 'Монетка'], ['drop', 'Капля'], ['drum', 'Барабан'], ['key', 'Печатная машинка'], ['brew', 'Кофемашина'], ['off', 'Без звука']], 'clickSnd', () => sndClick());
+ chipGroup('sizeChips', [['s', 'Малая'], ['m', 'Обычная'], ['l', 'Большая']], 'btnSize');
+ const fx = $('fxBtn'), vib = $('vibBtn');
+ const upd = () => { fx.textContent = state.fx === false ? 'Выкл' : 'Вкл'; vib.textContent = state.vib ? 'Вкл' : 'Выкл'; };
+ fx.addEventListener('click', () => { state.fx = state.fx === false; upd(); save(); });
+ vib.addEventListener('click', () => { state.vib = !state.vib; upd(); if (state.vib && navigator.vibrate) navigator.vibrate(30); save(); });
+ upd(); applyLook();
+}
+
+buildBank();
+buildFriends();
+setInterval(() => {
+ earn(incomePerSec() / 10);
+ tickCount++;
+ bankTick(0.1);
+ workEl.style.setProperty('--cb', Math.min(1, comboN / 60).toFixed(2));
+ updateTimers();
+ checkStory();
+ checkGoals();
+ if (tickCount % 10 === 0) {
+  history.shift();
+  history.push(earnedThisSecond);
+  earnedThisSecond = 0;
+  drawChart();
+ }
+ drawChart();
+ if (tickCount % 10 === 0) state.playSec = (state.playSec || 0) + 1;
+ if (tickCount % 50 === 0) save();
+ render();
+}, 100);
+
+load();
+stateLoaded = true;
+bankNormalize();
+frNormalize();
+wqNormalize();
+if (window.__resetTheme) { state.theme = 'classic'; try { localStorage.setItem('ctThemeFix', '2'); } catch (e) {} }
+buildLook();
+nameIn.value = state.name; sfxVol.value = state.sfxVol; musVol.value = state.musVol;
+renderJournal();
+{ const sn = season(), day = new Date().toDateString();
+  if (sn) { state.seasonSeen = true; if (state.seasonToastDay !== day) { state.seasonToastDay = day; toast(SEASONS[sn].icon + ' ' + SEASONS[sn].text); } } }
+const away = state.lastSeen ? (Date.now() - state.lastSeen) / 1000 : 0;
+if (away > 60 && incomePerSec() > 0) {
+ const og = incomePerSec() * Math.min(away, offlineCap()) * offlineEff();
+ earn(og);
+ toast('😴 Тебя не было ' + Math.round(away / 60) + ' мин — кофейня заработала $' + fmt(og));
+}
+document.addEventListener('keydown', e => {
+ if (e.code !== 'Space' || modalOpen || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+ e.preventDefault();
+ if (!e.repeat) $('work').click();
+});
+document.addEventListener('keyup', e => { if (e.code === 'Space' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) e.preventDefault(); });
+$('exp').addEventListener('click', () => {
+ const code = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+ $('impIn').value = code; $('impIn').select();
+ if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => toast('📋 Код скопирован'), () => toast('Скопируй код из поля вручную'));
+ else toast('Скопируй код из поля вручную');
+});
+$('imp').addEventListener('click', () => {
+ const code = $('impIn').value.trim();
+ if (!code) { toast('Вставь код сохранения в поле выше'); return; }
+ try { state = Object.assign(freshState(), JSON.parse(decodeURIComponent(escape(atob(code))))); save(); location.reload(); }
+ catch (e) { toast('❌ Неверный код'); }
+});
+$('pBtn').addEventListener('click', () => {
+ const g = prestigeGain();
+ if (g < 1) return;
+ confirmBox('Новая франшиза', 'Деньги, персонал и улучшения сбросятся, но ты получишь зёрен: ' + g + ' (+' + g * 3 + '% к доходу и клику навсегда). Достижения и история сохранятся.', 'Открыть франшизу', () => {
+ const keep = { muted: state.muted, music: state.music, name: state.name, sfxVol: state.sfxVol, musVol: state.musVol, fr: state.fr, wq: state.wq, theme: state.theme, btnSkin: state.btnSkin, btnIcon: state.btnIcon, clickSnd: state.clickSnd, btnSize: state.btnSize, vib: state.vib, fx: state.fx, 
+  seasonOff: state.seasonOff, seasonSeen: state.seasonSeen, vips: state.vips, vipMissed: state.vipMissed, vipBest: state.vipBest, bkLife: state.bkLife, pets: state.pets, purrs: state.purrs, bestCombo: state.bestCombo, ach: state.ach, chapter: state.chapter, flags: state.flags, log: state.log, boxes: state.boxes, goalsDone: state.goalsDone, playSec: state.playSec,
+  qWon: state.qWon, qLost: state.qLost, secNight: state.secNight, sec777: state.sec777, beans: (state.beans || 0) + g, prestiges: (state.prestiges || 0) + 1 };
+ state = freshState();
+ Object.assign(state, keep);
+ history = new Array(30).fill(0); earnedThisSecond = 0; buffs = [];
+ hideEvent(); save(); render(); drawChart();
+ toast('⭐ Новая франшиза! Кофейных зёрен: ' + state.beans);
+ sndAch();
+ });
+});
+$('seasonBtn').addEventListener('click', () => { state.seasonOff = !state.seasonOff; seasonStamp = 0; save(); render(); sndBuy(); });
+nameIn.addEventListener('input', () => { state.name = nameIn.value.slice(0, 20); save(); render(); });
+sfxVol.addEventListener('input', () => { state.sfxVol = +sfxVol.value; save(); });
+sfxVol.addEventListener('change', sndBuy);
+musVol.addEventListener('input', () => { state.musVol = +musVol.value; save(); });
+document.querySelectorAll('#fchips button').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('#fchips button').forEach(x => x.classList.toggle('on', x === b)); $('achs').className = b.dataset.f ? b.dataset.f : ''; }));
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+ document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+ document.querySelectorAll('.panel').forEach(x => x.classList.toggle('on', x.id === t.dataset.p));
+}));
+render();
+drawChart();
+requestAnimationFrame(frame);
+{ const TIPS = ["Лови золотые чашки: они дают ×7 к клику на 15 секунд.", "Погладь кота несколько раз подряд — он замурлыкает и принесёт удачу.", "VIP-клиент уходит, когда кольцо терпения опустеет, так что кликни по нему вовремя.", "Сдавай выручку в банк, пока кассу не ограбили.", "Включи автоплатёж, чтобы не получать штрафы за просрочку.", "Выкупленное помещение навсегда избавляет от аренды и повышает доход.", "Чем длиннее серия кликов без пауз, тем сильнее бонус.", "Ищи в магазине значок ⭐: это самая быстрая окупаемость.", "Новая франшиза даёт кофейные зёрна и постоянный бонус к доходу.", "Тему оформления можно сменить в настройках: классика, тёмная или светлая.", "Нажми пробел, чтобы варить кофе без мышки.", "Бухгалтер снижает налог, а сейф — потери при ограблении.", "Кофейня меняется со временем года и временем суток: загляни в разное время.", "В настройках можно поменять звук кнопки, её стиль и размер.", "Покупай сразу по ×10 или ×100: выбери количество над списком найма.", "Критик в шляпе ходит среди гостей: найди его, и доход вырастет навсегда.", "Сломалась кофемашина? Почини её быстрее, иначе доход упадёт вдвое.", "Не забывай про задания: награда за них растёт вместе с доходом.", "Язык игры меняется в настройках: English, Deutsch, Français, Русский, Українська.", "Загадочная посылка может оказаться ловушкой, так что рискуй с умом.", "Игра сохраняется сама, а резервный код лежит в настройках.", "Просроченный счёт снижает доход, а штраф составляет десять процентов."];
+  let ti = Math.floor(Math.random() * TIPS.length);
+  try { const last = +localStorage.getItem('ctTip'); if (ti === last) ti = (ti + 1 + Math.floor(Math.random() * (TIPS.length - 1))) % TIPS.length; localStorage.setItem('ctTip', ti); } catch (e) {}
+  document.getElementById('splashTip').textContent = TIPS[ti];
+  const sp = document.getElementById('splash'); let done = false;
+  const go = () => { if (done) return; done = true; sp.classList.add('out'); setTimeout(() => sp.remove(), 800); };
+  sp.addEventListener('click', go); document.addEventListener('keydown', go, { once: true });
+  setTimeout(go, 6000); }
+</script>
+<script>
+(function () {
+ const RU = [[" $ за клик", " $ per click", " $ pro Klick", " $ par clic", " $ за клік"], [" $/сек", " $/sec", " $/Sek.", " $/s", " $/сек"], [" (без учёта ручных кликов)", " (not counting manual clicks)", " (ohne manuelle Klicks)", " (sans compter les clics manuels)", " (без урахування ручних кліків)"], [" (ещё ", " (more ", " (noch ", " (encore ", " (ще "], [" (сейчас +", " (now +", " (aktuell +", " (actuellement +", " (зараз +"], [" (сейчас праздников нет)", " (no holiday right now)", " (gerade kein Feiertag)", " (pas de fête en ce moment)", " (зараз свят немає)"], [" (сейчас: ", " (now: ", " (aktuell: ", " (actuellement : ", " (зараз: "], [" (упущено ", " (missed ", " (verpasst ", " (ratés ", " (втрачено "], [" · все вехи взяты", " · all milestones reached", " · alle Meilensteine erreicht", " · tous les paliers atteints", " · усі рубежі взято"], [" Достижение: ", " Achievement: ", " Erfolg: ", " Succès : ", " Досягнення: "], [" и слова «Всё только начинается».", " and the words “It’s only the beginning.”", " und die Worte „Es fängt erst an.“", " et les mots « Ce n’est que le début ».", " і слова «Усе тільки починається»."], [" мин — кофейня заработала $", " min — the coffee shop earned $", " Min. — das Café hat $ verdient", " min — le café a gagné $", " хв — кав’ярня заробила $"], [" побед / ", " wins / ", " Siege / ", " victoires / ", " перемог / "], [" провалов", " losses", " Niederlagen", " échecs", " поразок"], [" у Н.", " from N.", " von N.", " à N.", " у Н."], [" шт: ×", " pcs: ×", " Stk.: ×", " pcs : ×", " шт: ×"], [" — окупится за ~", " — pays off in ~", " — amortisiert sich in ~", " — rentabilisé en ~", " — окупиться за ~"], [" ⭐ окупится за ~", " ⭐ pays off in ~", " ⭐ amortisiert sich in ~", " ⭐ rentabilisé en ~", " ⭐ окупиться за ~"], ["% к доходу и клику навсегда). Достижения и история сохранятся.", "% income and click power forever). Achievements and history are kept.", "% Einkommen und Klickkraft für immer). Erfolge und Verlauf bleiben erhalten.", "% de revenu et de puissance de clic pour toujours). Succès et historique conservés.", "% до доходу і кліку назавжди). Досягнення та історія збережуться."], ["% к доходу и клику навсегда). Если открыть франшизу сейчас, получишь ещё ", "% income and click power forever). If you open a franchise now, you’ll get ", "% Einkommen und Klickkraft für immer). Wenn du jetzt ein Franchise eröffnest, bekommst du noch ", "% de revenu et de puissance de clic pour toujours). Si tu ouvres une franchise maintenant, tu obtiens encore ", "% до доходу і кліку назавжди). Якщо відкрити франшизу зараз, отримаєш ще "], ["%. Следующее зерно — через $", "%. Next bean at $", "%. Nächste Bohne bei $", "%. Prochain grain à $", "%. Наступне зерно — через $"], ["+0.5 авто-клика/сек за уровень, авто-клик = 20% ручного (макс. 10 ур.)", "+0.5 auto-clicks/sec per level, an auto-click = 20% of a manual one (max 10 lvl)", "+0,5 Auto-Klicks/Sek. pro Stufe, Auto-Klick = 20 % eines manuellen (max. 10 Stufen)", "+0,5 auto-clic/s par niveau, un auto-clic = 20 % d’un clic manuel (max 10 niv.)", "+0.5 авто-кліка/сек за рівень, авто-клік = 20% ручного (макс. 10 рів.)"], ["+1 $ за каждый клик", "+1 $ per click", "+1 $ pro Klick", "+1 $ par clic", "+1 $ за кожен клік"], ["+3% к силе клика за уровень", "+3% click power per level", "+3 % Klickkraft pro Stufe", "+3 % de puissance de clic par niveau", "+3% до сили кліку за рівень"], ["+5% к доходу сотрудников за уровень", "+5% staff income per level", "+5 % Mitarbeitereinkommen pro Stufe", "+5 % de revenu du personnel par niveau", "+5% до доходу персоналу за рівень"], [", мурлыканий: ", ", purrs: ", ", Schnurren: ", ", ronronnements : ", ", муркотінь: "], [", франшиз: ", ", franchises: ", ", Franchises: ", ", franchises : ", ", франшиз: "], [", шанс успеха ", ", success chance ", ", Erfolgschance ", ", chance de succès ", ", шанс успіху "], ["10 000 кликов", "10,000 clicks", "10.000 Klicks", "10 000 clics", "10 000 кліків"], ["10 сотрудников", "10 employees", "10 Mitarbeiter", "10 employés", "10 співробітників"], ["100 кликов", "100 clicks", "100 Klicks", "100 clics", "100 кліків"], ["100 кликов подряд без пауз", "100 clicks in a row without a pause", "100 Klicks hintereinander ohne Pause", "100 clics d’affilée sans pause", "100 кліків поспіль без пауз"], ["1000 кликов", "1,000 clicks", "1.000 Klicks", "1 000 clics", "1000 кліків"], ["12 кликов за 2 секунды", "12 clicks in 2 seconds", "12 Klicks in 2 Sekunden", "12 clics en 2 secondes", "12 кліків за 2 секунди"], ["30 кликов подряд без пауз", "30 clicks in a row without a pause", "30 Klicks hintereinander ohne Pause", "30 clics d’affilée sans pause", "30 кліків поспіль без пауз"], ["50 сотрудников", "50 employees", "50 Mitarbeiter", "50 employés", "50 співробітників"], [": взнос $", ": stake $", ": Einsatz $", ": mise $", ": внесок $"], [": твой общий множитель вырастет примерно на ", ": your overall multiplier will grow by about ", ": dein Gesamtmultiplikator steigt um etwa ", ": ton multiplicateur global augmentera d’environ ", ": твій загальний множник зросте приблизно на "], ["VIP-обслуживание", "VIP Service", "VIP-Service", "Service VIP", "VIP-обслуговування"], ["Авто-машина", "Auto machine", "Automaschine", "Machine auto", "Авто-машина"], ["Автоматизация", "Automation", "Automatisierung", "Automatisation", "Автоматизація"], ["Автоматическая кофемашина", "Automatic coffee machine", "Automatische Kaffeemaschine", "Machine à café automatique", "Автоматична кавомашина"], ["Азартный игрок", "Gambler", "Glücksspieler", "Joueur", "Азартний гравець"], ["Бариста", "Barista", "Barista", "Barista", "Бариста"], ["Безупречный сервис", "Flawless Service", "Makelloser Service", "Service impeccable", "Бездоганний сервіс"], ["Бесплатный Wi-Fi", "Free Wi-Fi", "Kostenloses WLAN", "Wi-Fi gratuit", "Безкоштовний Wi-Fi"], ["Бешеный темп", "Frantic Pace", "Wahnsinnstempo", "Rythme effréné", "Шалений темп"], ["Бизнесмен", "Businessman", "Geschäftsmann", "Homme d’affaires", "Бізнесмен"], ["Бонусы длятся на 10% дольше (макс. 10 ур.)", "Bonuses last 10% longer (max 10 lvl)", "Boni halten 10 % länger (max. 10 Stufen)", "Les bonus durent 10 % plus longtemps (max 10 niv.)", "Бонуси тривають на 10% довше (макс. 10 рів.)"], ["Быстрая доставка", "Fast Delivery", "Schnelle Lieferung", "Livraison rapide", "Швидка доставка"], ["В воздухе любовь! События случаются на 15% чаще", "Love is in the air! Events happen 15% more often", "Liebe liegt in der Luft! Ereignisse passieren 15 % öfter", "L’amour est dans l’air ! Les événements arrivent 15 % plus souvent", "У повітрі кохання! Події трапляються на 15% частіше"], ["В конверте было $", "The envelope held $", "Im Umschlag waren $", "L’enveloppe contenait $", "У конверті було $"], ["Варить кофе", "Brew coffee", "Kaffee brühen", "Préparer du café", "Варити каву"], ["Везунчик", "Lucky One", "Glückspilz", "Veinard", "Щасливчик"], ["Вернуть долг (−20% денег)", "Repay the debt (−20% money)", "Schuld begleichen (−20 % Geld)", "Rembourser la dette (−20 % d’argent)", "Повернути борг (−20% грошей)"], ["Весна", "Spring", "Frühling", "Printemps", "Весна"], ["Весь прогресс и достижения пропадут. Название кофейни и настройки звука останутся.", "All progress and achievements will be lost. Your shop name and sound settings stay.", "Der gesamte Fortschritt und alle Erfolge gehen verloren. Name des Cafés und Toneinstellungen bleiben.", "Toute la progression et tous les succès seront perdus. Le nom du café et les réglages sonores restent.", "Увесь прогрес і досягнення зникнуть. Назва кав’ярні та налаштування звуку залишаться."], ["Вечер", "Evening", "Abend", "Soir", "Вечір"], ["Взять деньги Н. (+$ сразу, но Н. это запомнит)", "Take N.’s money (+$ now, but N. will remember)", "N.s Geld nehmen (+$ sofort, aber N. merkt es sich)", "Prendre l’argent de N. (+$ tout de suite, mais N. s’en souviendra)", "Взяти гроші Н. (+$ одразу, але Н. це запам’ятає)"], ["Витрина с выпечкой", "Pastry Display", "Gebäckvitrine", "Vitrine à pâtisseries", "Вітрина з випічкою"], ["Война с «Бразильеро» началась.", "The war with “Brasileiro” has begun.", "Der Krieg mit „Brasileiro“ hat begonnen.", "La guerre avec « Brasileiro » a commencé.", "Війна з «Бразільєро» почалася."], ["Все", "All", "Alle", "Tous", "Усі"], ["Вставь код сохранения в поле выше", "Paste the save code into the field above", "Füge den Speichercode in das Feld oben ein", "Colle le code de sauvegarde dans le champ ci-dessus", "Встав код збереження в поле вище"], ["Всё прокачано", "Fully Upgraded", "Alles aufgerüstet", "Tout amélioré", "Усе прокачано"], ["Вы с соседом решили не воевать.", "You and your neighbor decided not to fight.", "Du und dein Nachbar habt beschlossen, nicht zu streiten.", "Ton voisin et toi avez décidé de ne pas vous battre.", "Ви з сусідом вирішили не воювати."], ["Выиграй 5 квестов", "Win 5 quests", "Gewinne 5 Quests", "Gagne 5 quêtes", "Виграй 5 квестів"], ["Выиграй первый квест", "Win your first quest", "Gewinne deine erste Quest", "Gagne ta première quête", "Виграй перший квест"], ["Выполни 10 заданий", "Complete 10 tasks", "Erledige 10 Aufgaben", "Termine 10 tâches", "Виконай 10 завдань"], ["Выполни 50 заданий", "Complete 50 tasks", "Erledige 50 Aufgaben", "Termine 50 tâches", "Виконай 50 завдань"], ["Высший этап достигнут", "Highest stage reached", "Höchste Stufe erreicht", "Étape maximale atteinte", "Найвищий етап досягнуто"], ["Город наш", "The City Is Ours", "Die Stadt gehört uns", "La ville est à nous", "Місто наше"], ["Городская сеть", "City Chain", "Stadtkette", "Chaîne urbaine", "Міська мережа"], ["Громкость звуков", "Sound volume", "Lautstärke der Geräusche", "Volume des sons", "Гучність звуків"], ["Громкость музыки", "Music volume", "Musiklautstärke", "Volume de la musique", "Гучність музики"], ["Да, начать заново", "Yes, start over", "Ja, neu anfangen", "Oui, recommencer", "Так, почати заново"], ["День", "Day", "Tag", "Jour", "День"], ["День влюблённых", "Valentine’s Day", "Valentinstag", "Saint-Valentin", "День закоханих"], ["Деньги, персонал и улучшения сбросятся, но ты получишь зёрен: ", "Money, staff and upgrades will reset, but you’ll get beans: ", "Geld, Personal und Upgrades werden zurückgesetzt, aber du bekommst Bohnen: ", "L’argent, le personnel et les améliorations seront réinitialisés, mais tu obtiens des grains : ", "Гроші, персонал і покращення скинуться, але ти отримаєш зерен: "], ["Детектив", "Detective", "Detektiv", "Détective", "Детектив"], ["До этапа «", "To stage «", "Bis zur Stufe «", "Jusqu’à l’étape «", "До етапу «"], ["Долг Н. выплачен. Он кивнул и исчез.", "N.’s debt is paid. He nodded and vanished.", "N.s Schuld ist beglichen. Er nickte und verschwand.", "La dette de N. est remboursée. Il a hoché la tête et disparu.", "Борг Н. виплачено. Він кивнув і зник."], ["Доставка на скутерах", "Scooter Delivery", "Roller-Lieferdienst", "Livraison en scooter", "Доставка на скутерах"], ["Достигни этапа «Городская сеть»", "Reach the «City Chain» stage", "Erreiche die Stufe «Stadtkette»", "Atteins l’étape « Chaîne urbaine »", "Досягни етапу «Міська мережа»"], ["Достигни этапа «Мировая империя»", "Reach the «Global Empire» stage", "Erreiche die Stufe «Weltimperium»", "Atteins l’étape « Empire mondial »", "Досягни етапу «Світова імперія»"], ["Достигни этапа «Небольшая кофейня»", "Reach the «Small Coffee Shop» stage", "Erreiche die Stufe «Kleines Café»", "Atteins l’étape « Petit café »", "Досягни етапу «Невелика кав’ярня»"], ["Достижения", "Achievements", "Erfolge", "Succès", "Досягнення"], ["Доход $100 в секунду", "Earn $100 per second", "$100 Einkommen pro Sekunde", "$100 de revenu par seconde", "Дохід $100 на секунду"], ["Доход $100K в секунду", "Earn $100K per second", "$100K Einkommen pro Sekunde", "$100K de revenu par seconde", "Дохід $100K на секунду"], ["Доход $10K в секунду", "Earn $10K per second", "$10K Einkommen pro Sekunde", "$10K de revenu par seconde", "Дохід $10K на секунду"], ["Доход за последние 30 секунд", "Income over the last 30 seconds", "Einkommen der letzten 30 Sekunden", "Revenu des 30 dernières secondes", "Дохід за останні 30 секунд"], ["Доход сотрудников ×1.3, ноты в воздухе", "Staff income ×1.3, notes in the air", "Mitarbeitereinkommen ×1,3, Noten in der Luft", "Revenu du personnel ×1,3, notes dans l’air", "Дохід персоналу ×1.3, ноти в повітрі"], ["Доход сотрудников ×1.3, плакат", "Staff income ×1.3, poster", "Mitarbeitereinkommen ×1,3, Plakat", "Revenu du personnel ×1,3, affiche", "Дохід персоналу ×1.3, плакат"], ["Доход сотрудников ×1.4, значок", "Staff income ×1.4, icon", "Mitarbeitereinkommen ×1,4, Symbol", "Revenu du personnel ×1,4, icône", "Дохід персоналу ×1.4, значок"], ["Доход сотрудников ×1.4, курьер", "Staff income ×1.4, courier", "Mitarbeitereinkommen ×1,4, Kurier", "Revenu du personnel ×1,4, coursier", "Дохід персоналу ×1.4, кур’єр"], ["Доход сотрудников ×1.5, колпаки", "Staff income ×1.5, chef hats", "Mitarbeitereinkommen ×1,5, Kochmützen", "Revenu du personnel ×1,5, toques", "Дохід персоналу ×1.5, ковпаки"], ["Друг блогеров", "Friend of Bloggers", "Freund der Blogger", "Ami des blogueurs", "Друг блогерів"], ["Друг кота", "Cat’s Friend", "Freund der Katze", "Ami du chat", "Друг кота"], ["Живая музыка", "Live Music", "Livemusik", "Musique live", "Жива музика"], ["Журнал", "Journal", "Tagebuch", "Journal", "Журнал"], ["Загадочная посылка", "Mysterious Parcel", "Geheimnisvolles Paket", "Colis mystérieux", "Загадкова посилка"], ["Загляни в кофейню в сезонный праздник", "Visit the coffee shop on a seasonal holiday", "Besuche das Café an einem saisonalen Feiertag", "Passe au café lors d’une fête de saison", "Завітай до кав’ярні в сезонне свято"], ["Загрузить", "Load", "Laden", "Charger", "Завантажити"], ["Закрытые", "Locked", "Gesperrt", "Verrouillés", "Закриті"], ["Заплатить", "Pay", "Bezahlen", "Payer", "Заплатити"], ["Запусти доставку", "Launch delivery", "Starte die Lieferung", "Lance la livraison", "Запусти доставку"], ["Заработай $", "Earn $", "Verdiene $", "Gagne $", "Заробити $"], ["Заработай $100K за всё время", "Earn $100K in total", "Verdiene insgesamt $100K", "Gagne $100K au total", "Заробі $100K за весь час"], ["Заработай $1B за всё время", "Earn $1B in total", "Verdiene insgesamt $1B", "Gagne $1B au total", "Заробі $1B за весь час"], ["Заработай $1K за всё время", "Earn $1K in total", "Verdiene insgesamt $1K", "Gagne $1K au total", "Заробі $1K за весь час"], ["Заработай $1M за всё время", "Earn $1M in total", "Verdiene insgesamt $1M", "Gagne $1M au total", "Заробі $1M за весь час"], ["Заработай $1T за всё время", "Earn $1T in total", "Verdiene insgesamt $1T", "Gagne $1T au total", "Заробі $1T за весь час"], ["Заставь кота замурлыкать 3 раза", "Make the cat purr 3 times", "Bringe die Katze 3-mal zum Schnurren", "Fais ronronner le chat 3 fois", "Змусь кота замуркотіти 3 рази"], ["Звезда блогеров", "Blogger Star", "Blogger-Star", "Star des blogueurs", "Зірка блогерів"], ["Звук", "Sound", "Ton", "Son", "Звук"], ["Звуки", "Sounds", "Geräusche", "Sons", "Звуки"], ["Звёзды Мишлен", "Michelin Stars", "Michelin-Sterne", "Étoiles Michelin", "Зірки Мішлен"], ["Зерновой магнат", "Bean Tycoon", "Bohnen-Magnat", "Magnat du grain", "Зерновий магнат"], ["Зима", "Winter", "Winter", "Hiver", "Зима"], ["Знаменитый критик пришёл инкогнито. У тебя 20 секунд, чтобы заметить его шляпу среди посетителей!", "A famous critic came incognito. You have 20 seconds to spot his hat among the customers!", "Ein berühmter Kritiker ist inkognito gekommen. Du hast 20 Sekunden, um seinen Hut unter den Gästen zu entdecken!", "Un célèbre critique est venu incognito. Tu as 20 secondes pour repérer son chapeau parmi les clients !", "Відомий критик прийшов інкогніто. У тебе 20 секунд, щоб помітити його капелюх серед відвідувачів!"], ["Знаток зёрен", "Bean Connoisseur", "Bohnenkenner", "Connaisseur de grains", "Знавець зерен"], ["Золотая лихорадка", "Gold Rush", "Goldrausch", "Ruée vers l’or", "Золота лихоманка"], ["Золотая чашка", "Golden Cup", "Goldene Tasse", "Tasse dorée", "Золота чашка"], ["Золотая чашка!", "Golden Cup!", "Goldene Tasse!", "Tasse dorée !", "Золота чашка!"], ["Идеальная кофейня", "The Perfect Coffee Shop", "Das perfekte Café", "Le café parfait", "Ідеальна кав’ярня"], ["Империя", "Empire", "Imperium", "Empire", "Імперія"], ["Искать критика", "Find the critic", "Kritiker suchen", "Chercher le critique", "Шукати критика"], ["Исполнитель", "Performer", "Vollstrecker", "Exécutant", "Виконавець"], ["История завершена. Но кофе всегда нужен.", "The story is over. But coffee is always needed.", "Die Geschichte ist zu Ende. Aber Kaffee wird immer gebraucht.", "L’histoire est terminée. Mais on a toujours besoin de café.", "Історію завершено. Але кава завжди потрібна."], ["Качество зёрен", "Bean Quality", "Bohnenqualität", "Qualité des grains", "Якість зерен"], ["Качество зёрен: 10 уровень", "Bean Quality: level 10", "Bohnenqualität: Stufe 10", "Qualité des grains : niveau 10", "Якість зерен: 10 рівень"], ["Клик ×1.2, зелень в углу", "Click ×1.2, greenery in the corner", "Klick ×1,2, Grünzeug in der Ecke", "Clic ×1,2, verdure dans le coin", "Клік ×1.2, зелень у кутку"], ["Клик ×1.2, сотрудники ×1.3, город", "Click ×1.2, staff ×1.3, the city", "Klick ×1,2, Personal ×1,3, die Stadt", "Clic ×1,2, personnel ×1,3, la ville", "Клік ×1.2, персонал ×1.3, місто"], ["Клик ×1.2, сотрудники ×1.3, звёзды над входом", "Click ×1.2, staff ×1.3, stars above the entrance", "Klick ×1,2, Personal ×1,3, Sterne über dem Eingang", "Clic ×1,2, personnel ×1,3, étoiles au-dessus de l’entrée", "Клік ×1.2, персонал ×1.3, зірки над входом"], ["Клик ×1.5, банка с зёрнами", "Click ×1.5, jar of beans", "Klick ×1,5, Bohnenglas", "Clic ×1,5, bocal de grains", "Клік ×1.5, банка із зернами"], ["Клик ×1.5, вывеска светится", "Click ×1.5, glowing sign", "Klick ×1,5, leuchtendes Schild", "Clic ×1,5, enseigne lumineuse", "Клік ×1.5, вивіска світиться"], ["Клик ×1.5, значок на стене", "Click ×1.5, badge on the wall", "Klick ×1,5, Abzeichen an der Wand", "Clic ×1,5, badge sur le mur", "Клік ×1.5, значок на стіні"], ["Клик и сотрудники ×1.2, пирожные", "Click and staff ×1.2, pastries", "Klick und Personal ×1,2, Gebäck", "Clic et personnel ×1,2, pâtisseries", "Клік і персонал ×1.2, тістечка"], ["Клик и сотрудники ×1.2, столики", "Click and staff ×1.2, tables", "Klick und Personal ×1,2, Tische", "Clic et personnel ×1,2, tables", "Клік і персонал ×1.2, столики"], ["Клик приносит +0.5% дохода/сек за уровень (макс. 12 ур.)", "A click adds +0.5% of income/sec per level (max 12 lvl)", "Ein Klick bringt +0,5 % Einkommen/Sek. pro Stufe (max. 12 Stufen)", "Un clic rapporte +0,5 % du revenu/s par niveau (max 12 niv.)", "Клік приносить +0.5% доходу/сек за рівень (макс. 12 рів.)"], ["Клик с чаевыми (1 кл/с)", "Click with tips (1 click/s)", "Klick mit Trinkgeld (1 Klick/s)", "Clic avec pourboires (1 clic/s)", "Клік із чайовими (1 кл/с)"], ["Кликни, когда на счету ровно $777", "Click when your balance is exactly $777", "Klicke, wenn dein Kontostand genau $777 beträgt", "Clique quand ton solde est exactement de $777", "Клікни, коли на рахунку рівно $777"], ["Код сохранения: нажми «Копировать» или вставь свой", "Save code: press “Copy” or paste your own", "Speichercode: „Kopieren“ drücken oder eigenen einfügen", "Code de sauvegarde : appuie sur « Copier » ou colle le tien", "Код збереження: натисни «Копіювати» або встав свій"], ["Коллекционер", "Collector", "Sammler", "Collectionneur", "Колекціонер"], ["Копировать", "Copy", "Kopieren", "Copier", "Копіювати"], ["Король удачи", "King of Luck", "König des Glücks", "Roi de la chance", "Король удачі"], ["Кофейная империя", "Coffee Empire", "Kaffeeimperium", "Empire du café", "Кавова імперія"], ["Кофейные зёрна: ", "Coffee beans: ", "Kaffeebohnen: ", "Grains de café : ", "Кавові зерна: "], ["Кофейный король", "Coffee King", "Kaffeekönig", "Roi du café", "Кавовий король"], ["Кофейный марафон", "Coffee Marathon", "Kaffee-Marathon", "Marathon du café", "Кавовий марафон"], ["Кофеман", "Coffee Addict", "Kaffeeliebhaber", "Accro au café", "Кавоман"], ["Кофемашина и персонал", "Coffee machine & staff", "Kaffeemaschine & Personal", "Machine à café et personnel", "Кавомашина і персонал"], ["Кофемашина получше", "Better Coffee Machine", "Bessere Kaffeemaschine", "Meilleure machine à café", "Краща кавомашина"], ["Кофемашина получше: 25 уровень", "Better Coffee Machine: level 25", "Bessere Kaffeemaschine: Stufe 25", "Meilleure machine à café : niveau 25", "Краща кавомашина: 25 рівень"], ["Кофемашина-про", "Pro Coffee Machine", "Profi-Kaffeemaschine", "Machine à café pro", "Кавомашина-про"], ["Кофемолка", "Grinder", "Kaffeemühle", "Moulin à café", "Кавомолка"], ["Кошачий шёпот", "Cat Whisperer", "Katzenflüsterer", "Chuchoteur de chats", "Котячий шепіт"], ["Критик в зале — найди шляпу на экране!", "A critic is in the room — find the hat on screen!", "Ein Kritiker ist im Raum — finde den Hut auf dem Bildschirm!", "Un critique est dans la salle — trouve le chapeau à l’écran !", "Критик у залі — знайди капелюх на екрані!"], ["Критик остался доволен (доход ×1.25 навсегда).", "The critic was satisfied (income ×1.25 forever).", "Der Kritiker war zufrieden (Einkommen ×1,25 für immer).", "Le critique a été satisfait (revenu ×1,25 pour toujours).", "Критик залишився задоволений (дохід ×1.25 назавжди)."], ["Критик ушёл, так и не попробовав кофе.", "The critic left without ever tasting the coffee.", "Der Kritiker ging, ohne den Kaffee probiert zu haben.", "Le critique est parti sans avoir goûté le café.", "Критик пішов, так і не скуштувавши каву."], ["Критик!", "Critic!", "Kritiker!", "Critique !", "Критик!"], ["Купи 5 разовых улучшений", "Buy 5 one-time upgrades", "Kaufe 5 einmalige Upgrades", "Achète 5 améliorations uniques", "Купи 5 разових покращень"], ["Купи автоматическую кофемашину", "Buy an automatic coffee machine", "Kaufe eine automatische Kaffeemaschine", "Achète une machine à café automatique", "Купи автоматичну кавомашину"], ["Купи все разовые улучшения", "Buy all one-time upgrades", "Kaufe alle einmaligen Upgrades", "Achète toutes les améliorations uniques", "Купи всі разові покращення"], ["Летняя терраса", "Summer Terrace", "Sommerterrasse", "Terrasse d’été", "Літня тераса"], ["Лето", "Summer", "Sommer", "Été", "Літо"], ["Лучшие покупки сейчас", "Best buys right now", "Beste Käufe im Moment", "Meilleurs achats du moment", "Найкращі покупки зараз"], ["Любимец элиты", "Elite’s Favorite", "Liebling der Elite", "Favori de l’élite", "Улюбленець еліти"], ["Любопытный", "Curious", "Neugierig", "Curieux", "Допитливий"], ["МЕНЮ", "MENU", "MENÜ", "MENU", "МЕНЮ"], ["Макс", "Max", "Max", "Max", "Макс"], ["Мастер на все руки", "Jack of All Trades", "Alleskönner", "Touche-à-tout", "Майстер на всі руки"], ["Мастер прокачки", "Upgrade Master", "Upgrade-Meister", "Maître des améliorations", "Майстер прокачки"], ["Миллионер", "Millionaire", "Millionär", "Millionnaire", "Мільйонер"], ["Мировая империя", "Global Empire", "Weltimperium", "Empire mondial", "Світова імперія"], ["Мировой бренд", "Global Brand", "Weltmarke", "Marque mondiale", "Світовий бренд"], ["Мишлен", "Michelin", "Michelin", "Michelin", "Мішлен"], ["Мобильное приложение", "Mobile App", "Mobile App", "Application mobile", "Мобільний застосунок"], ["Моя кофейня", "My Coffee Shop", "Mein Café", "Mon café", "Моя кав’ярня"], ["Н. затаил злобу. Что-то нехорошее в воздухе.", "N. holds a grudge. Something bad is in the air.", "N. hegt einen Groll. Etwas Unheilvolles liegt in der Luft.", "N. garde rancune. Il y a quelque chose de mauvais dans l’air.", "Н. затаїв злобу. У повітрі щось недобре."], ["Н. снова у двери. «Ты не взял мои деньги. Редкость», — говорит он и кладёт на стойку конверт.", "N. is at the door again. “You didn’t take my money. Rare,” he says, and puts an envelope on the counter.", "N. steht wieder an der Tür. „Du hast mein Geld nicht genommen. Selten“, sagt er und legt einen Umschlag auf den Tresen.", "N. est de nouveau à la porte. « Tu n’as pas pris mon argent. Rare », dit-il en posant une enveloppe sur le comptoir.", "Н. знову біля дверей. «Ти не взяв мої гроші. Рідкість», — каже він і кладе на стійку конверт."], ["Н. стоит у стойки. «Пора вернуть долг с процентами», — шепчет он, и в зале становится тише.", "N. stands at the counter. “Time to repay the debt with interest,” he whispers, and the room falls quiet.", "N. steht am Tresen. „Zeit, die Schuld mit Zinsen zurückzuzahlen“, flüstert er, und im Raum wird es still.", "N. se tient au comptoir. « Il est temps de rembourser la dette avec les intérêts », murmure-t-il, et la salle devient silencieuse.", "Н. стоїть біля стійки. «Час повернути борг із відсотками», — шепоче він, і в залі стає тихіше."], ["На двери — последняя записка: «Помнишь самую первую чашку? Я был тем клиентом. Спасибо, что не сдался. — Н.» Ты понимаешь: вся империя выросла из одной чашки.", "On the door — a final note: “Remember the very first cup? I was that customer. Thank you for not giving up. — N.” You realize: the whole empire grew from a single cup.", "An der Tür hängt ein letzter Zettel: „Erinnerst du dich an die allererste Tasse? Ich war dieser Kunde. Danke, dass du nicht aufgegeben hast. — N.“ Du begreifst: Das ganze Imperium ist aus einer einzigen Tasse gewachsen.", "Sur la porte, un dernier mot : « Tu te souviens de la toute première tasse ? J’étais ce client. Merci de ne pas avoir abandonné. — N. » Tu comprends : tout l’empire est né d’une seule tasse.", "На дверях — остання записка: «Пам’ятаєш найпершу чашку? Я був тим клієнтом. Дякую, що не здався. — Н.» Ти розумієш: уся імперія виросла з однієї чашки."], ["Название кофейни", "Coffee shop name", "Name des Cafés", "Nom du café", "Назва кав’ярні"], ["Найми кого-нибудь", "Hire someone", "Stelle jemanden ein", "Embauche quelqu’un", "Найми когось"], ["Найми сотрудников каждого вида", "Hire every type of employee", "Stelle jede Art von Mitarbeiter ein", "Embauche chaque type d’employé", "Найми співробітників кожного виду"], ["Найми сотрудников: ", "Hire employees: ", "Stelle Mitarbeiter ein: ", "Embauche des employés : ", "Найми співробітників: "], ["Накопи 10 кофейных зёрен", "Collect 10 coffee beans", "Sammle 10 Kaffeebohnen", "Collecte 10 grains de café", "Накопичи 10 кавових зерен"], ["Напротив открылась кофейня «Бразильеро». Её владелец машет тебе рукой — то ли дружески, то ли нет.", "A coffee shop called “Brasileiro” opened across the street. Its owner waves at you — friendly or not, hard to tell.", "Gegenüber hat das Café „Brasileiro“ eröffnet. Sein Besitzer winkt dir zu — ob freundlich oder nicht, ist schwer zu sagen.", "Un café nommé « Brasileiro » a ouvert en face. Son propriétaire te fait signe de la main — amicalement ou pas, difficile à dire.", "Навпроти відкрилася кав’ярня «Бразільєро». Її власник махає тобі рукою — чи то дружньо, чи ні."], ["Начать заново", "Start over", "Neu anfangen", "Recommencer", "Почати заново"], ["Начать заново?", "Start over?", "Neu anfangen?", "Recommencer ?", "Почати заново?"], ["Не трогай кофейню 90 секунд", "Don’t touch the coffee shop for 90 seconds", "Fass das Café 90 Sekunden lang nicht an", "Ne touche pas au café pendant 90 secondes", "Не чіпай кав’ярню 90 секунд"], ["Не хватает денег на акцию", "Not enough money for a promotion", "Nicht genug Geld für die Aktion", "Pas assez d’argent pour la promotion", "Не вистачає грошей на акцію"], ["Не хватило денег на взнос", "Not enough money for the stake", "Nicht genug Geld für den Einsatz", "Pas assez d’argent pour la mise", "Не вистачило грошей на внесок"], ["Небольшая кофейня", "Small Coffee Shop", "Kleines Café", "Petit café", "Невелика кав’ярня"], ["Незнакомец в сером пальто предлагает вложиться в твою кофейню. «Без лишних вопросов», — говорит он и не снимает перчаток.", "A stranger in a gray coat offers to invest in your coffee shop. “No questions asked,” he says, never taking off his gloves.", "Ein Fremder im grauen Mantel bietet an, in dein Café zu investieren. „Ohne Fragen“, sagt er und zieht die Handschuhe nicht aus.", "Un inconnu en manteau gris propose d’investir dans ton café. « Sans poser de questions », dit-il sans retirer ses gants.", "Незнайомець у сірому пальті пропонує вкластися у твою кав’ярню. «Без зайвих питань», — каже він і не знімає рукавичок."], ["Неудержимый", "Unstoppable", "Unaufhaltsam", "Inarrêtable", "Невтримний"], ["Новая точка", "New Location", "Neuer Standort", "Nouvel emplacement", "Нова точка"], ["Новая франшиза", "New Franchise", "Neues Franchise", "Nouvelle franchise", "Нова франшиза"], ["Новогодняя кофейня! События случаются на 15% чаще", "New Year’s coffee shop! Events happen 15% more often", "Silvester-Café! Ereignisse passieren 15 % öfter", "Café du Nouvel An ! Les événements arrivent 15 % plus souvent", "Новорічна кав’ярня! Події трапляються на 15% частіше"], ["Новый год", "New Year", "Neujahr", "Nouvel An", "Новий рік"], ["Ночь", "Night", "Nacht", "Nuit", "Ніч"], ["Обжарочный цех", "Roastery", "Rösterei", "Atelier de torréfaction", "Цех обсмажування"], ["Обслужи 10 VIP-клиентов", "Serve 10 VIP customers", "Bediene 10 VIP-Kunden", "Sers 10 clients VIP", "Обслужи 10 VIP-клієнтів"], ["Обслужи 5 VIP подряд, не упустив ни одного", "Serve 5 VIPs in a row without missing any", "Bediene 5 VIPs hintereinander, ohne einen zu verpassen", "Sers 5 VIP d’affilée sans en rater un seul", "Обслужи 5 VIP поспіль, не втративши жодного"], ["Обслужи первого VIP-клиента", "Serve your first VIP customer", "Bediene deinen ersten VIP-Kunden", "Sers ton premier client VIP", "Обслужи першого VIP-клієнта"], ["Обучение персонала", "Staff Training", "Personalschulung", "Formation du personnel", "Навчання персоналу"], ["Объявить войну (клик ×1.25, но он будет мстить акциями)", "Declare war (click ×1.25, but he’ll retaliate with promotions)", "Krieg erklären (Klick ×1,25, aber er rächt sich mit Aktionen)", "Déclarer la guerre (clic ×1,25, mais il ripostera avec des promos)", "Оголосити війну (клік ×1.25, але він мститиме акціями)"], ["Окупится примерно за ", "Pays off in about ", "Amortisiert sich in etwa ", "Rentabilisé en environ ", "Окупиться приблизно за "], ["Осень", "Autumn", "Herbst", "Automne", "Осінь"], ["Оспорить (50%, иначе ×2)", "Dispute it (50%, otherwise ×2)", "Anfechten (50 %, sonst ×2)", "Contester (50 %, sinon ×2)", "Оскаржити (50%, інакше ×2)"], ["Ответить акцией −$", "Respond with a promo −$", "Mit Aktion kontern −$", "Répondre par une promo −$", "Відповісти акцією −$"], ["Отказаться", "Decline", "Ablehnen", "Refuser", "Відмовитися"], ["Отказаться из гордости (клик ×1.3 навсегда)", "Decline out of pride (click ×1.3 forever)", "Aus Stolz ablehnen (Klick ×1,3 für immer)", "Refuser par fierté (clic ×1,3 pour toujours)", "Відмовитися з гордості (клік ×1.3 назавжди)"], ["Откроется", "Unlocks", "Wird freigeschaltet", "Se débloque", "Відкриється"], ["Откроется на этапе «", "Unlocks at stage «", "Wird auf Stufe « freigeschaltet", "Se débloque à l’étape «", "Відкриється на етапі «"], ["Открой 3 загадочные посылки", "Open 3 mysterious parcels", "Öffne 3 geheimnisvolle Pakete", "Ouvre 3 colis mystérieux", "Відкрий 3 загадкові посилки"], ["Открой сеть кофеен", "Open a coffee shop chain", "Eröffne eine Café-Kette", "Ouvre une chaîne de cafés", "Відкрий мережу кав’ярень"], ["Открой франшизу в первый раз", "Open a franchise for the first time", "Eröffne zum ersten Mal ein Franchise", "Ouvre une franchise pour la première fois", "Відкрий франшизу вперше"], ["Открытые", "Unlocked", "Freigeschaltet", "Débloqués", "Відкриті"], ["Открыть конверт", "Open the envelope", "Umschlag öffnen", "Ouvrir l’enveloppe", "Відкрити конверт"], ["Открыть новую франшизу", "Open a new franchise", "Neues Franchise eröffnen", "Ouvrir une nouvelle franchise", "Відкрити нову франшизу"], ["Открыть франшизу", "Open franchise", "Franchise eröffnen", "Ouvrir la franchise", "Відкрити франшизу"], ["Отмена", "Cancel", "Abbrechen", "Annuler", "Скасувати"], ["Оформление", "Appearance", "Darstellung", "Apparence", "Оформлення"], ["Охотник за чашками", "Cup Hunter", "Tassenjäger", "Chasseur de tasses", "Мисливець за чашками"], ["Первая прокачка", "First Upgrade", "Erstes Upgrade", "Première amélioration", "Перша прокачка"], ["Первая тысяча", "First Thousand", "Die erste Tausend", "Le premier millier", "Перша тисяча"], ["Первая чашка", "First Cup", "Erste Tasse", "Première tasse", "Перша чашка"], ["Первый сотрудник", "First Employee", "Erster Mitarbeiter", "Premier employé", "Перший співробітник"], ["Пережить", "Weather it", "Überstehen", "Encaisser", "Пережити"], ["Персонал", "Staff", "Personal", "Personnel", "Персонал"], ["Погладь кота 20 раз", "Pet the cat 20 times", "Streichle die Katze 20-mal", "Caresse le chat 20 fois", "Погладь кота 20 разів"], ["Погладь кота 5 раз подряд — он замурлыкает и принесёт удачу", "Pet the cat 5 times in a row — he’ll purr and bring luck", "Streichle die Katze 5-mal hintereinander — sie schnurrt und bringt Glück", "Caresse le chat 5 fois d’affilée — il ronronnera et portera chance", "Погладь кота 5 разів поспіль — він замурчить і принесе удачу"], ["Подробно", "In detail", "Details", "En détail", "Докладно"], ["Подружиться (доход ×1.1 навсегда)", "Befriend him (income ×1.1 forever)", "Sich anfreunden (Einkommen ×1,1 für immer)", "Devenir amis (revenu ×1,1 pour toujours)", "Потоваришувати (дохід ×1.1 назавжди)"], ["Поймай 10 золотых чашек", "Catch 10 golden cups", "Fange 10 goldene Tassen", "Attrape 10 tasses dorées", "Упіймай 10 золотих чашок"], ["Поймай 5 золотых чашек", "Catch 5 golden cups", "Fange 5 goldene Tassen", "Attrape 5 tasses dorées", "Упіймай 5 золотих чашок"], ["Поймай золотую чашку", "Catch a golden cup", "Fange eine goldene Tasse", "Attrape une tasse dorée", "Упіймай золоту чашку"], ["Поймай золотых чашек: ", "Catch golden cups: ", "Fange goldene Tassen: ", "Attrape des tasses dorées : ", "Упіймай золотих чашок: "], ["Пока нечего советовать.", "Nothing to recommend yet.", "Noch keine Empfehlungen.", "Rien à recommander pour l’instant.", "Поки нічого радити."], ["Полный набор", "Full Set", "Komplettset", "Collection complète", "Повний набір"], ["Получи все остальные достижения", "Get all the other achievements", "Erhalte alle anderen Erfolge", "Obtiens tous les autres succès", "Отримай усі інші досягнення"], ["Получи звёзды Мишлен", "Earn Michelin stars", "Erhalte Michelin-Sterne", "Obtiens des étoiles Michelin", "Отримай зірки Мішлен"], ["Популярное кафе", "Popular Café", "Beliebtes Café", "Café populaire", "Популярне кафе"], ["Послать Н. подальше (доход ×0.9 навсегда)", "Tell N. to get lost (income ×0.9 forever)", "N. zum Teufel schicken (Einkommen ×0,9 für immer)", "Envoyer balader N. (revenu ×0,9 pour toujours)", "Послати Н. подалі (дохід ×0.9 назавжди)"], ["Построй кофейную империю", "Build a coffee empire", "Baue ein Kaffeeimperium auf", "Bâtis un empire du café", "Збудуй кавову імперію"], ["Поток денег", "Money Stream", "Geldstrom", "Flux d’argent", "Потік грошей"], ["Почини машину 3 раза", "Fix the machine 3 times", "Repariere die Maschine 3-mal", "Répare la machine 3 fois", "Полагодь машину 3 рази"], ["Починить", "Fix", "Reparieren", "Réparer", "Полагодити"], ["Появится в заголовке и на вывеске в кофейне", "Appears in the title and on the shop sign", "Erscheint im Titel und auf dem Schild des Cafés", "Apparaît dans le titre et sur l’enseigne du café", "З’явиться в заголовку та на вивісці в кав’ярні"], ["Праздничное настроение", "Festive Mood", "Festtagsstimmung", "Ambiance de fête", "Святковий настрій"], ["Премиальные зёрна", "Premium Beans", "Premium-Bohnen", "Grains premium", "Преміальні зерна"], ["Провали 3 квеста", "Fail 3 quests", "Scheitere an 3 Quests", "Rate 3 quêtes", "Провали 3 квести"], ["Прогресс", "Progress", "Fortschritt", "Progression", "Прогрес"], ["Прокачай что-нибудь", "Upgrade something", "Rüste etwas auf", "Améliore quelque chose", "Прокачай щось"], ["Прокачай что-нибудь раз: ", "Upgrade something times: ", "Rüste etwas auf, Anzahl: ", "Améliore quelque chose, fois : ", "Прокачай щось разів: "], ["Прокачка", "Upgrades", "Upgrades", "Améliorations", "Прокачка"], ["Разовые улучшения", "One-time upgrades", "Einmalige Upgrades", "Améliorations uniques", "Разові покращення"], ["Разогрев", "Warm-up", "Aufwärmen", "Échauffement", "Розігрів"], ["Раскрой тайну незнакомца Н.", "Uncover the mystery of the stranger N.", "Lüfte das Geheimnis des Fremden N.", "Perce le mystère de l’inconnu N.", "Розкрий таємницю незнайомця Н."], ["Растём", "Growing", "Wir wachsen", "On grandit", "Зростаємо"], ["Региональный бренд", "Regional Brand", "Regionale Marke", "Marque régionale", "Регіональний бренд"], ["Резервная копия", "Backup", "Sicherung", "Sauvegarde", "Резервна копія"], ["Река денег", "River of Money", "Geldfluss", "Rivière d’argent", "Ріка грошей"], ["Реклама в соцсетях", "Social Media Ads", "Social-Media-Werbung", "Pub sur les réseaux sociaux", "Реклама в соцмережах"], ["Рискнул — выиграл", "Risked It — Won", "Gewagt — gewonnen", "Risqué — gagné", "Ризикнув — виграв"], ["Рискнуть", "Take the risk", "Wagen", "Tenter le coup", "Ризикнути"], ["Робот-повар", "Robot Chef", "Roboterkoch", "Robot cuisinier", "Робот-кухар"], ["Рука набита", "Practiced Hand", "Geübte Hand", "Main experte", "Рука набита"], ["Сбросить всё и начать заново", "Reset everything and start over", "Alles zurücksetzen und neu anfangen", "Tout réinitialiser et recommencer", "Скинути все й почати заново"], ["Свари кофе глубокой ночью", "Brew coffee in the dead of night", "Brühe mitten in der Nacht Kaffee", "Prépare du café en pleine nuit", "Звари каву глупої ночі"], ["Сделай кликов: ", "Make clicks: ", "Klicks machen: ", "Fais des clics : ", "Зроби кліків: "], ["Сделай первый клик", "Make your first click", "Mach deinen ersten Klick", "Fais ton premier clic", "Зроби перший клік"], ["Сезонный декор", "Seasonal decor", "Saisonale Deko", "Décor de saison", "Сезонний декор"], ["Секретное достижение", "Secret achievement", "Geheimer Erfolg", "Succès secret", "Секретне досягнення"], ["Сетевик", "Networker", "Netzwerker", "Réseauteur", "Мережевик"], ["Сеть кофеен", "Coffee Chain", "Café-Kette", "Chaîne de cafés", "Мережа кав’ярень"], ["Скопируй код из поля вручную", "Copy the code from the field manually", "Kopiere den Code manuell aus dem Feld", "Copie le code du champ manuellement", "Скопіюй код із поля вручну"], ["Скорострел", "Rapid Fire", "Schnellfeuer", "Tir rapide", "Скоростріл"], ["Следующая глава откроется, когда ты заработаешь ещё $", "The next chapter unlocks when you earn $", "Das nächste Kapitel wird freigeschaltet, wenn du noch $ verdienst", "Le prochain chapitre se débloquera quand tu auras gagné encore $", "Наступний розділ відкриється, коли ти заробиш ще $"], ["События чаще, квесты успешнее (макс. 10 ур.)", "Events more often, quests more successful (max 10 lvl)", "Ereignisse häufiger, Quests erfolgreicher (max. 10 Stufen)", "Événements plus fréquents, quêtes plus réussies (max 10 niv.)", "Події частіше, квести успішніші (макс. 10 рів.)"], ["Сова", "Night Owl", "Nachteule", "Oiseau de nuit", "Сова"], ["Совет: лучше подождать, прирост пока небольшой.", "Tip: better to wait, the gain is small for now.", "Tipp: Besser warten, der Zuwachs ist noch klein.", "Conseil : mieux vaut attendre, le gain est encore faible.", "Порада: краще зачекати, приріст поки невеликий."], ["Спрятать записку", "Hide the note", "Zettel verstecken", "Cacher le mot", "Сховати записку"], ["Стажёр", "Intern", "Praktikant", "Stagiaire", "Стажер"], ["Статистика", "Statistics", "Statistik", "Statistiques", "Статистика"], ["Структура дохода", "Income breakdown", "Einkommensstruktur", "Structure du revenu", "Структура доходу"], ["Суммарно 25 уровней прокачки", "25 upgrade levels in total", "Insgesamt 25 Upgrade-Stufen", "25 niveaux d’amélioration au total", "Загалом 25 рівнів прокачки"], ["Счастливое число", "Lucky Number", "Glückszahl", "Nombre porte-bonheur", "Щасливе число"], ["Тайна раскрыта. Н. — твой первый клиент.", "Mystery solved. N. is your very first customer.", "Geheimnis gelüftet. N. ist dein allererster Kunde.", "Mystère résolu. N. est ton tout premier client.", "Таємницю розкрито. Н. — твій перший клієнт."], ["Терпение", "Patience", "Geduld", "Patience", "Терпіння"], ["Триллионер", "Trillionaire", "Billionär", "Trillionnaire", "Трильйонер"], ["Трудяга", "Hard Worker", "Arbeitstier", "Bourreau de travail", "Трудяга"], ["Ты взял $", "You took $", "Du hast $ genommen", "Tu as pris $", "Ти взяв $"], ["Ты отказался от денег Н.", "You turned down N.’s money.", "Du hast N.s Geld abgelehnt.", "Tu as refusé l’argent de N.", "Ти відмовився від грошей Н."], ["Ты спрятал записку. Н. наблюдает.", "You hid the note. N. is watching.", "Du hast den Zettel versteckt. N. beobachtet.", "Tu as caché le mot. N. observe.", "Ти сховав записку. Н. спостерігає."], ["Угости 5 блогеров", "Treat 5 bloggers", "Lade 5 Blogger ein", "Offre un café à 5 blogueurs", "Пригости 5 блогерів"], ["Угости блогера", "Treat a blogger", "Lade einen Blogger ein", "Offre un café à un blogueur", "Пригости блогера"], ["Угостить кофе", "Treat to coffee", "Auf einen Kaffee einladen", "Offrir un café", "Пригостити кавою"], ["Удача", "Luck", "Glück", "Chance", "Удача"], ["Удача: 10 уровень", "Luck: level 10", "Glück: Stufe 10", "Chance : niveau 10", "Удача: 10 рівень"], ["Удача: 5 уровень", "Luck: level 5", "Glück: Stufe 5", "Chance : niveau 5", "Удача: 5 рівень"], ["Уличный киоск", "Street Kiosk", "Straßenkiosk", "Kiosque de rue", "Вуличний кіоск"], ["Улучши кофемашину раз: ", "Upgrade the coffee machine times: ", "Rüste die Kaffeemaschine auf, Anzahl: ", "Améliore la machine à café, fois : ", "Покращ кавомашину разів: "], ["Улыбнуться (всё ×1.5 навсегда)", "Smile (everything ×1.5 forever)", "Lächeln (alles ×1,5 für immer)", "Sourire (tout ×1,5 pour toujours)", "Усміхнутися (все ×1.5 назавжди)"], ["Управляющий", "Manager", "Manager", "Gérant", "Керуючий"], ["Утром под дверью лежала записка: «Ваш кофе мне нравится. Продолжайте. — Н.» Кто такой Н.?", "In the morning there was a note under the door: “I like your coffee. Keep going. — N.” Who is N.?", "Morgens lag ein Zettel unter der Tür: „Ihr Kaffee gefällt mir. Weiter so. — N.“ Wer ist N.?", "Le matin, il y avait un mot sous la porte : « J’aime votre café. Continuez. — N. » Qui est N. ?", "Вранці під дверима лежала записка: «Ваша кава мені подобається. Продовжуйте. — Н.» Хто такий Н.?"], ["Учимся на ошибках", "Learning from Mistakes", "Aus Fehlern lernen", "Apprendre de ses erreurs", "Вчимося на помилках"], ["Уют", "Coziness", "Gemütlichkeit", "Cosy", "Затишок"], ["Уютные растения", "Cozy Plants", "Gemütliche Pflanzen", "Plantes cosy", "Затишні рослини"], ["Фоновая музыка", "Background music", "Hintergrundmusik", "Musique d’ambiance", "Фонова музика"], ["Франшиза", "Franchise", "Franchise", "Franchise", "Франшиза"], ["Хороший момент для новой франшизы!", "Good time for a new franchise!", "Guter Zeitpunkt für ein neues Franchise!", "Bon moment pour une nouvelle franchise !", "Слушний момент для нової франшизи!"], ["Хэллоуин", "Halloween", "Halloween", "Halloween", "Гелловін"], ["Хэллоуин в кофейне! События случаются на 15% чаще", "Halloween at the coffee shop! Events happen 15% more often", "Halloween im Café! Ereignisse passieren 15 % öfter", "Halloween au café ! Les événements arrivent 15 % plus souvent", "Гелловін у кав’ярні! Події трапляються на 15% частіше"], ["Целая команда", "A Whole Team", "Ein ganzes Team", "Toute une équipe", "Ціла команда"], ["Целый штат", "A Full Staff", "Eine ganze Belegschaft", "Tout un effectif", "Цілий штат"], ["Чаевые", "Tips", "Trinkgeld", "Pourboires", "Чайові"], ["Яркая вывеска", "Bright Sign", "Helles Schild", "Enseigne éclatante", "Яскрава вивіска"], ["мрр♥", "mrr♥", "mrr♥", "mrr♥", "мрр♥"], ["мрр♥♥", "mrr♥♥", "mrr♥♥", "mrr♥♥", "мрр♥♥"], ["мур~", "purr~", "schnurr~", "ronron~", "мур~"], ["мяу!", "meow!", "miau!", "miaou !", "няв!"], ["мяу?", "meow?", "miau?", "miaou ?", "няв?"], ["⏱ Время игры: ", "⏱ Play time: ", "⏱ Spielzeit: ", "⏱ Temps de jeu : ", "⏱ Час гри: "], ["☕ Кликов за забег: ", "☕ Clicks this run: ", "☕ Klicks in diesem Durchlauf: ", "☕ Clics sur cette partie : ", "☕ Кліків за забіг: "], ["☕ Моя кофейня", "☕ My Coffee Shop", "☕ Mein Café", "☕ Mon café", "☕ Моя кав’ярня"], ["⚖️ Оспорили — штрафа нет!", "⚖️ Dispute won — no fine!", "⚖️ Angefochten — keine Strafe!", "⚖️ Contesté — pas d’amende !", "⚖️ Оскаржили — штрафу немає!"], ["⚙️ Настройки", "⚙️ Settings", "⚙️ Einstellungen", "⚙️ Réglages", "⚙️ Налаштування"], ["❌ Неверный код", "❌ Invalid code", "❌ Ungültiger Code", "❌ Code invalide", "❌ Невірний код"], ["✅ Успех! +$", "✅ Success! +$", "✅ Erfolg! +$", "✅ Réussite ! +$", "✅ Успіх! +$"], ["❌ Провал: −$", "❌ Failure: −$", "❌ Fehlschlag: −$", "❌ Échec : −$", "❌ Провал: −$"], ["❌ Проверка проиграна: −$", "❌ Inspection lost: −$", "❌ Prüfung verloren: −$", "❌ Contrôle perdu : −$", "❌ Перевірку програно: −$"], ["⭐ Зёрна", "⭐ Beans", "⭐ Bohnen", "⭐ Grains", "⭐ Зерна"], ["⭐ Зёрна: ", "⭐ Beans: ", "⭐ Bohnen: ", "⭐ Grains : ", "⭐ Зерна: "], ["⭐ Новая франшиза", "⭐ New Franchise", "⭐ Neues Franchise", "⭐ Nouvelle franchise", "⭐ Нова франшиза"], ["⭐ Новая франшиза! Кофейных зёрен: ", "⭐ New franchise! Coffee beans: ", "⭐ Neues Franchise! Kaffeebohnen: ", "⭐ Nouvelle franchise ! Grains de café : ", "⭐ Нова франшиза! Кавових зерен: "], ["🌟 Заряд кофеина: клик ×7", "🌟 Caffeine boost: click ×7", "🌟 Koffeinschub: Klick ×7", "🌟 Dose de caféine : clic ×7", "🌟 Заряд кофеїну: клік ×7"], ["🌟 Золотая чашка! Клик ×7 на 15 секунд", "🌟 Golden cup! Click ×7 for 15 seconds", "🌟 Goldene Tasse! Klick ×7 für 15 Sekunden", "🌟 Tasse dorée ! Clic ×7 pendant 15 secondes", "🌟 Золота чашка! Клік ×7 на 15 секунд"], ["🎄 Вкл", "🎄 On", "🎄 An", "🎄 Activé", "🎄 Увімк"], ["🎄 Выкл", "🎄 Off", "🎄 Aus", "🎄 Désactivé", "🎄 Вимк"], ["🎉 Кейтеринг на свадьбу", "🎉 Wedding catering", "🎉 Hochzeits-Catering", "🎉 Traiteur de mariage", "🎉 Кейтеринг на весілля"], ["🎉 Новый этап: ", "🎉 New stage: ", "🎉 Neue Stufe: ", "🎉 Nouvelle étape : ", "🎉 Новий етап: "], ["🎩 Критик в восторге! Доход ×1.25 навсегда", "🎩 The critic is delighted! Income ×1.25 forever", "🎩 Der Kritiker ist begeistert! Einkommen ×1,25 für immer", "🎩 Le critique est ravi ! Revenu ×1,25 pour toujours", "🎩 Критик у захваті! Дохід ×1.25 назавжди"], ["🎩 Критик в зале", "🎩 Critic in the room", "🎩 Kritiker im Raum", "🎩 Critique dans la salle", "🎩 Критик у залі"], ["🎩 Критик ушёл незамеченным...", "🎩 The critic left unnoticed...", "🎩 Der Kritiker ging unbemerkt...", "🎩 Le critique est parti inaperçu...", "🎩 Критик пішов непоміченим..."], ["🎲 Квесты: ", "🎲 Quests: ", "🎲 Quests: ", "🎲 Quêtes : ", "🎲 Квести: "], ["🎵 Музыка вкл", "🎵 Music on", "🎵 Musik an", "🎵 Musique activée", "🎵 Музика увімк"], ["🎵 Музыка выкл", "🎵 Music off", "🎵 Musik aus", "🎵 Musique désactivée", "🎵 Музика вимк"], ["🏅 Конкурс бариста", "🏅 Barista contest", "🏅 Barista-Wettbewerb", "🏅 Concours de barista", "🏅 Конкурс бариста"], ["🏆 Достижений", "🏆 Achievements", "🏆 Erfolge", "🏆 Succès", "🏆 Досягнень"], ["🏆 Достижения", "🏆 Achievements", "🏆 Erfolge", "🏆 Succès", "🏆 Досягнення"], ["🏪 Акция конкурента: доход ×0.75", "🏪 Competitor’s promo: income ×0.75", "🏪 Aktion des Konkurrenten: Einkommen ×0,75", "🏪 Promo du concurrent : revenu ×0,75", "🏪 Акція конкурента: дохід ×0.75"], ["🏪 Конкурент запустил акцию — клиентов меньше!", "🏪 The competitor launched a promo — fewer customers!", "🏪 Der Konkurrent hat eine Aktion gestartet — weniger Kunden!", "🏪 Le concurrent a lancé une promo — moins de clients !", "🏪 Конкурент запустив акцію — клієнтів менше!"], ["🏪 Конкурент через дорогу", "🏪 Competitor across the street", "🏪 Konkurrent gegenüber", "🏪 Concurrent en face", "🏪 Конкурент через дорогу"], ["🐱 Кот замурлыкал! Доход ×1.25 на 45 секунд", "🐱 The cat purred! Income ×1.25 for 45 seconds", "🐱 Die Katze schnurrt! Einkommen ×1,25 für 45 Sekunden", "🐱 Le chat ronronne ! Revenu ×1,25 pendant 45 secondes", "🐱 Кіт замуркотів! Дохід ×1.25 на 45 секунд"], ["🐱 Кота гладили", "🐱 Cat pets", "🐱 Katze gestreichelt", "🐱 Caresses au chat", "🐱 Кота гладили"], ["🐱 Кота погладили: ", "🐱 Cat pets: ", "🐱 Katze gestreichelt: ", "🐱 Caresses au chat : ", "🐱 Кота погладили: "], ["🐱 Мурлыканье: доход ×1.25", "🐱 Purring: income ×1.25", "🐱 Schnurren: Einkommen ×1,25", "🐱 Ronronnement : revenu ×1,25", "🐱 Муркотіння: дохід ×1.25"], ["👆 За клик", "👆 Per click", "👆 Pro Klick", "👆 Par clic", "👆 За клік"], ["👑 VIP доволен! +", "👑 VIP is happy! +", "👑 VIP ist zufrieden! +", "👑 Le VIP est content ! +", "👑 VIP задоволений! +"], ["👑 VIP обслужено", "👑 VIPs served", "👑 VIPs bedient", "👑 VIP servis", "👑 VIP обслужено"], ["💡 Вдохновение: всё ×3", "💡 Inspiration: everything ×3", "💡 Inspiration: alles ×3", "💡 Inspiration : tout ×3", "💡 Натхнення: усе ×3"], ["💰 Доход/сек", "💰 Income/sec", "💰 Einkommen/Sek.", "💰 Revenu/s", "💰 Дохід/сек"], ["💰 Заработано за забег: $", "💰 Earned this run: $", "💰 Verdient in diesem Durchlauf: $", "💰 Gagné sur cette partie : $", "💰 Зароблено за забіг: $"], ["📈 Развитие", "📈 Growth", "📈 Wachstum", "📈 Progrès", "📈 Розвиток"], ["📊 Статистика", "📊 Stats", "📊 Statistik", "📊 Stats", "📊 Статистика"], ["📋 Задание выполнено! +$", "📋 Task complete! +$", "📋 Aufgabe erledigt! +$", "📋 Tâche terminée ! +$", "📋 Завдання виконано! +$"], ["📋 Заданий: ", "📋 Tasks: ", "📋 Aufgaben: ", "📋 Tâches : ", "📋 Завдань: "], ["📋 Задания", "📋 Tasks", "📋 Aufgaben", "📋 Tâches", "📋 Завдання"], ["📋 Код скопирован", "📋 Code copied", "📋 Code kopiert", "📋 Code copié", "📋 Код скопійовано"], ["📖 Журнал", "📖 Journal", "📖 Tagebuch", "📖 Journal", "📖 Журнал"], ["📝 Записка под дверью", "📝 Note under the door", "📝 Zettel unter der Tür", "📝 Mot sous la porte", "📝 Записка під дверима"], ["📣 Ответная акция удалась!", "📣 The counter-promo worked!", "📣 Die Gegenaktion war erfolgreich!", "📣 La contre-promo a fonctionné !", "📣 Відповідна акція вдалася!"], ["📦 Внутри деньги: +$", "📦 Money inside: +$", "📦 Geld drin: +$", "📦 De l’argent dedans : +$", "📦 Всередині гроші: +$"], ["📦 Внутри идея! Всё ×3 на 20 секунд", "📦 An idea inside! Everything ×3 for 20 seconds", "📦 Eine Idee drin! Alles ×3 für 20 Sekunden", "📦 Une idée dedans ! Tout ×3 pendant 20 secondes", "📦 Всередині ідея! Усе ×3 на 20 секунд"], ["📦 Ловушка! Рассыпались зёрна: −$", "📦 A trap! Beans spilled: −$", "📦 Falle! Bohnen verschüttet: −$", "📦 Piège ! Des grains se sont renversés : −$", "📦 Пастка! Розсипалися зерна: −$"], ["📦 Посылок: ", "📦 Parcels: ", "📦 Pakete: ", "📦 Colis : ", "📦 Посилок: "], ["📦 Пусто. Только записка: «Скоро. — Н.»", "📦 Empty. Only a note: “Soon. — N.”", "📦 Leer. Nur ein Zettel: „Bald. — N.“", "📦 Vide. Seulement un mot : « Bientôt. — N. »", "📦 Порожньо. Лише записка: «Скоро. — Н.»"], ["📸 Блогер оставил отзыв: +$", "📸 A blogger left a review: +$", "📸 Ein Blogger hat eine Bewertung hinterlassen: +$", "📸 Un blogueur a laissé un avis : +$", "📸 Блогер залишив відгук: +$"], ["📸 Известный блогер зашёл в кофейню!", "📸 A famous blogger walked into the coffee shop!", "📸 Ein bekannter Blogger ist ins Café gekommen!", "📸 Un blogueur célèbre est entré dans le café !", "📸 Відомий блогер зайшов до кав’ярні!"], ["🔄 Начинаем с чистого листа!", "🔄 Starting with a clean slate!", "🔄 Wir fangen von vorn an!", "🔄 On repart de zéro !", "🔄 Починаємо з чистого аркуша!"], ["🔇 Звук выкл", "🔇 Sound off", "🔇 Ton aus", "🔇 Son désactivé", "🔇 Звук вимк"], ["🔊 Звук вкл", "🔊 Sound on", "🔊 Ton an", "🔊 Son activé", "🔊 Звук увімк"], ["🔍 Тайна Н. раскрыта", "🔍 N.’s mystery solved", "🔍 N.s Geheimnis gelüftet", "🔍 Le mystère de N. résolu", "🔍 Таємницю Н. розкрито"], ["🔒 Этап ", "🔒 Stage ", "🔒 Stufe ", "🔒 Étape ", "🔒 Етап "], ["🔔 Н. возвращается", "🔔 N. returns", "🔔 N. kehrt zurück", "🔔 N. revient", "🔔 Н. повертається"], ["🔥 Комбо ×", "🔥 Combo ×", "🔥 Combo ×", "🔥 Combo ×", "🔥 Комбо ×"], ["🔥 Лучшая серия кликов: ", "🔥 Best click streak: ", "🔥 Beste Klickserie: ", "🔥 Meilleure série de clics : ", "🔥 Найкраща серія кліків: "], ["🔧 Всё починено!", "🔧 Everything is fixed!", "🔧 Alles repariert!", "🔧 Tout est réparé !", "🔧 Усе полагоджено!"], ["🔧 Поломка: доход ×0.5", "🔧 Breakdown: income ×0.5", "🔧 Defekt: Einkommen ×0,5", "🔧 Panne : revenu ×0,5", "🔧 Поломка: дохід ×0.5"], ["🔧 Сломалась кофемашина — доход ×0.5", "🔧 The coffee machine broke — income ×0.5", "🔧 Die Kaffeemaschine ist kaputt — Einkommen ×0,5", "🔧 La machine à café est en panne — revenu ×0,5", "🔧 Зламалася кавомашина — дохід ×0.5"], ["🕴️ Предложение Н.", "🕴️ N.’s offer", "🕴️ N.s Angebot", "🕴️ L’offre de N.", "🕴️ Пропозиція Н."], ["😞 Позор: доход ×0.8", "😞 Shame: income ×0.8", "😞 Schande: Einkommen ×0,8", "😞 Honte : revenu ×0,8", "😞 Ганьба: дохід ×0.8"], ["😠 Жалобы гостей: клик ×0.7", "😠 Guest complaints: click ×0.7", "😠 Gästebeschwerden: Klick ×0,7", "😠 Plaintes des clients : clic ×0,7", "😠 Скарги гостей: клік ×0.7"], ["😴 Тебя не было ", "😴 You were away for ", "😴 Du warst weg: ", "😴 Tu étais absent pendant ", "😴 Тебе не було "], ["🚶 Час пик! Всё приносит ×2 на 20 секунд", "🚶 Rush hour! Everything earns ×2 for 20 seconds", "🚶 Stoßzeit! Alles bringt ×2 für 20 Sekunden", "🚶 Heure de pointe ! Tout rapporte ×2 pendant 20 secondes", "🚶 Година пік! Усе приносить ×2 на 20 секунд"], ["🚶 Час пик: всё ×2", "🚶 Rush hour: everything ×2", "🚶 Stoßzeit: alles ×2", "🚶 Heure de pointe : tout ×2", "🚶 Година пік: усе ×2"], ["🧾 Налоговая проверка: штраф $", "🧾 Tax inspection: fine $", "🧾 Steuerprüfung: Strafe $", "🧾 Contrôle fiscal : amende $", "🧾 Податкова перевірка: штраф $"], ["🧾 Штраф уплачен: −$", "🧾 Fine paid: −$", "🧾 Strafe bezahlt: −$", "🧾 Amende payée : −$", "🧾 Штраф сплачено: −$"], ["🫘 Партия редких зёрен", "🫘 Batch of rare beans", "🫘 Charge seltener Bohnen", "🫘 Lot de grains rares", "🫘 Партія рідкісних зерен"], ["Язык", "Language", "Sprache", "Langue", "Мова"], ["Язык интерфейса", "Interface language", "Sprache der Oberfläche", "Langue de l’interface", "Мова інтерфейсу"], ["Язык переключается сразу, прогресс сохраняется", "Switches instantly, progress is kept", "Wechselt sofort, der Fortschritt bleibt erhalten", "Change immédiatement, la progression est conservée", "Перемикається одразу, прогрес зберігається"], [" за цикл", " per cycle", " pro Zyklus", " par cycle", " за цикл"], [" за цикл, +", " per cycle, +", " pro Zyklus, +", " par cycle, +", " за цикл, +"], [" раз)", " times)", " Mal)", " fois)", " разів)"], [" — просрочено", " — overdue", " — überfällig", " — en retard", " — прострочено"], ["% к доходу", "% income", "% Einkommen", "% de revenu", "% до доходу"], ["% к доходу, аренды нет", "% income, no rent", "% Einkommen, keine Miete", "% de revenu, pas de loyer", "% до доходу, оренди немає"], [". Сдавай выручку в банк!", ". Deposit your takings in the bank!", ". Zahle die Einnahmen bei der Bank ein!", ". Dépose la recette à la banque !", ". Здавай виручку в банк!"], ["Арендовать $", "Rent $", "Mieten $", "Louer $", "Орендувати $"], ["Арендуется: $", "Rented: $", "Gemietet: $", "Loué : $", "Орендується: $"], ["Банковские улучшения", "Bank upgrades", "Bank-Upgrades", "Améliorations bancaires", "Банківські покращення"], ["Больше столиков и посетителей.", "More tables and more customers.", "Mehr Tische und mehr Gäste.", "Plus de tables et plus de clients.", "Більше столиків і відвідувачів."], ["Бухгалтер", "Accountant", "Buchhalter", "Comptable", "Бухгалтер"], ["В собственности: +", "Owned: +", "Eigentum: +", "Propriété : +", "У власності: +"], ["Вся недвижимость — твоя.", "All the real estate is yours.", "Die ganze Immobilie gehört dir.", "Tout l’immobilier est à toi.", "Уся нерухомість — твоя."], ["Второй зал", "Second Hall", "Zweiter Saal", "Deuxième salle", "Другий зал"], ["Выкупи все помещения", "Buy out all premises", "Kaufe alle Räume", "Rachète tous les locaux", "Викупи всі приміщення"], ["Выкупи первое помещение", "Buy out your first premises", "Kaufe deine ersten Räume", "Rachète tes premiers locaux", "Викупи перше приміщення"], ["Выкупить $", "Buy out $", "Kaufen $", "Racheter $", "Викупити $"], ["Домовладелец", "Landlord", "Hausbesitzer", "Propriétaire", "Домовласник"], ["Запасы зёрен и выпечки под рукой.", "Beans and pastries stocked close at hand.", "Bohnen und Gebäck griffbereit.", "Grains et pâtisseries à portée de main.", "Запаси зерен і випічки під рукою."], ["Заплати первый налог", "Pay your first tax", "Zahle deine erste Steuer", "Paie ton premier impôt", "Сплати перший податок"], ["Здание целиком", "Whole Building", "Ganzes Gebäude", "Immeuble entier", "Будівля повністю"], ["Инкассатор", "Cash Collector", "Geldtransporter", "Convoyeur de fonds", "Інкасатор"], ["Итоги банка", "Bank summary", "Bankübersicht", "Bilan bancaire", "Підсумки банку"], ["Комиссия за оплату картой снижается вдвое", "Card payment fee is cut in half", "Die Kartengebühr wird halbiert", "Les frais de paiement par carte sont divisés par deux", "Комісія за оплату карткою знижується вдвічі"], ["Купи все банковские улучшения", "Buy all bank upgrades", "Kaufe alle Bank-Upgrades", "Achète toutes les améliorations bancaires", "Купи всі банківські покращення"], ["Куплено ✓", "Bought ✓", "Gekauft ✓", "Acheté ✓", "Куплено ✓"], ["Наличные в кассе без комиссии, но их могут украсть. Карты безопасны, но банк берёт комиссию.", "Cash in the register has no fee, but it can be stolen. Cards are safe, but the bank takes a fee.", "Bargeld in der Kasse ist gebührenfrei, kann aber gestohlen werden. Karten sind sicher, aber die Bank nimmt eine Gebühr.", "L’argent en caisse est sans frais, mais peut être volé. Les cartes sont sûres, mais la banque prélève des frais.", "Готівка в касі без комісії, але її можуть вкрасти. Картки безпечні, але банк бере комісію."], ["Налог на прибыль −25%", "Profit tax −25%", "Gewinnsteuer −25 %", "Impôt sur les bénéfices −25 %", "Податок на прибуток −25%"], ["Налогоплательщик", "Taxpayer", "Steuerzahler", "Contribuable", "Платник податків"], ["Не арендовано: $", "Not rented: $", "Nicht gemietet: $", "Non loué : $", "Не орендовано: $"], ["Недвижимый магнат", "Real Estate Tycoon", "Immobilienmagnat", "Magnat de l’immobilier", "Нерухомий магнат"], ["Оплатить", "Pay", "Bezahlen", "Payer", "Сплатити"], ["Основное помещение кофейни.", "The main premises of the coffee shop.", "Die Haupträume des Cafés.", "Les locaux principaux du café.", "Основне приміщення кав’ярні."], ["Помещения", "Premises", "Räumlichkeiten", "Locaux", "Приміщення"], ["Потери при ограблении кассы −70%", "Losses from a till robbery −70%", "Verluste bei Kassenraub −70 %", "Pertes en cas de vol de caisse −70 %", "Втрати при пограбуванні каси −70%"], ["Сам сдаёт выручку в банк каждые 90 секунд", "Deposits the takings in the bank every 90 seconds", "Zahlt die Einnahmen alle 90 Sekunden bei der Bank ein", "Dépose la recette à la banque toutes les 90 secondes", "Сам здає виручку в банк кожні 90 секунд"], ["Сдать выручку в банк", "Deposit takings in the bank", "Einnahmen bei der Bank einzahlen", "Déposer la recette à la banque", "Здати виручку в банк"], ["Сейф", "Safe", "Tresor", "Coffre-fort", "Сейф"], ["Склад", "Warehouse", "Lager", "Entrepôt", "Склад"], ["Счета к оплате", "Bills to pay", "Zu zahlende Rechnungen", "Factures à payer", "Рахунки до сплати"], ["Счетов нет — всё оплачено ✅", "No bills — everything is paid ✅", "Keine Rechnungen — alles bezahlt ✅", "Aucune facture — tout est payé ✅", "Рахунків немає — усе сплачено ✅"], ["Торговый зал", "Main Hall", "Verkaufsraum", "Salle principale", "Торговий зал"], ["Финансовая грамотность", "Financial Literacy", "Finanzkompetenz", "Culture financière", "Фінансова грамотність"], ["Эквайринг-терминал", "Card Terminal", "Kartenterminal", "Terminal de paiement", "Еквайринг-термінал"], ["Следующая аренда через ", "Next rent in ", "Nächste Miete in ", "Prochain loyer dans ", "Наступна оренда через "], ["Следующий налог через ", "Next tax in ", "Nächste Steuer in ", "Prochain impôt dans ", "Наступний податок через "], ["аренда −$", "rent −$", "Miete −$", "loyer −$", "оренда −$"], ["налог −$", "tax −$", "Steuer −$", "impôt −$", "податок −$"], ["⚠️ Просрочек: ", "⚠️ Late payments: ", "⚠️ Verspätete Zahlungen: ", "⚠️ Retards de paiement : ", "⚠️ Прострочень: "], ["⚠️ Просрочка платежа! Штраф 10%, доход ×0.85 до оплаты", "⚠️ Payment overdue! 10% fine, income ×0.85 until paid", "⚠️ Zahlung überfällig! 10 % Strafe, Einkommen ×0,85 bis zur Zahlung", "⚠️ Paiement en retard ! Amende de 10 %, revenu ×0,85 jusqu’au paiement", "⚠️ Прострочення платежу! Штраф 10%, дохід ×0.85 до сплати"], ["✅ Оплачено: ", "✅ Paid: ", "✅ Bezahlt: ", "✅ Payé : ", "✅ Сплачено: "], ["🏠 Аренда", "🏠 Rent", "🏠 Miete", "🏠 Loyer", "🏠 Оренда"], ["🏠 Аренда выплачена: $", "🏠 Rent paid: $", "🏠 Miete bezahlt: $", "🏠 Loyer payé : $", "🏠 Оренду сплачено: $"], ["🏠 Выкуплено: ", "🏠 Bought out: ", "🏠 Gekauft: ", "🏠 Racheté : ", "🏠 Викуплено: "], ["🏠 Выставлен счёт за аренду: $", "🏠 Rent bill issued: $", "🏠 Mietrechnung gestellt: $", "🏠 Facture de loyer émise : $", "🏠 Виставлено рахунок за оренду: $"], ["🏦 Автоплатёж: ", "🏦 Autopay: ", "🏦 Autozahlung: ", "🏦 Paiement auto : ", "🏦 Автоплатіж: "], ["🏦 Банк", "🏦 Bank", "🏦 Bank", "🏦 Banque", "🏦 Банк"], ["🏦 Выручка сдана в банк: $", "🏦 Takings deposited: $", "🏦 Einnahmen eingezahlt: $", "🏦 Recette déposée : $", "🏦 Виручку здано в банк: $"], ["💳 Доля оплат картой", "💳 Share of card payments", "💳 Anteil Kartenzahlungen", "💳 Part des paiements par carte", "💳 Частка оплат карткою"], ["💳 Карта (на счёте)", "💳 Card (in account)", "💳 Karte (auf dem Konto)", "💳 Carte (sur le compte)", "💳 Картка (на рахунку)"], ["💳 Комиссий банку: $", "💳 Fees to the bank: $", "💳 Gebühren an die Bank: $", "💳 Frais payés à la banque : $", "💳 Комісій банку: $"], ["💵 Касса (наличные)", "💵 Register (cash)", "💵 Kasse (Bargeld)", "💵 Caisse (espèces)", "💵 Каса (готівка)"], ["📈 Бонус помещений", "📈 Premises bonus", "📈 Raumbonus", "📈 Bonus des locaux", "📈 Бонус приміщень"], ["📉 Комиссия за карты", "📉 Card fee", "📉 Kartengebühr", "📉 Frais de carte", "📉 Комісія за картки"], ["🔁 Автоплатёж: вкл", "🔁 Autopay: on", "🔁 Autozahlung: an", "🔁 Paiement auto : activé", "🔁 Автоплатіж: увімк"], ["🔁 Автоплатёж: выкл", "🔁 Autopay: off", "🔁 Autozahlung: aus", "🔁 Paiement auto : désactivé", "🔁 Автоплатіж: вимк"], ["🔑 Арендовано: ", "🔑 Rented: ", "🔑 Gemietet: ", "🔑 Loué : ", "🔑 Орендовано: "], ["🦹 Ограбление! Из кассы украли $", "🦹 Robbery! Stolen from the register: $", "🦹 Raub! Aus der Kasse gestohlen: $", "🦹 Cambriolage ! Volé dans la caisse : $", "🦹 Пограбування! З каси вкрали $"], ["🦹 Украдено из кассы: $", "🦹 Stolen from the register: $", "🦹 Aus der Kasse gestohlen: $", "🦹 Volé dans la caisse : $", "🦹 Украдено з каси: $"], ["🧾 Выставлен налог: $", "🧾 Tax bill issued: $", "🧾 Steuer festgesetzt: $", "🧾 Impôt émis : $", "🧾 Виставлено податок: $"], ["🧾 Налог", "🧾 Tax", "🧾 Steuer", "🧾 Impôt", "🧾 Податок"], ["🧾 Налог на прибыль", "🧾 Profit tax", "🧾 Gewinnsteuer", "🧾 Impôt sur les bénéfices", "🧾 Податок на прибуток"], ["🧾 Налогов выплачено: $", "🧾 Taxes paid: $", "🧾 Steuern bezahlt: $", "🧾 Impôts payés : $", "🧾 Податків сплачено: $"], ["Барабан", "Drum", "Trommel", "Tambour", "Барабан"], ["Без звука", "No sound", "Ohne Ton", "Sans son", "Без звуку"], ["Большая", "Large", "Groß", "Grand", "Велика"], ["Вибрация при клике", "Vibration on click", "Vibration beim Klick", "Vibration au clic", "Вібрація при кліку"], ["Вкл", "On", "An", "Activé", "Увімк"], ["Выкл", "Off", "Aus", "Désactivé", "Вимк"], ["Звук клика", "Click sound", "Klickgeräusch", "Son du clic", "Звук кліку"], ["Золото", "Gold", "Gold", "Or", "Золото"], ["Иконка", "Icon", "Symbol", "Icône", "Іконка"], ["Капля", "Droplet", "Tropfen", "Goutte", "Крапля"], ["Карамель", "Caramel", "Karamell", "Caramel", "Карамель"], ["Классика", "Classic", "Klassisch", "Classique", "Класика"], ["Кнопка «Варить кофе»", "The “Brew coffee” button", "Der Button „Kaffee brühen“", "Le bouton « Préparer du café »", "Кнопка «Варити каву»"], ["Колокольчик", "Bell", "Glöckchen", "Clochette", "Дзвіночок"], ["Кофемашина", "Coffee machine", "Kaffeemaschine", "Machine à café", "Кавомашина"], ["Малая", "Small", "Klein", "Petit", "Мала"], ["Матча", "Matcha", "Matcha", "Matcha", "Матча"], ["Мокко", "Mocha", "Mokka", "Moka", "Мокко"], ["Монетка", "Coin", "Münze", "Pièce", "Монетка"], ["Неон", "Neon", "Neon", "Néon", "Неон"], ["Обычная", "Normal", "Normal", "Normal", "Звичайна"], ["Пентатоника", "Pentatonic", "Pentatonik", "Pentatonique", "Пентатоніка"], ["Печатная машинка", "Typewriter", "Schreibmaschine", "Machine à écrire", "Друкарська машинка"], ["Размер кнопки", "Button size", "Button-Größe", "Taille du bouton", "Розмір кнопки"], ["Светлая", "Light", "Hell", "Clair", "Світла"], ["Стиль кнопки", "Button style", "Button-Stil", "Style du bouton", "Стиль кнопки"], ["Тема оформления", "Theme", "Design-Thema", "Thème", "Тема оформлення"], ["Тёмная", "Dark", "Dunkel", "Sombre", "Темна"], ["Эффекты клика", "Click effects", "Klick-Effekte", "Effets de clic", "Ефекти кліку"], ["Ягода", "Berry", "Beere", "Baie", "Ягода"], ["Подсказка", "Tip", "Tipp", "Astuce", "Підказка"], ["Лови золотые чашки: они дают ×7 к клику на 15 секунд.", "Catch the golden cups: they give ×7 click power for 15 seconds.", "Fang die goldenen Tassen: Sie geben 15 Sekunden lang ×7 Klickkraft.", "Attrape les tasses dorées : elles donnent ×7 de puissance de clic pendant 15 secondes.", "Лови золоті чашки: вони дають ×7 до кліку на 15 секунд."], ["Погладь кота несколько раз подряд — он замурлыкает и принесёт удачу.", "Pet the cat several times in a row — he’ll purr and bring you luck.", "Streichle die Katze mehrmals hintereinander — sie schnurrt und bringt Glück.", "Caresse le chat plusieurs fois de suite — il ronronnera et te portera chance.", "Погладь кота кілька разів поспіль — він замуркоче й принесе удачу."], ["VIP-клиент уходит, когда кольцо терпения опустеет, так что кликни по нему вовремя.", "A VIP customer leaves when the patience ring runs out, so click on them in time.", "Ein VIP-Kunde geht, sobald der Geduldsring leer ist — klicke ihn rechtzeitig an.", "Un client VIP part quand l’anneau de patience est vide : clique dessus à temps.", "VIP-клієнт іде, коли кільце терпіння порожніє, тож клікни по ньому вчасно."], ["Сдавай выручку в банк, пока кассу не ограбили.", "Deposit your takings in the bank before the register gets robbed.", "Zahle die Einnahmen bei der Bank ein, bevor die Kasse ausgeraubt wird.", "Dépose la recette à la banque avant que la caisse ne soit cambriolée.", "Здавай виручку в банк, поки касу не пограбували."], ["Включи автоплатёж, чтобы не получать штрафы за просрочку.", "Turn on autopay to avoid late-payment fines.", "Aktiviere die Autozahlung, um Verzugsstrafen zu vermeiden.", "Active le paiement automatique pour éviter les amendes de retard.", "Увімкни автоплатіж, щоб не отримувати штрафи за прострочення."], ["Выкупленное помещение навсегда избавляет от аренды и повышает доход.", "A bought-out premises frees you from rent forever and boosts your income.", "Gekaufte Räume befreien dich für immer von der Miete und steigern dein Einkommen.", "Un local racheté t’épargne le loyer pour toujours et augmente ton revenu.", "Викуплене приміщення назавжди позбавляє від оренди й підвищує дохід."], ["Чем длиннее серия кликов без пауз, тем сильнее бонус.", "The longer your click streak without pauses, the bigger the bonus.", "Je länger deine Klickserie ohne Pause, desto größer der Bonus.", "Plus ta série de clics sans pause est longue, plus le bonus est grand.", "Чим довша серія кліків без пауз, тим сильніший бонус."], ["Ищи в магазине значок ⭐: это самая быстрая окупаемость.", "Look for the ⭐ badge in the shop: it marks the fastest payback.", "Achte im Shop auf das ⭐-Symbol: Es steht für die schnellste Amortisation.", "Cherche le badge ⭐ dans la boutique : c’est le meilleur retour sur investissement.", "Шукай у магазині значок ⭐: це найшвидша окупність."], ["Новая франшиза даёт кофейные зёрна и постоянный бонус к доходу.", "A new franchise gives you coffee beans and a permanent income bonus.", "Ein neues Franchise bringt Kaffeebohnen und einen dauerhaften Einkommensbonus.", "Une nouvelle franchise te donne des grains de café et un bonus de revenu permanent.", "Нова франшиза дає кавові зерна та постійний бонус до доходу."], ["Тему оформления можно сменить в настройках: классика, тёмная или светлая.", "You can change the theme in settings: classic, dark or light.", "Das Design-Thema kannst du in den Einstellungen ändern: klassisch, dunkel oder hell.", "Tu peux changer le thème dans les réglages : classique, sombre ou clair.", "Тему оформлення можна змінити в налаштуваннях: класична, темна або світла."], ["Нажми пробел, чтобы варить кофе без мышки.", "Press the space bar to brew coffee without a mouse.", "Drücke die Leertaste, um ohne Maus Kaffee zu brühen.", "Appuie sur la barre d’espace pour préparer du café sans souris.", "Натисни пробіл, щоб варити каву без мишки."], ["Бухгалтер снижает налог, а сейф — потери при ограблении.", "The accountant lowers your tax, and the safe lowers robbery losses.", "Der Buchhalter senkt die Steuer, der Tresor die Verluste bei einem Raub.", "Le comptable réduit l’impôt, et le coffre-fort réduit les pertes en cas de cambriolage.", "Бухгалтер знижує податок, а сейф — втрати при пограбуванні."], ["Кофейня меняется со временем года и временем суток: загляни в разное время.", "The coffee shop changes with the season and the time of day: visit at different times.", "Das Café verändert sich mit Jahres- und Tageszeit: Schau zu verschiedenen Zeiten vorbei.", "Le café change avec la saison et l’heure du jour : passe à différents moments.", "Кав’ярня змінюється з порою року та часом доби: заглядай у різний час."], ["В настройках можно поменять звук кнопки, её стиль и размер.", "In settings you can change the button’s sound, style and size.", "In den Einstellungen kannst du Ton, Stil und Größe des Buttons ändern.", "Dans les réglages, tu peux changer le son, le style et la taille du bouton.", "У налаштуваннях можна змінити звук кнопки, її стиль і розмір."], ["Покупай сразу по ×10 или ×100: выбери количество над списком найма.", "Buy ×10 or ×100 at once: pick the amount above the hiring list.", "Kaufe gleich ×10 oder ×100: Wähle die Menge über der Einstellungsliste.", "Achète ×10 ou ×100 d’un coup : choisis la quantité au-dessus de la liste d’embauche.", "Купуй одразу по ×10 або ×100: обери кількість над списком найму."], ["Критик в шляпе ходит среди гостей: найди его, и доход вырастет навсегда.", "A critic in a hat walks among the guests: find him and your income grows forever.", "Ein Kritiker mit Hut mischt sich unter die Gäste: Finde ihn, und dein Einkommen wächst für immer.", "Un critique à chapeau se mêle aux clients : trouve-le et ton revenu augmentera pour toujours.", "Критик у капелюсі ходить серед гостей: знайди його, і дохід зросте назавжди."], ["Сломалась кофемашина? Почини её быстрее, иначе доход упадёт вдвое.", "Coffee machine broke? Fix it fast, or your income will drop by half.", "Kaffeemaschine kaputt? Repariere sie schnell, sonst halbiert sich dein Einkommen.", "La machine à café est en panne ? Répare-la vite, sinon ton revenu sera divisé par deux.", "Зламалася кавомашина? Полагодь її швидше, інакше дохід упаде вдвічі."], ["Не забывай про задания: награда за них растёт вместе с доходом.", "Don’t forget the tasks: their reward grows with your income.", "Vergiss die Aufgaben nicht: ihre Belohnung wächst mit deinem Einkommen.", "N’oublie pas les tâches : leur récompense grandit avec ton revenu.", "Не забувай про завдання: нагорода за них зростає разом із доходом."], ["Язык игры меняется в настройках: English, Deutsch, Français, Русский, Українська.", "The game language can be changed in settings: English, Deutsch, Français, Русский, Українська.", "Die Spielsprache lässt sich in den Einstellungen ändern: English, Deutsch, Français, Русский, Українська.", "La langue du jeu se change dans les réglages : English, Deutsch, Français, Русский, Українська.", "Мову гри можна змінити в налаштуваннях: English, Deutsch, Français, Русский, Українська."], ["Загадочная посылка может оказаться ловушкой, так что рискуй с умом.", "A mysterious parcel can turn out to be a trap, so take risks wisely.", "Ein geheimnisvolles Paket kann eine Falle sein — geh Risiken mit Verstand ein.", "Un colis mystérieux peut être un piège : prends des risques à bon escient.", "Загадкова посилка може виявитися пасткою, тож ризикуй з розумом."], ["Игра сохраняется сама, а резервный код лежит в настройках.", "The game saves itself, and a backup code is in settings.", "Das Spiel speichert automatisch, und einen Sicherungscode findest du in den Einstellungen.", "Le jeu se sauvegarde tout seul, et un code de sauvegarde se trouve dans les réglages.", "Гра зберігається сама, а резервний код лежить у налаштуваннях."], ["Просроченный счёт снижает доход, а штраф составляет десять процентов.", "An overdue bill lowers your income, and the fine is ten percent.", "Eine überfällige Rechnung senkt dein Einkommen, und die Strafe beträgt zehn Prozent.", "Une facture en retard réduit ton revenu, et l’amende est de dix pour cent.", "Прострочений рахунок знижує дохід, а штраф становить десять відсотків."], ["Друзья", "Friends", "Freunde", "Amis", "Друзі"], ["VIP-клуб", "VIP Club", "VIP-Club", "Club VIP", "VIP-клуб"], ["Ежедневная награда", "Daily reward", "Tägliche Belohnung", "Récompense quotidienne", "Щоденна нагорода"], ["Пригласи друзей", "Invite friends", "Freunde einladen", "Invite tes amis", "Запроси друзів"], ["Отправь другу приглашение с твоим кодом. Друг вводит код и получает бонус, а ты получаешь награды, когда подтвердишь его ответный код.", "Send your friend an invitation with your code. Your friend enters it and gets a bonus, and you get rewards once you confirm their reply code.", "Schicke deinem Freund eine Einladung mit deinem Code. Dein Freund gibt ihn ein und erhält einen Bonus, du bekommst Belohnungen, sobald du seinen Antwortcode bestätigst.", "Envoie à ton ami une invitation avec ton code. Il le saisit et reçoit un bonus, et tu obtiens des récompenses quand tu confirmes son code de réponse.", "Надішли другу запрошення з твоїм кодом. Друг вводить код і отримує бонус, а ти отримуєш нагороди, коли підтвердиш його кодову відповідь."], ["Ссылка на игру или бота (необязательно)", "Link to the game or bot (optional)", "Link zum Spiel oder Bot (optional)", "Lien vers le jeu ou le bot (facultatif)", "Посилання на гру або бота (необов’язково)"], ["Скопировать приглашение", "Copy invitation", "Einladung kopieren", "Copier l’invitation", "Скопіювати запрошення"], ["Есть код друга?", "Have a friend’s code?", "Hast du einen Freundescode?", "Tu as un code d’ami ?", "Є код друга?"], ["Код друга", "Friend’s code", "Freundescode", "Code d’ami", "Код друга"], ["Ввести", "Enter", "Eingeben", "Valider", "Ввести"], ["Подтверждение друга", "Friend confirmation", "Freund bestätigen", "Confirmation d’un ami", "Підтвердження друга"], ["Друг присылает тебе ответный код. Введи его, чтобы засчитать приглашение.", "Your friend sends you a reply code. Enter it to count the invitation.", "Dein Freund schickt dir einen Antwortcode. Gib ihn ein, damit die Einladung zählt.", "Ton ami t’envoie un code de réponse. Saisis-le pour valider l’invitation.", "Друг надсилає тобі кодову відповідь. Введи її, щоб зарахувати запрошення."], ["Ответный код друга", "Friend’s reply code", "Antwortcode des Freundes", "Code de réponse de l’ami", "Кодова відповідь друга"], ["Подтвердить", "Confirm", "Bestätigen", "Confirmer", "Підтвердити"], ["Награды за друзей", "Rewards for friends", "Belohnungen für Freunde", "Récompenses d’amis", "Нагороди за друзів"], ["В этой версии коды обмениваются вручную. В Telegram-боте друзья засчитываются автоматически.", "In this version codes are exchanged by hand. In the Telegram bot friends are counted automatically.", "In dieser Version werden Codes von Hand getauscht. Im Telegram-Bot werden Freunde automatisch gezählt.", "Dans cette version, les codes s’échangent à la main. Dans le bot Telegram, les amis sont comptés automatiquement.", "У цій версії коди обмінюються вручну. У Telegram-боті друзі зараховуються автоматично."], ["Заходи в Coffee Shop Simulator! Мой код друга:  ", "Come play Coffee Shop Simulator! My friend code:  ", "Spiel mit im Coffee Shop Simulator! Mein Freundescode:  ", "Viens jouer à Coffee Shop Simulator ! Mon code d’ami :  ", "Заходь у Coffee Shop Simulator! Мій код друга:  "], [". Введи его в разделе «Друзья» и получи бонус.", ". Enter it in the “Friends” tab and get a bonus.", ". Gib ihn im Bereich „Freunde“ ein und erhalte einen Bonus.", ". Saisis-le dans la section « Amis » et reçois un bonus.", ". Введи його в розділі «Друзі» й отримай бонус."], ["Друг народа", "Friend of the People", "Freund des Volkes", "Ami du peuple", "Друг народу"], ["Пригласи первого друга", "Invite your first friend", "Lade deinen ersten Freund ein", "Invite ton premier ami", "Запроси першого друга"], ["Душа компании", "Life of the Party", "Seele der Gesellschaft", "Boute-en-train", "Душа компанії"], ["Пригласи 6 друзей", "Invite 6 friends", "Lade 6 Freunde ein", "Invite 6 amis", "Запроси 6 друзів"], ["Постоянный гость", "Regular Guest", "Stammgast", "Habitué", "Постійний гість"], ["Забери ежедневную награду 7 дней подряд", "Claim the daily reward 7 days in a row", "Hol dir 7 Tage in Folge die tägliche Belohnung", "Récupère la récompense quotidienne 7 jours de suite", "Забери щоденну нагороду 7 днів поспіль"], ["Королевский", "Royal", "Königlich", "Royal", "Королівський"], ["Бриллиант", "Diamond", "Diamant", "Diamant", "Діамант"], ["VIP не активен", "VIP inactive", "VIP nicht aktiv", "VIP inactif", "VIP не активний"], ["VIP Бронза", "VIP Bronze", "VIP Bronze", "VIP Bronze", "VIP Бронза"], ["VIP Серебро", "VIP Silver", "VIP Silber", "VIP Argent", "VIP Срібло"], ["VIP Золото", "VIP Gold", "VIP Gold", "VIP Or", "VIP Золото"], ["Пробный VIP: осталось  ", "Trial VIP:  ", "Test-VIP: noch  ", "VIP d’essai : encore  ", "Пробний VIP: залишилось  "], ["Друзей:  ", "Friends:  ", "Freunde:  ", "Amis :  ", "Друзів:  "], [" · до следующего уровня:  ", " · to next level:  ", " · bis zum nächsten Level:  ", " · avant le prochain niveau :  ", " · до наступного рівня:  "], [" · максимальный уровень", " · max level", " · Maximales Level", " · niveau maximum", " · максимальний рівень"], ["Забрать +$", "Claim +$", "Abholen +$", "Récupérer +$", "Забрати +$"], ["Уже получено сегодня", "Already claimed today", "Heute schon erhalten", "Déjà récupérée aujourd’hui", "Вже отримано сьогодні"], ["Серия дней:  ", "Day streak:  ", "Tage in Folge:  ", "Série de jours :  ", "Серія днів:  "], [" · на 7-й день зёрна", " · beans on day 7", " · am 7. Tag Bohnen", " · des grains au 7ᵉ jour", " · на 7-й день зерна"], ["Отправь другу-пригласившему ответный код:  ", "Send the friend who invited you this reply code:  ", "Schicke dem einladenden Freund diesen Antwortcode:  ", "Envoie ce code de réponse à l’ami qui t’a invité :  ", "Надішли другу, який запросив, кодову відповідь:  "], ["Ежедневная награда ×2", "Daily reward ×2", "Tägliche Belohnung ×2", "Récompense quotidienne ×2", "Щоденна нагорода ×2"], ["Ежедневная награда ×3", "Daily reward ×3", "Tägliche Belohnung ×3", "Récompense quotidienne ×3", "Щоденна нагорода ×3"], ["Ежедневная награда ×4", "Daily reward ×4", "Tägliche Belohnung ×4", "Récompense quotidienne ×4", "Щоденна нагорода ×4"], ["Офлайн-доход 65% до 4 часов", "Offline income 65% up to 4 hours", "Offline-Einkommen 65 % bis 4 Stunden", "Revenu hors ligne 65 % jusqu’à 4 heures", "Офлайн-дохід 65% до 4 годин"], ["Офлайн-доход 80% до 6 часов", "Offline income 80% up to 6 hours", "Offline-Einkommen 80 % bis 6 Stunden", "Revenu hors ligne 80 % jusqu’à 6 heures", "Офлайн-дохід 80% до 6 годин"], ["Офлайн-доход 100% до 8 часов", "Offline income 100% up to 8 hours", "Offline-Einkommen 100 % bis 8 Stunden", "Revenu hors ligne 100 % jusqu’à 8 heures", "Офлайн-дохід 100% до 8 годин"], ["Скин кнопки «Королевский»", "Button skin “Royal”", "Button-Skin „Königlich“", "Skin de bouton « Royal »", "Скін кнопки «Королівський»"], ["Скин кнопки «Бриллиант»", "Button skin “Diamond”", "Button-Skin „Diamant“", "Skin de bouton « Diamant »", "Скін кнопки «Діамант»"], ["Золотые чашки ловятся сами", "Golden cups are caught automatically", "Goldene Tassen werden automatisch gefangen", "Les tasses dorées sont attrapées automatiquement", "Золоті чашки ловляться самі"], ["VIP-клиенты ждут дольше и приходят чаще", "VIP customers wait longer and come more often", "VIP-Kunden warten länger und kommen öfter", "Les clients VIP attendent plus longtemps et viennent plus souvent", "VIP-клієнти чекають довше й приходять частіше"], ["+3% к доходу", "+3% income", "+3 % Einkommen", "+3 % de revenu", "+3% до доходу"], ["+6% к доходу", "+6% income", "+6 % Einkommen", "+6 % de revenu", "+6% до доходу"], ["Бесплатный инкассатор", "Free cash collector", "Kostenloser Geldeinsammler", "Collecteur de fonds gratuit", "Безкоштовний інкасатор"], ["Корона на вывеске", "Crown on the sign", "Krone auf dem Schild", "Couronne sur l’enseigne", "Корона на вивісці"], ["Первый друг", "First friend", "Erster Freund", "Premier ami", "Перший друг"], ["Три друга", "Three friends", "Drei Freunde", "Trois amis", "Три друга"], ["Шесть друзей", "Six friends", "Sechs Freunde", "Six amis", "Шість друзів"], ["Десять друзей", "Ten friends", "Zehn Freunde", "Dix amis", "Десять друзів"], ["VIP Бронза навсегда и скин «Королевский»", "VIP Bronze forever and the “Royal” skin", "VIP Bronze für immer und der Skin „Königlich“", "VIP Bronze à vie et le skin « Royal »", "VIP Бронза назавжди та скін «Королівський»"], ["VIP Серебро: золотые чашки ловятся сами", "VIP Silver: golden cups are caught automatically", "VIP Silber: goldene Tassen werden automatisch gefangen", "VIP Argent : les tasses dorées sont attrapées automatiquement", "VIP Срібло: золоті чашки ловляться самі"], ["VIP Золото: бесплатный инкассатор, скин «Бриллиант» и корона на вывеске", "VIP Gold: free cash collector, the “Diamond” skin and a crown on the sign", "VIP Gold: kostenloser Geldeinsammler, Skin „Diamant“ und Krone auf dem Schild", "VIP Or : collecteur gratuit, skin « Diamant » et couronne sur l’enseigne", "VIP Золото: безкоштовний інкасатор, скін «Діамант» і корона на вивісці"], ["Зёрна и большой денежный приз", "Beans and a big cash prize", "Bohnen und ein großer Geldpreis", "Des grains et un gros prix en argent", "Зерна та великий грошовий приз"], ["👑 Нужен VIP-статус: пригласи друзей", "👑 VIP status required: invite friends", "👑 VIP-Status nötig: Lade Freunde ein", "👑 Statut VIP requis : invite des amis", "👑 Потрібен VIP-статус: запроси друзів"], ["📋 Выдели текст и скопируй вручную", "📋 Select the text and copy it manually", "📋 Text markieren und manuell kopieren", "📋 Sélectionne le texte et copie-le à la main", "📋 Виділи текст і скопіюй вручну"], ["📋 Приглашение скопировано", "📋 Invitation copied", "📋 Einladung kopiert", "📋 Invitation copiée", "📋 Запрошення скопійовано"], ["❌ Неверный код друга", "❌ Invalid friend code", "❌ Ungültiger Freundescode", "❌ Code d’ami invalide", "❌ Невірний код друга"], ["❌ Это твой собственный код", "❌ That is your own code", "❌ Das ist dein eigener Code", "❌ C’est ton propre code", "❌ Це твій власний код"], ["❌ Код друга уже введён", "❌ Friend code already entered", "❌ Freundescode bereits eingegeben", "❌ Code d’ami déjà saisi", "❌ Код друга вже введено"], ["❌ Неверный ответный код", "❌ Invalid reply code", "❌ Ungültiger Antwortcode", "❌ Code de réponse invalide", "❌ Невірна кодова відповідь"], ["❌ Этот друг уже засчитан", "❌ This friend is already counted", "❌ Dieser Freund ist schon gezählt", "❌ Cet ami est déjà compté", "❌ Цього друга вже зараховано"], ["🎁 Бонус за код друга: +$", "🎁 Friend code bonus: +$", "🎁 Bonus für Freundescode: +$", "🎁 Bonus du code d’ami : +$", "🎁 Бонус за код друга: +$"], [" и 3 дня VIP!", " and 3 days of VIP!", " und 3 Tage VIP!", " et 3 jours de VIP !", " і 3 дні VIP!"], ["🎁 Награда за друзей: +$", "🎁 Friend reward: +$", "🎁 Belohnung für Freunde: +$", "🎁 Récompense d’amis : +$", "🎁 Нагорода за друзів: +$"], [" и зёрна:  ", " and beans:  ", " und Bohnen:  ", " et des grains :  ", " і зерна:  "], ["🤝 Друг засчитан!", "🤝 Friend counted!", "🤝 Freund gezählt!", "🤝 Ami compté !", "🤝 Друга зараховано!"], ["🎁 Ежедневная награда: +$", "🎁 Daily reward: +$", "🎁 Tägliche Belohnung: +$", "🎁 Récompense quotidienne : +$", "🎁 Щоденна нагорода: +$"], ["Задания", "Quests", "Aufgaben", "Quêtes", "Завдання"], ["Задания недели", "Weekly quests", "Wochenaufgaben", "Quêtes de la semaine", "Завдання тижня"], ["Сделай критических кликов:  ", "Make critical clicks:  ", "Mache kritische Klicks:  ", "Fais des clics critiques :  ", "Зроби критичних кліків:  "], ["Обслужи VIP-клиентов:  ", "Serve VIP customers:  ", "Bediene VIP-Kunden:  ", "Sers des clients VIP :  ", "Обслужи VIP-клієнтів:  "], ["Обслужи клиентов:  ", "Serve customers:  ", "Bediene Kunden:  ", "Sers des clients :  ", "Обслужи клієнтів:  "], ["Забери ежедневную награду раз:  ", "Claim the daily reward times:  ", "Hole die tägliche Belohnung Mal ab:  ", "Récupère la récompense quotidienne fois :  ", "Забери щоденну нагороду разів:  "], ["Обновятся через  ", "Resets in  ", "Erneuert sich in  ", "Renouvelées dans  ", "Оновляться через  "], [" · награда за каждое: $", " · reward for each: $", " · Belohnung pro Aufgabe: $", " · récompense pour chacune : $", " · нагорода за кожне: $"], ["Забрать", "Claim", "Abholen", "Récupérer", "Забрати"], ["За все три задания недели: +1 зерно", "All three weekly quests: +1 bean", "Für alle drei Wochenaufgaben: +1 Bohne", "Pour les trois quêtes de la semaine : +1 grain", "За всі три завдання тижня: +1 зерно"], ["🫘 Бонус недели получен", "🫘 Weekly bonus claimed", "🫘 Wochenbonus erhalten", "🫘 Bonus de la semaine reçu", "🫘 Бонус тижня отримано"], ["📋 Задание недели выполнено! +$", "📋 Weekly quest complete! +$", "📋 Wochenaufgabe erledigt! +$", "📋 Quête de la semaine terminée ! +$", "📋 Завдання тижня виконано! +$"], ["🫘 Все задания недели! +1 зерно", "🫘 All weekly quests done! +1 bean", "🫘 Alle Wochenaufgaben erledigt! +1 Bohne", "🫘 Toutes les quêtes de la semaine ! +1 grain", "🫘 Усі завдання тижня! +1 зерно"], ["☀️ Погода прояснилась", "☀️ The weather cleared up", "☀️ Das Wetter hat sich aufgeklärt", "☀️ Le temps s’est éclairci", "☀️ Погода прояснилась"], ["🌧 Дождь: клиентов меньше, зато доход +4%", "🌧 Rain: fewer customers, but income +4%", "🌧 Regen: weniger Kunden, aber Einkommen +4 %", "🌧 Pluie : moins de clients, mais revenu +4 %", "🌧 Дощ: клієнтів менше, зате дохід +4%"], ["⛈ Гроза: клиентов мало, зато доход +6%", "⛈ Thunderstorm: few customers, but income +6%", "⛈ Gewitter: wenige Kunden, aber Einkommen +6 %", "⛈ Orage : peu de clients, mais revenu +6 %", "⛈ Гроза: клієнтів мало, зате дохід +6%"], ["❄️ Снегопад: клиентов меньше, зато доход +5%", "❄️ Snowfall: fewer customers, but income +5%", "❄️ Schneefall: weniger Kunden, aber Einkommen +5 %", "❄️ Chute de neige : moins de clients, mais revenu +5 %", "❄️ Снігопад: клієнтів менше, зате дохід +5%"], ["🌫 Туман: клиентов чуть меньше, доход +2%", "🌫 Fog: slightly fewer customers, income +2%", "🌫 Nebel: etwas weniger Kunden, Einkommen +2 %", "🌫 Brouillard : un peu moins de clients, revenu +2 %", "🌫 Туман: клієнтів трохи менше, дохід +2%"], ["🔥 Жара: клиентов больше, доход +3%", "🔥 Heat: more customers, income +3%", "🔥 Hitze: mehr Kunden, Einkommen +3 %", "🔥 Canicule : plus de clients, revenu +3 %", "🔥 Спека: клієнтів більше, дохід +3%"]], EN = [["Tap to start", "Tap to start", "Zum Starten tippen", "Touche pour commencer", "Торкнись, щоб почати", "Нажми, чтобы начать"], ["Brew. Grow. Build your empire.", "Brew. Grow. Build your empire.", "Brühen. Wachsen. Imperium aufbauen.", "Prépare. Grandis. Bâtis ton empire.", "Вари. Зростай. Збудуй імперію.", "Вари. Расти. Построй империю."]];
+ const LANGS = { en: 'English', de: 'Deutsch', fr: 'Français', ru: 'Русский', uk: 'Українська' };
+ const IDX = { en: 1, de: 2, fr: 3, uk: 4 }, EIDX = { en: 1, de: 2, fr: 3, uk: 4, ru: 5 };
+ const UNITS = { en: ['d', 'min', 'h', 's'], de: ['T', 'Min.', 'Std.', 'Sek.'], fr: ['j', 'min', 'h', 's'], uk: ['дн', 'хв', 'год', 'с'] };
+ let lang = null;
+ try { lang = localStorage.getItem('ctLang'); } catch (e) {}
+ if (!LANGS[lang]) { const n = (navigator.language || 'en').slice(0, 2).toLowerCase(); lang = LANGS[n] ? n : 'en'; }
+ document.documentElement.lang = lang;
+ window.LANG = lang;
+ const CYR = /[А-Яа-яЁё]/;
+ function mk(rows, col) {
+  const map = new Map(); rows.forEach(r => { if (r[col] != null) map.set(r[0], r[col]); });
+  const keys = [...map.keys()].sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return { map, re: new RegExp(keys.join('|'), 'g') };
+ }
+ const dRU = lang !== 'ru' ? mk(RU, IDX[lang]) : null;
+ const dEN = lang !== 'en' ? mk(EN, EIDX[lang]) : null;
+ const U = UNITS[lang];
+ const unitRe = /(\d)( ?)(дн|мин|ч|с)(?![А-Яа-яЁёA-Za-z])/g;
+ const cache = new Map();
+ function walkDict(t, d, short) {
+  return t.replace(d.re, (m, off, str) => {
+   if (short && m.length <= 6 && (CYR.test(str[off - 1] || '') || CYR.test(str[off + m.length] || ''))) return m;
+   return d.map.get(m);
+  });
+ }
+ function TR(t) {
+  if (typeof t !== 'string' || t.length < 1) return t;
+  const c = cache.get(t); if (c !== undefined) return c;
+  let o = t;
+  if (dEN && /[A-Za-z]/.test(o)) o = walkDict(o, dEN, false);
+  if (dRU && CYR.test(o)) {
+   o = walkDict(o, dRU, true);
+   if (U && CYR.test(o)) o = o.replace(unitRe, (m, d, sp, u) => d + ' ' + U[['дн', 'мин', 'ч', 'с'].indexOf(u)]);
+  }
+  if (cache.size > 4000) cache.clear();
+  cache.set(t, o); return o;
+ }
+ window.TR = TR;
+ if (lang === 'ru' && !dEN) return;
+ const done = new WeakMap();
+ function fixNode(n) {
+  const v = n.nodeValue; if (done.get(n) === v) return;
+  const o = TR(v); if (o !== v) { n.nodeValue = o; } done.set(n, o);
+ }
+ const ATTRS = ['title', 'placeholder', 'data-badge'];
+ const adone = new WeakMap();
+ function fixEl(e) {
+  ATTRS.forEach(a => { const v = e.getAttribute && e.getAttribute(a); if (v == null) return;
+   const k = adone.get(e) || {}; if (k[a] === v) return;
+   const o = TR(v); if (o !== v) e.setAttribute(a, o); k[a] = o; adone.set(e, k); });
+ }
+ function walk(root) {
+  if (root.nodeType === 3) { fixNode(root); return; }
+  if (root.nodeType !== 1 || /^(SCRIPT|STYLE|TEXTAREA)$/.test(root.tagName)) return;
+  fixEl(root);
+  for (let c = root.firstChild; c; c = c.nextSibling) walk(c);
+ }
+ const mo = new MutationObserver(recs => {
+  for (const r of recs) {
+   if (r.type === 'childList') r.addedNodes.forEach(walk);
+   else if (r.type === 'characterData') fixNode(r.target);
+   else if (r.type === 'attributes') fixEl(r.target);
+  }
+ });
+ mo.observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+ walk(document.documentElement);
+ const nm = document.getElementById('nameIn'); if (nm && CYR.test(nm.value)) nm.value = TR(nm.value);
+ const P = CanvasRenderingContext2D.prototype, ft = P.fillText, mt = P.measureText;
+ P.fillText = function (t, ...a) { return ft.call(this, TR(t), ...a); };
+ P.measureText = function (t) { return mt.call(this, TR(t)); };
+})();
+(function () {
+ const sel = document.getElementById('langSel'); if (!sel) return;
+ const L = { en: 'English', de: 'Deutsch', fr: 'Français', ru: 'Русский', uk: 'Українська' };
+ Object.keys(L).forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = L[k]; if (k === window.LANG) o.selected = true; sel.appendChild(o); });
+ sel.addEventListener('change', () => { try { save(); } catch (e) {} try { localStorage.setItem('ctLang', sel.value); } catch (e) {} location.reload(); });
+})();
+</script>
+</body>
+</html>
